@@ -30,6 +30,7 @@
 
          .title {
             text-transform: uppercase;
+            margin-bottom: 5px;
          }
       }
 
@@ -66,18 +67,6 @@
             span {
                border-radius: 0 0.5rem 0.5rem 0;
             }
-         }
-
-         .ctaForgot {
-            margin-bottom: 1.5rem;
-            text-align: center;
-         }
-
-         .googleBtn {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 0.5rem;
          }
       }
    }

@@ -44,7 +44,7 @@ button {
    display: grid;
    align-items: center;
    justify-content: center;
-   grid-template-columns: 85% 15%;
+   grid-template-columns: 90% 10%;
 
    .inputIcon {
       display: flex;
@@ -54,4 +54,10 @@ button {
       height: 100%;
       width: 100%;
    }
+}
+
+.errorMsg {
+   font-size: smaller;
+   font-style: italic;
+   color: #c92f2f;
 }
