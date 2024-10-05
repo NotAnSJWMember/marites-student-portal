@@ -1,0 +1,57 @@
+@import "./variables.scss";
+
+
+* {
+   margin: 0;
+   padding: 0;
+   box-sizing: border-box;
+   font-family: "Fira Sans", sans-serif;
+}
+
+body {
+   font-size: 15px;
+   background-color: $light-primary-background;
+}
+
+button {
+   background-color: $light-primary-color;
+   color: $light-primary-background;
+}
+
+.text-divider {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   width: 100%;
+   margin: 0.5rem 0 0.5rem 0;
+   opacity: 0.4;
+
+   span {
+      display: block;
+      position: absolute;
+      background-color: $light-primary-background;
+      padding: 0 0.5rem 0 0.5rem;
+   }
+}
+
+.line {
+   height: 1px;
+   width: 100%;
+   background-color: $light-primary-text;
+}
+
+.input-merge {
+   display: grid;
+   align-items: center;
+   justify-content: center;
+   grid-template-columns: 85% 15%;
+
+   .input-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #f0f0f0;
+      height: 100%;
+      width: 100%;
+   }
+}
