@@ -6,7 +6,10 @@ export type StudentDocument = Student & Document;
 @Schema()
 export class Student {
   @Prop({ required: true })
-  name: string;
+  username: string;
+
+  @Prop({ required: true })
+  password: string;
 
   @Prop({ required: true })
   course: string;

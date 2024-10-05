@@ -101,21 +101,43 @@ const Register = () => {
                      })}
                   />
                </div>
-               <div>
-                  <label>
-                     Birthdate{" "}
-                     {errors.birthDate && (
-                        <span className={styles.errorMsg}>
-                           ({errors.birthDate.message})
-                        </span>
-                     )}
-                  </label>
-                  <input
-                     type="date"
-                     {...register("birthDate", {
-                        required: "Birthdate is required",
-                     })}
-                  />
+               <div className={styles.twoColumn}>
+                  <div>
+                     <label>
+                        Birthdate{" "}
+                        {errors.birthDate && (
+                           <span className={styles.errorMsg}>
+                              ({errors.birthDate.message})
+                           </span>
+                        )}
+                     </label>
+                     <input
+                        type="date"
+                        {...register("birthDate", {
+                           required: "Birthdate is required",
+                        })}
+                     />
+                  </div>
+                  <div>
+                     <label>
+                        Sex{" "}
+                        {errors.sex && (
+                           <span className={styles.errorMsg}>
+                              ({errors.sex.message})
+                           </span>
+                        )}
+                     </label>
+                     <select
+                        {...register("sex", {
+                           required: "Sex is required",
+                        })}
+                     >
+                        <option value="">Select Sex</option>
+                        <option value="1">Female</option>
+                        <option value="2">Male</option>
+                        <option value="3">Other</option>
+                     </select>
+                  </div>
                </div>
                <div className={styles.twoColumn}>
                   <div className={styles.course}>
