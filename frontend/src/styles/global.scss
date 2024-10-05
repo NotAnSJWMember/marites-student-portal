@@ -1,6 +1,5 @@
 @import "./variables.scss";
 
-
 * {
    margin: 0;
    padding: 0;
@@ -52,6 +51,15 @@ button {
       justify-content: center;
       background-color: #f0f0f0;
       height: 100%;
+      width: 100%;
+   }
+}
+
+.twoColumn {
+   display: flex;
+   gap: 0.7rem;
+
+   div {
       width: 100%;
    }
 }

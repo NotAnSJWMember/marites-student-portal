@@ -19,18 +19,10 @@
       background-color: $light-primary-background;
       box-shadow: #d3d3d3 0 0 5px;
 
-      .sealContainer {
+      .head {
          text-align: center;
-
-         img {
-            width: 120px;
-         }
-
-         .head {
-            .title {
-               text-transform: uppercase;
-               margin: 10px 0 5px 0;
-            }
+         .title {
+            text-transform: uppercase;
          }
       }
 
@@ -43,16 +35,6 @@
          label {
             display: inline-block;
             margin-bottom: 0.5rem;
-         }
-
-         .nameColumn {
-            display: flex;
-            gap: 0.7rem;
-
-            .firstName,
-            .lastName {
-               width: 100%;
-            }
          }
 
          input {
@@ -81,6 +63,16 @@
 
             span {
                border-radius: 0 0.5rem 0.5rem 0;
+            }
+         }
+         .twoColumn {
+            margin-top: 1rem;
+
+            button {
+               &:first-of-type {
+                  color: $light-secondary-color;
+                  background-color: $light-blue-color;
+               }
             }
          }
       }
