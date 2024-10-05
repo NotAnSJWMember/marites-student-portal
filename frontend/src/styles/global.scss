@@ -18,7 +18,7 @@ button {
    color: $light-primary-background;
 }
 
-.text-divider {
+.textDivider {
    display: flex;
    justify-content: center;
    align-items: center;
@@ -40,13 +40,13 @@ button {
    background-color: $light-primary-text;
 }
 
-.input-merge {
+.inputMerge {
    display: grid;
    align-items: center;
    justify-content: center;
    grid-template-columns: 85% 15%;
 
-   .input-icon {
+   .inputIcon {
       display: flex;
       align-items: center;
       justify-content: center;
