@@ -1,12 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import styles from "./Register.module.scss";
 import { useForm } from "react-hook-form";
 import { Helmet } from "react-helmet";
 
+import Popup from "../../components/popup/Popup";
 import LogoIcon from "../../assets/images/logo.png";
 import { IoEyeOutline } from "@react-icons/all-files/io5/IoEyeOutline";
 
 const Register = () => {
+   const [popupTitle, setPopupTitle] = useState("");
+   const [popupMessage, setPopupMessage] = useState("");
+   const [showPopup, setShowPopup] = useState(true);
+
    const {
       register,
       handleSubmit,
@@ -14,8 +19,6 @@ const Register = () => {
    } = useForm();
 
    const onSubmit = async (data) => {
-      console.log(data);
-
       try {
          const url = "http://localhost:8080/students";
          const response = await fetch(url, {
@@ -27,15 +30,22 @@ const Register = () => {
          });
 
          if (response.ok) {
-            const student = await response.json();
-            console.log(student);
-            
+            setPopupTitle("Success");
+            setPopupMessage("Student created successfully!");
+            console.log("Created student successfully");
          } else {
-            console.log("Depota");
+            setPopupTitle("Error");
+            setPopupMessage("Failed to create student.");
+            console.log("Failed to create student");
          }
       } catch (error) {
          console.error("Error:", error);
       }
+      setShowPopup(true);
+   };
+
+   const handleClosePopup = () => {
+      setShowPopup(false); // Close the popup
    };
 
    return (
@@ -236,14 +246,21 @@ const Register = () => {
                      </span>
                   </div>
                </div>
-
-               <div className={styles.twoColumn}>
-                  <button>Reset</button>
-                  <button type="submit" className={styles.submitBtn}>
-                     Create account
-                  </button>
-               </div>
+               <button
+                  type="submit"
+                  className={styles.submitBtn}
+                  title="Create account with given details"
+               >
+                  Create account
+               </button>
             </form>
+            {showPopup && (
+               <Popup
+                  title={popupTitle}
+                  message={popupMessage}
+                  onClose={handleClosePopup}
+               />
+            )}
          </div>
       </div>
    );
