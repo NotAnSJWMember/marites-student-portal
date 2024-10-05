@@ -14,15 +14,25 @@
       justify-content: center;
       border-radius: 0.5rem;
       padding: 2rem;
-      gap: 2.5rem;
+      gap: 1.3rem;
       width: 35vw;
       background-color: $light-primary-background;
       box-shadow: #d3d3d3 0 0 5px;
 
-      .head {
-         text-align: center;
-         .title {
-            text-transform: uppercase;
+      .sealContainer {
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         gap: 1rem;
+
+         img {
+            width: 90px;
+         }
+
+         .head {
+            .title {
+               text-transform: uppercase;
+            }
          }
       }
 
@@ -46,7 +56,8 @@
          }
 
          input,
-         button {
+         button,
+         select {
             outline: none;
             border-radius: 0.5rem;
             padding: 1rem;
@@ -65,14 +76,23 @@
                border-radius: 0 0.5rem 0.5rem 0;
             }
          }
-         .twoColumn {
-            margin-top: 1rem;
 
-            button {
-               &:first-of-type {
-                  color: $light-secondary-color;
-                  background-color: $light-blue-color;
-               }
+         .year {
+            display: flex;
+            flex-direction: column;
+
+            select {
+               border: 1px solid $light-gray-color;
+            }
+         }
+      }
+      .twoColumn {
+         margin-top: 1rem;
+
+         button {
+            &:first-of-type {
+               color: $light-secondary-color;
+               background-color: $light-blue-color;
             }
          }
       }

@@ -1,7 +1,9 @@
 import React from "react";
 import styles from "./Register.module.scss";
 import { useForm } from "react-hook-form";
+import { Helmet } from "react-helmet";
 
+import LogoIcon from "../../assets/images/logo.png";
 import { IoEyeOutline } from "@react-icons/all-files/io5/IoEyeOutline";
 
 const Register = () => {
@@ -17,14 +19,21 @@ const Register = () => {
 
    return (
       <div className={styles.content}>
+         <Helmet>
+            <title>Marites University | Register</title>
+         </Helmet>
          <div className={styles.container}>
-            <div className={styles.head}>
-               <h1 className={styles.title}>Portal Registration</h1>
-               <p>Create an account in Marites University</p>
+            <div className={styles.sealContainer}>
+               <img src={LogoIcon} alt="Marites University Seal" />
+               <div className={styles.head}>
+                  <h1 className={styles.title}>Portal Registration</h1>
+                  <p>Create an account in Marites University</p>
+               </div>
             </div>
             <form
                className={styles.formContainer}
                onSubmit={handleSubmit(onSubmit)}
+               autoComplete="off"
             >
                <div className={styles.twoColumn}>
                   <div className={styles.firstName}>
@@ -112,34 +121,39 @@ const Register = () => {
                   <div className={styles.course}>
                      <label>
                         Programme{" "}
-                        {errors.course && (
+                        {errors.programme && (
                            <span className={styles.errorMsg}>
-                              ({errors.course.message})
+                              ({errors.programme.message})
                            </span>
                         )}
                      </label>
                      <input
                         type="text"
-                        {...register("course", {
-                           required: "Course is required",
+                        {...register("programme", {
+                           required: "Programme is required",
                         })}
                      />
                   </div>
-                  <div className={styles.course}>
+                  <div className={styles.year}>
                      <label>
                         Year{" "}
-                        {errors.course && (
+                        {errors.year && (
                            <span className={styles.errorMsg}>
-                              ({errors.course.message})
+                              ({errors.year.message})
                            </span>
                         )}
                      </label>
-                     <input
-                        type="text"
-                        {...register("course", {
-                           required: "Course is required",
+                     <select
+                        {...register("year", {
+                           required: "Year is required",
                         })}
-                     />
+                     >
+                        <option value="">Select Year</option>
+                        <option value="1">First year</option>
+                        <option value="2">Second year</option>
+                        <option value="3">Third year</option>
+                        <option value="4">Fourth year</option>
+                     </select>
                   </div>
                </div>
                <div>
