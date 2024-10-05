@@ -13,8 +13,29 @@ const Register = () => {
       formState: { errors },
    } = useForm();
 
-   const onSubmit = (data) => {
+   const onSubmit = async (data) => {
       console.log(data);
+
+      try {
+         const url = "http://localhost:8080/students";
+         const response = await fetch(url, {
+            method: "POST",
+            headers: {
+               "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+         });
+
+         if (response.ok) {
+            const student = await response.json();
+            console.log(student);
+            
+         } else {
+            console.log("Depota");
+         }
+      } catch (error) {
+         console.error("Error:", error);
+      }
    };
 
    return (
@@ -72,15 +93,15 @@ const Register = () => {
                <div>
                   <label>
                      Email Address{" "}
-                     {errors.emailAd && (
+                     {errors.email && (
                         <span className={styles.errorMsg}>
-                           ({errors.emailAd.message})
+                           ({errors.email.message})
                         </span>
                      )}
                   </label>
                   <input
                      type="email"
-                     {...register("emailAd", {
+                     {...register("email", {
                         required: "Email address is required",
                      })}
                   />
