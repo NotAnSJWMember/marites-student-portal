@@ -18,6 +18,9 @@ export class Student {
   email: string;
 
   @Prop({ required: true })
+  phoneNum: number;
+
+  @Prop({ required: true })
   birthDate: Date;
 
   @Prop({ required: true, enum: ['Male', 'Female', 'Other'] })

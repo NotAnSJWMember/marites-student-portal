@@ -154,9 +154,9 @@ const Register = () => {
                         })}
                      >
                         <option value="">Select Sex</option>
-                        <option value="1">Female</option>
-                        <option value="2">Male</option>
-                        <option value="3">Other</option>
+                        <option value="Female">Female</option>
+                        <option value="Male">Male</option>
+                        <option value="Other">Other</option>
                      </select>
                   </div>
                </div>

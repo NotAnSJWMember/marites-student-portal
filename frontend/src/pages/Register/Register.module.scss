@@ -55,6 +55,10 @@
             border: none;
          }
 
+         select {
+            border: 1px solid $light-gray-color;
+         }
+
          input,
          button,
          select {
@@ -80,10 +84,6 @@
          .year {
             display: flex;
             flex-direction: column;
-
-            select {
-               border: 1px solid $light-gray-color;
-            }
          }
       }
       .twoColumn {
