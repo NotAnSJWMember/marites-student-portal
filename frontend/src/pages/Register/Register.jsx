@@ -1,64 +1,45 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./Register.module.scss";
 import { useForm } from "react-hook-form";
 import { Helmet } from "react-helmet";
 
-import Popup from "../../components/popup/Popup";
+import Popup from "../../components/Popup/Popup";
 import LogoIcon from "../../assets/images/logo.png";
-import { IoEyeOutline } from "@react-icons/all-files/io5/IoEyeOutline";
+import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
+
+import { useRegister, useTogglePassword } from "../../hooks";
 
 const Register = () => {
-   const [popupTitle, setPopupTitle] = useState("");
-   const [popupMessage, setPopupMessage] = useState("");
-   const [showPopup, setShowPopup] = useState(true);
+   const [showPassword, togglePasswordVisibility] = useTogglePassword();
+   const { popupState, showPopup, setShowPopup, createAccount } = useRegister();
 
    const {
       register,
       handleSubmit,
+      reset,
       formState: { errors },
    } = useForm();
 
    const onSubmit = async (data) => {
-      try {
-         const url = "http://localhost:8080/students";
-         const response = await fetch(url, {
-            method: "POST",
-            headers: {
-               "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-         });
-
-         if (response.ok) {
-            setPopupTitle("Success");
-            setPopupMessage("Student created successfully!");
-            console.log("Created student successfully");
-         } else {
-            setPopupTitle("Error");
-            setPopupMessage("Failed to create student.");
-            console.log("Failed to create student");
-         }
-      } catch (error) {
-         console.error("Error:", error);
-      }
+      createAccount(data, reset);
       setShowPopup(true);
    };
 
    const handleClosePopup = () => {
-      setShowPopup(false); // Close the popup
+      setShowPopup(false);
    };
 
    return (
       <div className={styles.content}>
          <Helmet>
-            <title>Marites University | Register</title>
+            <title>Dr. AMMC | Register</title>
          </Helmet>
          <div className={styles.container}>
             <div className={styles.sealContainer}>
-               <img src={LogoIcon} alt="Marites University Seal" />
+               <img src={LogoIcon} alt="Dr. AMMC Seal" />
                <div className={styles.head}>
                   <h1 className={styles.title}>Portal Registration</h1>
-                  <p>Create an account in Marites University</p>
+                  <p>Create an account to start your session</p>
                </div>
             </div>
             <form
@@ -129,6 +110,11 @@ const Register = () => {
                      type="tel"
                      {...register("phoneNum", {
                         required: "Phone number is required",
+                        pattern: {
+                           value: /^\+?\d{1,3}?\s?\d{10}$/,
+                           message:
+                              "Phone number must be 10 digits",
+                        },
                      })}
                   />
                </div>
@@ -149,7 +135,7 @@ const Register = () => {
                         })}
                      />
                   </div>
-                  <div>
+                  <div className={styles.sex}>
                      <label>
                         Sex{" "}
                         {errors.sex && (
@@ -236,13 +222,20 @@ const Register = () => {
                   </label>
                   <div className={styles.inputMerge}>
                      <input
-                        type="password"
+                        type={showPassword ? "text" : "password"}
                         {...register("password", {
                            required: "Password is required",
                         })}
                      />
-                     <span className={styles.inputIcon}>
-                        <IoEyeOutline color="gray" height="20px" width="20px" />
+                     <span
+                        className={styles.inputIcon}
+                        onClick={togglePasswordVisibility}
+                     >
+                        {showPassword ? (
+                           <IoEyeOffOutline color="gray" size={20} />
+                        ) : (
+                           <IoEyeOutline color="gray" size={20} />
+                        )}
                      </span>
                   </div>
                </div>
@@ -253,14 +246,18 @@ const Register = () => {
                >
                   Create account
                </button>
+               <a href="login">Already have an account? Sign In</a>
             </form>
-            {showPopup && (
-               <Popup
-                  title={popupTitle}
-                  message={popupMessage}
-                  onClose={handleClosePopup}
-               />
-            )}
+
+            <Popup
+               icon={popupState.icon}
+               border={popupState.border}
+               color={popupState.color}
+               title={popupState.title}
+               message={popupState.message}
+               onClose={handleClosePopup}
+               show={showPopup}
+            />
          </div>
       </div>
    );

@@ -3,13 +3,26 @@ dotenv.config();
 
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { StudentModule } from './students/student.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { ConfigModule } from '@nestjs/config';
+import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
+import { JwtModule } from '@nestjs/jwt';
+import { MailService } from './mail/mail.service';
 
 @Module({
-  imports: [MongooseModule.forRoot(process.env.MONGODB_URI), StudentModule],
-  controllers: [AppController],
-  providers: [AppService],
+   imports: [
+      ConfigModule.forRoot(),
+      JwtModule.register({
+         secret: process.env.JWT_SECRET,
+         signOptions: { expiresIn: '1h' },
+      }),
+      MongooseModule.forRoot(process.env.MONGODB_URI),
+      AuthModule,
+      UserModule,
+   ],
+   controllers: [AppController],
+   providers: [AppService, MailService],
 })
 export class AppModule {}

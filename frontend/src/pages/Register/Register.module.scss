@@ -4,7 +4,8 @@
    display: flex;
    align-items: center;
    justify-content: center;
-   height: 100vh;
+   height: 100%;
+   padding: 3rem;
    background-color: #f0f0f0;
 
    .container {
@@ -12,10 +13,9 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      border-radius: 0.5rem;
       padding: 2rem;
       gap: 1.3rem;
-      width: 35vw;
+      width: 40rem;
       background-color: $light-primary-background;
       box-shadow: #d3d3d3 0 0 5px;
 
@@ -26,7 +26,7 @@
          gap: 1rem;
 
          img {
-            width: 90px;
+            width: 70px;
          }
 
          .head {
@@ -62,32 +62,33 @@
          input,
          button,
          select {
+            flex: 1;
             outline: none;
-            border-radius: 0.5rem;
             padding: 1rem;
             width: 100%;
          }
 
          .inputMerge {
             border: 1px solid $light-gray-color;
-            border-radius: 0.5rem;
+            height: 100%;
 
             input {
                border: none;
             }
-
-            span {
-               border-radius: 0 0.5rem 0.5rem 0;
-            }
          }
 
+         .sex,
          .year {
             display: flex;
             flex-direction: column;
          }
 
          .submitBtn {
-            cursor: pointer;
+            margin-top: 1rem;
+         }
+
+         a {
+            margin: 1rem auto 0 auto;
          }
       }
    }

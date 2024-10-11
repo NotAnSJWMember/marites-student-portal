@@ -4,18 +4,18 @@
    display: flex;
    align-items: center;
    justify-content: center;
-   height: 100vh;
+   height: 100%;
+   padding: 3rem;
    background-color: #f0f0f0;
 
    .container {
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      border-radius: 0.5rem;
+      justify-content: center;   
       padding: 2rem;
       gap: 1.5rem;
-      width: 23vw;
+      width: 30rem;
       background-color: $light-primary-background;
       box-shadow: #d3d3d3 0 0 5px;
 
@@ -52,20 +52,35 @@
          button {
             outline: none;
             padding: 1rem;
-            border-radius: 0.5rem;
             width: 100%;
          }
 
          .inputMerge {
             border: 1px solid $light-gray-color;
-            border-radius: 0.5rem;
 
             input {
                border: none;
             }
 
             span {
-               border-radius: 0 0.5rem 0.5rem 0;
+               user-select: none;
+               height: 50px;
+               width: 60px;
+               cursor: pointer;
+            }
+         }
+
+         .ctaForgot {
+            text-align: center;
+            margin-top: 0.2rem;
+            margin-bottom: 2.5rem;
+         }
+
+         .createBtn {
+            width: 100%;
+
+            button {
+               background-color: $light-tertiary-color;
             }
          }
       }

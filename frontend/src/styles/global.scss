@@ -7,14 +7,36 @@
    font-family: "Fira Sans", sans-serif;
 }
 
-body {
-   font-size: 15px;
-   background-color: $light-primary-background;
+a {
+   width: max-content;
+   color: $light-anchor-color;
+   text-underline-offset: 5px;
+}
+
+p {
+   line-height: 1.4rem;
 }
 
 button {
+   cursor: pointer;
+}
+
+body {
+   font-size: 15px;
+   background-color: $light-primary-background;
+   background-color: #f0f0f0;
+}
+
+button {
+   border: none;
+   outline: none;
+   padding: 1rem;
    background-color: $light-primary-color;
    color: $light-primary-background;
+
+   &:hover {
+      filter: brightness(90%);
+   }
 }
 
 .textDivider {
@@ -40,18 +62,27 @@ button {
 }
 
 .inputMerge {
-   display: grid;
+   display: flex;
+   justify-content: space-between;
    align-items: center;
-   justify-content: center;
-   grid-template-columns: 90% 10%;
+
+   input {
+      flex: 1;
+      height: 100%;
+      border: 1px solid $light-gray-color;
+      padding: 10px;
+   }
 
    .inputIcon {
+      user-select: none;
       display: flex;
       align-items: center;
       justify-content: center;
       background-color: #f0f0f0;
       height: 100%;
-      width: 100%;
+      padding: 0 10px;
+      cursor: pointer;
+      padding: 1rem;
    }
 }
 
