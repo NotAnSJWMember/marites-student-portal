@@ -30,7 +30,7 @@ export const useRegister = () => {
          return response;
       } catch (error) {
          showError(
-            "Error",
+            "Internal Server Error",
             error?.message || "An unexpected error occurred. Please try again."
          );
          return { ok: false };

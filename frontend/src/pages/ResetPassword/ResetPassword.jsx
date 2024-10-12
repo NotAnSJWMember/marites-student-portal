@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState } from "react";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 
 import styles from "./ResetPassword.module.scss";
@@ -21,7 +21,7 @@ const ResetPassword = () => {
       reset,
       formState: { errors },
    } = useForm();
-   
+
    const newPassword = watch("newPassword");
 
    const isTokenValid = useValidateToken();
@@ -81,7 +81,7 @@ const ResetPassword = () => {
    return (
       <div className={styles.container}>
          <Helmet>
-            <title>Dr. AMMC | Reset Password</title>
+            <title>Reset Password | Dr. AMMC</title>
          </Helmet>
          <div className={styles.content}>
             <div className={styles.head}>
@@ -97,7 +97,7 @@ const ResetPassword = () => {
             </div>
             {isEmailSent ? (
                <a href="login">
-                  <button type="button">Return to Sign In</button>
+                  <button type="button">Return to Login</button>
                </a>
             ) : (
                <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">

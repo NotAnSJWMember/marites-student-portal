@@ -1,0 +1,50 @@
+@import "../../styles/global.scss";
+
+.header {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   padding: 1.2rem 2rem;
+   border-bottom: 1px solid $light-gray-color;
+
+   .sideBar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+
+      div {
+         border-radius: 0.5rem;
+         padding: 0.5rem 0.8rem;
+      }
+
+      .notif,
+      .settings {
+         cursor: pointer;
+         color: $light-primary-text;
+         transition: 300ms $trans-smooth;
+
+         &:hover {
+            background-color: $light-gray-color;
+         }
+      }
+
+      .userIcon {
+         cursor: pointer;
+         width: 42px;
+         height: 42px;
+         border-radius: 50%;
+         padding: 0;
+         overflow: hidden;
+         margin-left: 0.5rem;
+
+         img {
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+            object-position: center;
+            display: block; 
+         }
+      }
+   }
+}

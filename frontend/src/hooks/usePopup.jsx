@@ -1,15 +1,21 @@
 import { useState } from "react";
 
 export const usePopup = () => {
-   const [popupState, setPopupState] = useState({
+   const defaultState = {
       icon: "",
       title: "",
       message: "",
       border: "",
       color: "",
-   });
+   };
 
+   const [popupState, setPopupState] = useState(defaultState);
    const [showPopup, setShowPopup] = useState(false);
+
+   const clearPopupState = () => {
+      setPopupState(defaultState);
+      setShowPopup(false);
+   };
 
    const showError = (title, message) => {
       setPopupState({
@@ -20,6 +26,7 @@ export const usePopup = () => {
          color: "#ffd1d1",
       });
       setShowPopup(true);
+      setTimeout(() => clearPopupState(), 3000);
    };
 
    const showSuccess = (title, message) => {
@@ -31,7 +38,7 @@ export const usePopup = () => {
          color: "#b0ffc1",
       });
       setShowPopup(true);
-      setTimeout(() => setShowPopup(false), 3000);
+      setTimeout(() => clearPopupState(false), 3000);
    };
 
    return { popupState, showPopup, setShowPopup, showError, showSuccess };

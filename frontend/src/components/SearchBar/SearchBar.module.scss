@@ -1,0 +1,19 @@
+@import "../../styles/global.scss";
+
+.searchBar {
+   display: flex;
+   align-items: center;
+   justify-content: flex-start;
+   background-color: $light-primary-background;
+   gap: 0.6rem;
+   padding: 0.9rem 1.5rem;
+   border-radius: 0.5rem;
+   width: 20rem;
+
+   input {
+      border: none;
+      background: none;
+      outline: none;
+      width: 100%;
+   }
+}

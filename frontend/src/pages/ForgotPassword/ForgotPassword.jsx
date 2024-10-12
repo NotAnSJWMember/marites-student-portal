@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 
 import Popup from "../../components/Popup/Popup";
@@ -10,7 +10,7 @@ import { useForgetPassword } from "../../hooks/useForgetPassword";
 import Loading from "../../components/Loading/Loading";
 
 const ForgotPassword = () => {
-   const { popupState, showPopup, setShowPopup, forgotPassword } =
+   const { popupState, showPopup, setShowPopup, forgetPassword } =
       useForgetPassword();
 
    const [isEmailSent, setIsEmailSent] = useState(false);
@@ -27,7 +27,7 @@ const ForgotPassword = () => {
       setLoading(true);
 
       try {
-         const response = await forgotPassword(data, reset);
+         const response = await forgetPassword(data, reset);
 
          if (response.ok) {
             setIsEmailSent(true);
@@ -44,7 +44,7 @@ const ForgotPassword = () => {
    return (
       <div className={styles.container}>
          <Helmet>
-            <title>Dr. AMMC | Forgot Password</title>
+            <title>Forgot Password | Dr. AMMC</title>
          </Helmet>
          <div className={styles.content}>
             <div className={styles.head}>
@@ -60,7 +60,7 @@ const ForgotPassword = () => {
             </div>
             {isEmailSent ? (
                <a href="login" className={styles.returnBtn}>
-                  <button type="button">Return to Sign In</button>
+                  <button type="button">Return to Login</button>
                </a>
             ) : (
                <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
@@ -83,7 +83,7 @@ const ForgotPassword = () => {
                      <button type="submit" disabled={loading}>
                         Reset Password {loading && <Loading />}
                      </button>
-                     <a href="login">Return to Sign In</a>
+                     <a href="login">Return to Login</a>
                   </div>
                </form>
             )}

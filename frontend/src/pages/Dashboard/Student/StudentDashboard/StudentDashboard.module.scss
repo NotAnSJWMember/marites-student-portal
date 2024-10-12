@@ -1,0 +1,87 @@
+@import "../../../../styles/global.scss";
+
+.gridContainer {
+   display: grid;
+   grid-template-columns: 18% 82%;
+   height: 100vh;
+
+   .contentWrapper {
+      display: grid;
+      grid-template-rows: 9% 91%;
+      height: 100%;
+
+      .contentDivider {
+         display: grid;
+         grid-template-columns: 77% 23%;
+
+         .mainContent {
+            display: flex;
+            flex-direction: column;
+            padding: 2rem;
+            gap: 1.5rem;
+
+            .heroWelcome {
+               display: flex;
+               align-items: flex-end;
+               justify-content: space-between;
+               width: 100%;
+
+               h2 {
+                  font-size: 2rem;
+               }
+            }
+
+            .heroBanner {
+               display: flex;
+               flex-direction: column;
+               background-color: $light-primary-background;
+               border-radius: 0.5rem;
+               padding: 2rem;
+               gap: 1rem;
+
+               .heroBannerTitle {
+                  font-weight: 600;
+                  font-size: 1.7rem;
+               }
+
+               .heroBannerDesc {
+                  max-width: 65ch;
+                  margin-bottom: 1rem;
+               }
+            }
+         }
+
+         .sideContent {
+            padding: 2rem;
+            border-left: 1px solid $light-gray-color;
+         }
+      }
+   }
+}
+
+section {
+   .sectionLabel {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      border-bottom: 1px solid $light-gray-color;
+      padding: 1.3rem 0.5rem;
+      margin-bottom: 1rem;
+
+      .labelText {
+         display: flex;
+         align-items: center;
+         justify-content: flex-start;
+         font-size: 1rem;
+         font-weight: 500;
+         gap: 0.5rem;
+      }
+   }
+}
+
+.courseCard {
+   padding: 2rem;
+   width: max-content;
+   background-color: $light-primary-background;
+   border-radius: 0.5rem;
+}

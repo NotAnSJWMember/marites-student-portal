@@ -2,21 +2,24 @@
 
 .popup {
    position: fixed;
-   right: 0;
-   bottom: 0;
-   opacity: 0;
-   visibility: hidden;
    display: flex;
    align-items: center;
    justify-content: space-between;
+   visibility: hidden;
+   opacity: 0;
+   right: 0;
+   bottom: 0;
+   width: 24rem;
+   height:  5.5rem;
    padding: 1rem;
-   width: 27rem;
-   height: max-content;
+   gap: 2rem;
    margin: 2rem;
-   background-color: $light-primary-background;
    border-radius: 0.5rem;
    transform: scale(95%);
+   background-color: transparent;
+   border: 1px solid transparent;
    transition: 300ms cubic-bezier(0.34, 0, 0.13, 1);
+   z-index: 99;
    
    .iconContainer {
       display: flex;
@@ -26,6 +29,7 @@
    
    .title {
       font-weight: 600;
+      margin-bottom: 0.2rem;
    }
 
    .message {

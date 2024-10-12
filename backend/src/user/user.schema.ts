@@ -23,8 +23,8 @@ export class User {
    @Prop({ required: true, unique: true, match: /.+\@.+\..+/ })
    email: string;
 
-   @Prop({ required: true })
-   phoneNum: number;
+   @Prop({ required: true, type: String })
+   phoneNum: string;
 
    @Prop({ required: true })
    birthDate: Date;
@@ -38,7 +38,7 @@ export class User {
    @Prop({ required: true })
    year: number;
 
-   @Prop({ required: true })
+   @Prop({ required: true, unique: true })
    username: string;
 
    @Prop({ required: true })
@@ -47,7 +47,7 @@ export class User {
    @Prop({ type: String, enum: UserRole, default: UserRole.STUDENT })
    role: UserRole;
 
-   @Prop({ default: Date.now(), required: true })
+   @Prop({ default: Date.now() })
    createdAt: Date;
 
    @Prop({ default: Date.now() })

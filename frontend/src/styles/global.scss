@@ -7,36 +7,48 @@
    font-family: "Fira Sans", sans-serif;
 }
 
-a {
-   width: max-content;
-   color: $light-anchor-color;
-   text-underline-offset: 5px;
-}
-
-p {
-   line-height: 1.4rem;
-}
-
-button {
-   cursor: pointer;
-}
-
 body {
    font-size: 15px;
    background-color: $light-primary-background;
    background-color: #f0f0f0;
 }
 
+p {
+   line-height: 1.35rem;
+}
+
+a {
+   width: max-content;
+   color: $light-anchor-color;
+   text-underline-offset: 5px;
+}
+
 button {
+   cursor: pointer;
    border: none;
    outline: none;
    padding: 1rem;
    background-color: $light-primary-color;
    color: $light-primary-background;
+}
 
-   &:hover {
-      filter: brightness(90%);
+.ctaBtn {
+   button {
+      padding: 1rem 1.5rem;
+      font-size: 0.8rem;
+      border-radius: 0.3rem;
    }
+}
+
+.iconBtn, .iconCta {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   gap: 7px;
+}
+
+.iconCta {
+   text-decoration: none;
 }
 
 .textDivider {

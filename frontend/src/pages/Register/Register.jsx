@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import styles from "./Register.module.scss";
 import { useForm } from "react-hook-form";
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 
 import Popup from "../../components/Popup/Popup";
 import LogoIcon from "../../assets/images/logo.png";
@@ -21,8 +21,10 @@ const Register = () => {
    } = useForm();
 
    const onSubmit = async (data) => {
-      createAccount(data, reset);
-      setShowPopup(true);
+      const response = await createAccount(data, reset);
+      if (response.ok) {
+         setShowPopup(true);
+      }
    };
 
    const handleClosePopup = () => {
@@ -32,7 +34,7 @@ const Register = () => {
    return (
       <div className={styles.content}>
          <Helmet>
-            <title>Dr. AMMC | Register</title>
+            <title>Register | Dr. AMMC</title>
          </Helmet>
          <div className={styles.container}>
             <div className={styles.sealContainer}>
@@ -112,8 +114,7 @@ const Register = () => {
                         required: "Phone number is required",
                         pattern: {
                            value: /^\+?\d{1,3}?\s?\d{10}$/,
-                           message:
-                              "Phone number must be 10 digits",
+                           message: "Phone number must be 10 digits",
                         },
                      })}
                   />
