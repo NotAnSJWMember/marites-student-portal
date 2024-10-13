@@ -1,5 +1,5 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { UserService } from './user.service';
+import { UserService } from 'src/modules/user/user.service';
 
 @Injectable()
 export class IdGenerator {
@@ -15,12 +15,22 @@ export class IdGenerator {
       let userId: string;
       let isUnique = false;
 
-      while (!isUnique) {
+      let retries = 0;
+      const maxRetries = 10;
+
+      while (!isUnique && retries < maxRetries) {
          userId = Math.floor(Math.random() * (max - min + 1) + min).toString();
          const userExists = await this.userService.findOne(userId);
          if (!userExists) {
             isUnique = true;
          }
+         retries++;
+      }
+
+      if (!isUnique) {
+         throw new Error(
+            'Failed to generate a unique ID after multiple attempts.',
+         );
       }
 
       return userId;

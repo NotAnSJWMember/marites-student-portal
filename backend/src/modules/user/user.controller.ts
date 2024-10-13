@@ -1,27 +1,31 @@
 import {
-   Controller,
-   Get,
-   Post,
+   All,
    Body,
-   Param,
-   Put,
+   Controller,
    Delete,
+   Get,
+   HttpCode,
    HttpException,
    HttpStatus,
-   HttpCode,
-   UseGuards,
+   Logger,
+   Param,
+   Post,
+   Put,
    Query,
+   UseGuards,
 } from '@nestjs/common';
-import { UserService } from './user.service';
-import { User } from './user.schema';
-import { AuthService } from 'src/auth/auth.service';
-import { Roles } from 'src/auth/roles.decorator';
 import { AuthGuard } from '@nestjs/passport';
-import { RolesGuard } from 'src/auth/roles.guard';
-import { MailService } from 'src/mail/mail.service';
+import { Roles } from 'src/common/decorators/roles.decorator';
+import { RolesGuard } from 'src/common/guards/roles.guard';
+import { MailService } from 'src/common/services/mail/mail.service';
+import { AuthService } from '../auth/auth.service';
+import { User } from './user.schema';
+import { UserService } from './user.service';
 
 @Controller('user')
 export class UserController {
+   private readonly logger = new Logger(UserController.name);
+
    constructor(
       private readonly userService: UserService,
       private readonly authService: AuthService,
@@ -40,6 +44,8 @@ export class UserController {
             HttpStatus.BAD_REQUEST,
          );
       }
+
+      this.logger.log(`Login attempt for userId: ${userId}`);
 
       let user = await this.userService.findByUserId(userId);
 
@@ -69,6 +75,9 @@ export class UserController {
          user.userId,
          user.role,
       );
+
+      this.logger.log(`Login successful for ${user.userId}`);
+
       return { token, role: user.role, message: 'Login successful' };
    }
 
@@ -119,8 +128,14 @@ export class UserController {
          throw new HttpException('User not found', HttpStatus.NOT_FOUND);
       }
 
-      const hashedPassword = await this.userService.hashPassword(newPassword);
-      await this.userService.updatePassword(user.userId, hashedPassword);
+      await this.userService.updatePassword(user.userId, newPassword);
+
+      const newToken = await this.authService.generateToken(
+         user.userId,
+         user.role,
+      );
+
+      return { message: 'Password updated successfully', token: newToken };
    }
 
    @Post('validate-reset-token')
@@ -175,36 +190,9 @@ export class UserController {
       return this.userService.delete(userId);
    }
 
-   @Post('*')
+   @All('*')
    @HttpCode(HttpStatus.METHOD_NOT_ALLOWED)
    handleMethodNotAllowed() {
-      throw new HttpException(
-         'Method Not Allowed',
-         HttpStatus.METHOD_NOT_ALLOWED,
-      );
-   }
-
-   @Get('*')
-   @HttpCode(HttpStatus.METHOD_NOT_ALLOWED)
-   handleGetMethodNotAllowed() {
-      throw new HttpException(
-         'Method Not Allowed',
-         HttpStatus.METHOD_NOT_ALLOWED,
-      );
-   }
-
-   @Put('*')
-   @HttpCode(HttpStatus.METHOD_NOT_ALLOWED)
-   handlePutMethodNotAllowed() {
-      throw new HttpException(
-         'Method Not Allowed',
-         HttpStatus.METHOD_NOT_ALLOWED,
-      );
-   }
-
-   @Delete('*')
-   @HttpCode(HttpStatus.METHOD_NOT_ALLOWED)
-   handleDeleteMethodNotAllowed() {
       throw new HttpException(
          'Method Not Allowed',
          HttpStatus.METHOD_NOT_ALLOWED,

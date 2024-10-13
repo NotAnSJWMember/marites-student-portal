@@ -136,21 +136,21 @@ const Register = () => {
                         })}
                      />
                   </div>
-                  <div className={styles.sex}>
+                  <div className={styles.gender}>
                      <label>
-                        Sex{" "}
-                        {errors.sex && (
+                        Gender{" "}
+                        {errors.gender && (
                            <span className={styles.errorMsg}>
-                              ({errors.sex.message})
+                              ({errors.gender.message})
                            </span>
                         )}
                      </label>
                      <select
-                        {...register("sex", {
-                           required: "Sex is required",
+                        {...register("gender", {
+                           required: "Gender is required",
                         })}
                      >
-                        <option value="">Select Sex</option>
+                        <option value="">Select gender</option>
                         <option value="Female">Female</option>
                         <option value="Male">Male</option>
                         <option value="Other">Other</option>

@@ -30,7 +30,7 @@ export class User {
    birthDate: Date;
 
    @Prop({ required: true, enum: ['Male', 'Female', 'Other'] })
-   sex: string;
+   gender: string;
 
    @Prop({ required: true })
    programme: string;

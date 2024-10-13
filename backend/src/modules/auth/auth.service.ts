@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
    Injectable,
    UnauthorizedException,
@@ -6,7 +5,7 @@ import {
    BadRequestException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { UserService } from 'src/user/user.service';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class AuthService {
@@ -33,11 +32,13 @@ export class AuthService {
 
    async validateUser(username: string, password: string): Promise<any> {
       const user = await this.userService.findByUsername(username);
-      if (
-         !user ||
-         !(await this.userService.comparePassword(password, user.password))
-      ) {
-         this.logger.warn(`Failed login attempt for username: ${username}`);
+
+      if (!user) {
+         this.logger.warn(`No user found with username: ${username}`);
+         throw new UnauthorizedException('Invalid username or password');
+      }
+      if (!(await this.userService.comparePassword(password, user.password))) {
+         this.logger.warn(`Incorrect password for username: ${username}`);
          throw new UnauthorizedException('Invalid username or password');
       }
 
@@ -58,26 +59,7 @@ export class AuthService {
             );
          }
          this.logger.error(`Failed to verify reset token: ${token}`, error);
-         throw new UnauthorizedException('Invalid reset token.');
+         return null;
       }
-   }
-
-   async login(user: any) {
-      const payload = {
-         username: user.username,
-         sub: user.userId,
-         role: user.role,
-      };
-
-      const accessToken = await this.generateToken(user.userId, user.role);
-      this.logger.log(`User logged in: ${user.username}`);
-
-      return {
-         access_token: accessToken,
-         user: {
-            username: user.username,
-            role: user.role,
-         },
-      };
    }
 }

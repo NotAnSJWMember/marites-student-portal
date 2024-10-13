@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from './user.schema';
-import { IdGenerator } from './generate-id.helper';
+import { IdGenerator } from 'src/common/utils/generate-id.helper';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 
@@ -25,10 +25,9 @@ export class UserService {
 
       try {
          userData.userId = await this.idGenerator.generateId();
-         this.logger.log(`Generate user id: ${userData.userId}`);
+         this.logger.log(`Generated user id: ${userData.userId}`);
 
          const hashedPassword = await this.hashPassword(userData.password);
-         this.logger.log('Password hashed successfuly.');
 
          const newUser = new this.userModel({
             ...userData,
@@ -121,9 +120,13 @@ export class UserService {
 
    async updatePassword(userId: string, newPassword: string): Promise<void> {
       this.logger.log(`Updating password for user with ID: ${userId}`);
+      const hashedPassword = await this.hashPassword(newPassword);
 
       try {
-         await this.userModel.updateOne({ userId }, { password: newPassword });
+         await this.userModel.updateOne(
+            { userId },
+            { password: hashedPassword },
+         );
          this.logger.log(
             `Password updated successfully for user ID: ${userId}`,
          );
@@ -139,7 +142,7 @@ export class UserService {
       }
    }
 
-   async update(userId: string, userData: Partial<User>): Promise<User> {
+   async update(userId: string, userData: Partial<User>): Promise<User | null> {
       this.logger.log(`Updating user with ID: ${userId}`);
       const updatedUser = await this.userModel
          .findOneAndUpdate({ userId }, userData, { new: true })
@@ -151,7 +154,7 @@ export class UserService {
          this.logger.warn(`User with ID: ${userId} not found for update.`);
       }
 
-      return updatedUser;
+      return updatedUser || null;
    }
 
    async delete(userId: string): Promise<User> {
@@ -166,6 +169,6 @@ export class UserService {
          this.logger.warn(`No user found with ID: ${userId} to delete.`);
       }
 
-      return deletedUser;
+      return deletedUser || null;
    }
 }
