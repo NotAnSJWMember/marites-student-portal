@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useForm } from "react-hook-form";
 
-import Popup from "../../components/Popup/Popup";
+import PopupAlert from "../../components/Popup/PopupAlert";
 import LogoIcon from "../../assets/images/logo.png";
 import styles from "./ForgotPassword.module.scss";
 
@@ -88,7 +88,7 @@ const ForgotPassword = () => {
                </form>
             )}
 
-            <Popup
+            <PopupAlert
                icon={popupState.icon}
                border={popupState.border}
                color={popupState.color}

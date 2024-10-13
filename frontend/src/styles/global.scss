@@ -13,10 +13,6 @@ body {
    background-color: #f0f0f0;
 }
 
-p {
-   line-height: 1.35rem;
-}
-
 a {
    width: max-content;
    color: $light-anchor-color;
@@ -27,14 +23,19 @@ button {
    cursor: pointer;
    border: none;
    outline: none;
-   padding: 1rem;
+   padding: 0.7rem;
    background-color: $light-primary-color;
    color: $light-primary-background;
 }
 
+.cta {
+   cursor: pointer;
+   color: $light-primary-color;
+}
+
 .ctaBtn {
    button {
-      padding: 1rem 1.5rem;
+      padding: 0.7rem 1.3rem;
       font-size: 0.8rem;
       border-radius: 0.3rem;
    }
@@ -44,11 +45,17 @@ button {
    display: flex;
    justify-content: center;
    align-items: center;
-   gap: 7px;
+   gap: 0.6rem;
 }
 
 .iconCta {
    text-decoration: none;
+}
+
+.iconLabel {
+   display: flex;
+   align-items: center;
+   gap: 7px;
 }
 
 .textDivider {
@@ -70,6 +77,12 @@ button {
 .line {
    height: 1px;
    width: 100%;
+   background-color: $light-primary-text;
+}
+
+.verticalLine {
+   height: 100%;
+   width: 2px;
    background-color: $light-primary-text;
 }
 
@@ -99,12 +112,9 @@ button {
 }
 
 .twoColumn {
-   display: flex;
+   display: grid;
+   grid-template-columns: repeat(2, auto);
    gap: 0.7rem;
-
-   div {
-      width: 100%;
-   }
 }
 
 .errorMsg {

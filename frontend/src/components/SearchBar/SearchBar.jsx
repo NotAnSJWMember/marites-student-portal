@@ -15,7 +15,7 @@ const SearchBar = () => {
          <TbSearch size={20} />
          <input
             type="text"
-            placeholder="Magsearch ka potangina mo"
+            placeholder="Search"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             onKeyPress={(e) => {

@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 
 import styles from "./ResetPassword.module.scss";
 import LogoIcon from "../../assets/images/logo.png";
-import Popup from "../../components/Popup/Popup";
+import PopupAlert from "../../components/Popup/PopupAlert";
 import Loading from "../../components/Loading/Loading";
 import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 
@@ -166,7 +166,7 @@ const ResetPassword = () => {
                </form>
             )}
 
-            <Popup
+            <PopupAlert
                icon={popupState.icon}
                border={popupState.border}
                color={popupState.color}

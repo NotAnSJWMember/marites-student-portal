@@ -1,7 +1,7 @@
-import { usePopup } from "./usePopup";
+import { usePopupAlert } from "./usePopupAlert";
 
 export const useResetPassword = () => {
-   const { setShowPopup, showError, showSuccess, ...popupProps } = usePopup();
+   const { setShowPopup, showError, showSuccess, ...popupProps } = usePopupAlert();
 
    const resetPassword = async (payload, resetForm) => {
       try {

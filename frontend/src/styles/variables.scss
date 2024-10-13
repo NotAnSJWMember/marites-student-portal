@@ -4,6 +4,8 @@ $light-primary-color: #186e2a;
 $light-secondary-color: #e2ad39;
 $light-tertiary-color: #852926;
 
+$light-box-shadow-gray: 0px 0px 10px rgba(226, 226, 226, 0.5);
+
 $light-primary-text: #1d1d1d;
 $light-primary-background: #fcfcfc;
 
@@ -14,9 +16,16 @@ $light-yellow-color-100: #ffd255;
 
 $light-green-color-100: #aeffae;
 $light-green-color-200: #3c853c;
+$light-green-color-300: #79ce79;
 
 $light-gray-color: #dbdbdb;
-$light-blue-color: #cbeaff;
+$light-gray-color-100: #e9e9e9;
+$light-gray-color-200: #f1f1f1;
+$light-gray-color-400: #a0a0a0;
+$light-gray-color-500: #8b8b8b;
+$light-gray-color-600: #5c5c5c;
 
 $trans-smooth: cubic-bezier(.26,0,.26,1);
 
+$box-padding-def: 2rem;
+$box-padding-small: 1.7rem;

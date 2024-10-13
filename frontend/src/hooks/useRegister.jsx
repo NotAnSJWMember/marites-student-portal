@@ -1,7 +1,7 @@
-import { usePopup } from "./usePopup";
+import { usePopupAlert } from "./usePopupAlert";
 
 export const useRegister = () => {
-   const { setShowPopup, showError, showSuccess, ...popupProps } = usePopup();
+   const { setShowPopup, showError, showSuccess, ...popupProps } = usePopupAlert();
 
    const createAccount = async (data, resetForm) => {
       try {

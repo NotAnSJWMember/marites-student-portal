@@ -1,0 +1,59 @@
+@import "../../styles/global.scss";
+
+.card {
+   display: flex;
+   flex-direction: column;
+   justify-content: space-between;
+   max-width: 25rem;
+   height: 100%;
+   border-radius: 0.5rem;
+   gap: 2rem;
+   padding: $box-padding-def;
+   background-color: $light-primary-background;
+   border: 1px solid $light-gray-color-100;
+
+   .cardTitle {
+      .infoBlock {
+         font-size: 0.85rem;
+         margin-bottom: 0.5rem;
+      }
+
+      .cardLabel {
+         display: flex;
+         align-items: flex-start;
+         justify-content: space-between;
+
+         h2 {
+            font-size: 1.5rem;
+            max-width: 14ch;
+         }
+
+         .catalogLabel {
+            font-size: 0.85rem;
+            border: 1px solid $light-gray-color-100;
+            border-radius: 0.3rem;
+            padding: 0.6rem 0.9rem;
+         }
+      }
+   }
+
+   .cardInfo {
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+
+      .infoTime {
+         opacity: 0.5;
+      }
+
+      .infoTeacher {
+         font-weight: 500;
+         font-size: 1rem;
+      }
+
+      .line {
+         border: 1.3px solid;
+         opacity: 0.05;
+      }
+   }
+}

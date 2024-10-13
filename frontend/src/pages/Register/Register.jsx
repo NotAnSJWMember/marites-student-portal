@@ -3,7 +3,7 @@ import styles from "./Register.module.scss";
 import { useForm } from "react-hook-form";
 import { Helmet } from "react-helmet-async";
 
-import Popup from "../../components/Popup/Popup";
+import PopupAlert from "../../components/Popup/PopupAlert";
 import LogoIcon from "../../assets/images/logo.png";
 import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 
@@ -250,7 +250,7 @@ const Register = () => {
                <a href="login">Already have an account? Sign In</a>
             </form>
 
-            <Popup
+            <PopupAlert
                icon={popupState.icon}
                border={popupState.border}
                color={popupState.color}

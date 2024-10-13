@@ -5,15 +5,15 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import Loading from "../../components/Loading/Loading";
-import { usePopup, useTogglePassword, useLoading } from "../../hooks";
+import { usePopupAlert, useTogglePassword, useLoading } from "../../hooks";
 
-import Popup from "../../components/Popup/Popup";
+import PopupAlert from "../../components/Popup/PopupAlert";
 import logo from "assets/images/logo.png";
 import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 
 const Login = () => {
    const [showPassword, togglePasswordVisibility] = useTogglePassword();
-   const { popupState, showPopup, setShowPopup, showError } = usePopup();
+   const { popupState, showPopup, setShowPopup, showError } = usePopupAlert();
    const { isLoading, withLoading } = useLoading();
 
    const navigate = useNavigate();
@@ -143,7 +143,7 @@ const Login = () => {
             </div>
          </div>
 
-         <Popup
+         <PopupAlert
             icon={popupState.icon}
             border={popupState.border}
             color={popupState.color}

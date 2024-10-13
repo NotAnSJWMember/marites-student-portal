@@ -1,87 +1,124 @@
 @import "../../../../styles/global.scss";
 
+::-webkit-scrollbar {
+   width: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+   background: $light-gray-color;
+   border-radius: 4px;
+}
+
+.wrapper {
+   display: flex;
+   height: 100vh;
+   width: 100%;
+}
+
 .gridContainer {
    display: grid;
-   grid-template-columns: 18% 82%;
-   height: 100vh;
+   grid-template-columns: 15% auto;
+   height: 100%;
+   width: 100%;
 
    .contentWrapper {
-      display: grid;
-      grid-template-rows: 9% 91%;
-      height: 100%;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
 
-      .contentDivider {
-         display: grid;
-         grid-template-columns: 77% 23%;
+      .dividerWrapper {
+         overflow: hidden;
+         padding: 1.5rem;
+         height: 100%;
 
-         .mainContent {
-            display: flex;
-            flex-direction: column;
-            padding: 2rem;
-            gap: 1.5rem;
+         .contentDivider {
+            display: grid;
+            grid-template-columns: 75% 1fr;
+            gap: 1rem;
+            height: 100%;
 
-            .heroWelcome {
-               display: flex;
-               align-items: flex-end;
-               justify-content: space-between;
-               width: 100%;
-
-               h2 {
-                  font-size: 2rem;
-               }
-            }
-
-            .heroBanner {
+            .mainContent,
+            .sideContent {
                display: flex;
                flex-direction: column;
-               background-color: $light-primary-background;
-               border-radius: 0.5rem;
-               padding: 2rem;
+               overflow: hidden;
                gap: 1rem;
-
-               .heroBannerTitle {
-                  font-weight: 600;
-                  font-size: 1.7rem;
-               }
-
-               .heroBannerDesc {
-                  max-width: 65ch;
-                  margin-bottom: 1rem;
-               }
             }
-         }
-
-         .sideContent {
-            padding: 2rem;
-            border-left: 1px solid $light-gray-color;
          }
       }
    }
 }
 
 section {
-   .sectionLabel {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      border-bottom: 1px solid $light-gray-color;
-      padding: 1.3rem 0.5rem;
-      margin-bottom: 1rem;
+   background-color: $light-primary-background;
+   padding: 1.5rem;
+   border-radius: 0.5rem;
+}
 
-      .labelText {
-         display: flex;
-         align-items: center;
-         justify-content: flex-start;
-         font-size: 1rem;
-         font-weight: 500;
-         gap: 0.5rem;
-      }
+.sectionLabel {
+   display: flex;
+   align-items: flex-end;
+   justify-content: space-between;
+   margin-bottom: 1.3rem;
+
+   .labelText {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      font-size: 1.3rem;
+      font-weight: 500;
+      gap: 0.5rem;
    }
 }
 
-.courseCard {
-   padding: 2rem;
-   width: max-content;
-   background-color: $light-primary-background;
-   border-radius: 0.5rem;
+.previewClasses,
+.previewEvents .previewAnnouncements {
+   display: flex;
+   flex-direction: column;
+   flex-grow: 1;
+}
+
+.previewClasses {
+   .sectionContent {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      flex-grow: 1;
+   }
+}
+
+.twoColumn {
+   // display: flex;
+   .sectionContent {
+      display: flex;
+      flex-direction: column;
+      max-height: 18rem;
+      overflow-y: auto;
+      gap: 2rem;
+   }
+}
+
+.previewSchedule {
+   display: flex;
+   flex-direction: column;
+}
+
+.previewAssignments {
+   flex-grow: 1;
+   overflow: hidden;
+
+   .sectionContent {
+      display: flex;
+      flex-direction: column;
+      overflow-y: scroll;
+      max-height: 88%;
+      gap: 1rem;
+   }
+}
+
+.previewEvents, .previewAnnouncements, .previewAssignments {
+   .sectionContent {
+      padding-right: 0.7rem;
+   }
 }

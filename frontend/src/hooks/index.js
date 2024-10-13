@@ -1,4 +1,4 @@
-export { usePopup } from "./usePopup";
+export { usePopupAlert } from "./usePopupAlert";
 export { useRegister } from "./useRegister";
 export { useResetPassword } from "./useResetPassword";
 export { useForgetPassword } from "./useForgetPassword";

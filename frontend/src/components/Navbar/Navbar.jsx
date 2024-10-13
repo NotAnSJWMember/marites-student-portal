@@ -5,7 +5,6 @@ import styles from "./Navbar.module.scss";
 import logo from "assets/images/logo.png";
 import {
    TbBook,
-   TbCalendarCheck,
    TbCalendarEvent,
    TbCertificate,
    TbLayoutDashboardFilled,
@@ -15,7 +14,7 @@ import {
    TbSpeakerphone,
 } from "react-icons/tb";
 
-const ICON_SIZE = 23;
+const ICON_SIZE = 26;
 
 export const Navbar = ({ role }) => {
    const [activeTab, setActiveTab] = useState("dashboard");
@@ -107,22 +106,7 @@ export const Navbar = ({ role }) => {
                            }
                         >
                            <TbCertificate size={ICON_SIZE} />
-                           Enrolled Courses
-                        </button>
-                     </Link>
-                     <Link
-                        to="/attendance"
-                        className={styles.itemBtn}
-                        onClick={() => handleTabClick("attendance")}
-                     >
-                        <button
-                           type="button"
-                           className={
-                              activeTab === "attendance" ? styles.active : ""
-                           }
-                        >
-                           <TbCalendarCheck size={ICON_SIZE} />
-                           Attendance
+                           Courses
                         </button>
                      </Link>
                   </div>

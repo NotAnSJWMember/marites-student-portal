@@ -1,0 +1,73 @@
+@import "../../styles/global.scss";
+
+.card {
+   width: 100%;
+   border-radius: 0.5rem;
+   padding: 1rem;
+   background-color: $light-gray-color-200;
+   user-select: none;
+
+   .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0;
+      font-weight: 600;
+      font-size: 1.2rem;
+
+      h2 {
+         font-size: 1.3rem;
+         font-weight: 600;
+      }
+
+      button {
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         background: $light-primary-background;
+         border: 1px solid $light-gray-color-100;
+         border-radius: 0.5rem;
+         font-size: 1rem;
+         padding: 0.3rem;
+         cursor: pointer;
+         color: $light-gray-color-600;
+      }
+   }
+
+   .dayLabels {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      text-align: center;
+      padding-top: 0.7rem;
+
+      .dayLabel {
+         font-weight: 500;
+      }
+   }
+
+   .calendarGrid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 0.3rem;
+      padding-top: 1rem;
+
+      .day {
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         padding: 0.5rem;
+         border-radius: 0.25rem;
+         font-size: 0.85rem;
+         font-weight: 500;
+
+         &.today {
+            background-color: $light-green-color-100;
+            border-radius: 50%;
+         }
+
+         &.inactiveDay {
+            color: $light-gray-color-400;
+         }
+      }
+   }
+}

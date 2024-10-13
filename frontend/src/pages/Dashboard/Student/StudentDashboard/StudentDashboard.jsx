@@ -3,15 +3,20 @@ import { Helmet } from "react-helmet-async";
 import { Navbar } from "components/Navbar/Navbar";
 import { Header } from "components/Header/Header";
 
-import styles from "./StudentDashboard.module.scss";
-import { TbArrowRight, TbCalendar, TbCertificate, TbClock, TbMapPin, TbUser } from "react-icons/tb";
+import CourseCard from "components/CourseCard/CourseCard";
+import AnnouncementCard from "components/AnnouncementCard/AnnouncementCard";
+import EventCard from "components/EventCard/EventCard";
+import CalendarCard from "components/Calendar/CalendarCard";
+import AssignmentCard from "components/AssignmentCard/AssignmentCard";
 
-const ICON_SIZE = 24;
+import styles from "./StudentDashboard.module.scss";
+import { TbArrowRight } from "react-icons/tb";
+
 const SMALL_ICON_SIZE = 16;
 
 const StudentDashboard = () => {
    return (
-      <div>
+      <div className={styles.wrapper}>
          <Helmet>
             <title>Student Dashboard | Dr. AMMC</title>
          </Helmet>
@@ -19,68 +24,177 @@ const StudentDashboard = () => {
             <Navbar role="student"></Navbar>
             <div className={styles.contentWrapper}>
                <Header></Header>
-               <div className={styles.contentDivider}>
-                  <div className={styles.mainContent}>
-                     <div className={styles.heroWelcome}>
-                        <h2>Welcome, Caenar!</h2>
-                        <p>12 October 2024, Saturday</p>
-                     </div>
-                     <div className={styles.heroBanner}>
-                        <h2 className={styles.heroBannerTitle}>
-                           Join the hackathon today!
-                        </h2>
-                        <p className={styles.heroBannerDesc}>
-                           Lorem ipsum dolor sit amet consectetur adipisicing
-                           elit. Deserunt id corporis, exercitationem aut
-                           numquam possimus. Quo rem optio dolores corrupti.
-                        </p>
-                        <a href="/" className={styles.ctaBtn}>
-                           <button type="button" className={styles.iconBtn}>
-                              Learn more <TbArrowRight size={SMALL_ICON_SIZE} />
-                           </button>
-                        </a>
-                     </div>
-                     <section>
-                        <div className={styles.sectionLabel}>
-                           <h2 className={styles.labelText}>
-                              <TbCertificate size={ICON_SIZE} />
-                              Enrolled Courses
-                           </h2>
-                           <a
-                              href="enrolled-courses"
-                              className={styles.iconCta}
-                           >
-                              View all
-                              <TbArrowRight size={SMALL_ICON_SIZE} />
-                           </a>
-                        </div>
-                        <div className={styles.sectionContent}>
-                           <div className={styles.courseCard}>
-                              <h2>Fundamentals of Programming</h2>
-                              <div className={styles.line}></div>
-                              <div className={styles.courseInfo}>
-                                 <div className={styles.infoItem}>
-                                    <TbUser size={ICON_SIZE}/>
-                                    <p>Professor pota</p>
-                                 </div>
-                                 <div className={styles.infoItem}>
-                                    <TbCalendar size={ICON_SIZE}/>
-                                    <p>Professor pota</p>
-                                 </div>
-                                 <div className={styles.infoItem}>
-                                    <TbClock size={ICON_SIZE}/>
-                                    <p>Professor pota</p>
-                                 </div>
-                                 <div className={styles.infoItem}>
-                                    <TbMapPin size={ICON_SIZE}/>
-                                    <p>Professor pota</p>
-                                 </div>
-                              </div>
+               <div className={styles.dividerWrapper}>
+                  <div className={styles.contentDivider}>
+                     <main className={styles.mainContent}>
+                        <section className={styles.previewClasses}>
+                           <div className={styles.sectionLabel}>
+                              <h2 className={styles.labelText}>Classes Today</h2>
+                              <a
+                                 href="enrolled-courses"
+                                 className={styles.iconCta}
+                              >
+                                 View all
+                                 <TbArrowRight size={SMALL_ICON_SIZE} />
+                              </a>
                            </div>
+                           <div className={styles.sectionContent}>
+                              <CourseCard
+                                 title="Fundamentals of Programming"
+                                 catalog="CC 101A"
+                                 block="BLOCK A"
+                                 time="8:00am - 9:30am"
+                                 room="319"
+                                 teacher="Aljohn Marilag"
+                              />
+                              <CourseCard
+                                 title="Introduction to Computing"
+                                 catalog="CC 100"
+                                 block="BLOCK B"
+                                 time="9:30am - 12:00am"
+                                 room="315"
+                                 teacher="Rhodora Faye"
+                              />
+                              <CourseCard
+                                 title="Understanding the Self"
+                                 catalog="GE 01"
+                                 block="BLOCK I"
+                                 time="1:00 pm - 2:30pm"
+                                 room="204"
+                                 teacher="Areth Arana"
+                              />
+                           </div>
+                        </section>
+                        <div className={styles.twoColumn}>
+                           <section className={styles.previewEvents}>
+                              <div className={styles.sectionLabel}>
+                                 <h2 className={styles.labelText}>Events</h2>
+                                 <a
+                                    href="enrolled-courses"
+                                    className={styles.iconCta}
+                                 >
+                                    View all
+                                    <TbArrowRight size={SMALL_ICON_SIZE} />
+                                 </a>
+                              </div>
+                              <div className={styles.sectionContent}>
+                                 <EventCard
+                                    title="Lulu"
+                                    month="Oct"
+                                    day="13"
+                                    desc="Make sure you lulu before the midterm exams to pass!"
+                                 />
+                                 <EventCard
+                                    title="Lulu"
+                                    month="Oct"
+                                    day="13"
+                                    desc="Make sure you lulu before the midterm exams to pass!"
+                                 />
+                                 <EventCard
+                                    title="Lulu"
+                                    month="Oct"
+                                    day="13"
+                                    desc="Make sure you lulu before the midterm exams to pass!"
+                                 />
+                                 <EventCard
+                                    title="Lulu"
+                                    month="Oct"
+                                    day="13"
+                                    desc="Make sure you lulu before the midterm exams to pass!"
+                                 />
+                              </div>
+                           </section>
+                           <section className={styles.previewAnnouncements}>
+                              <div className={styles.sectionLabel}>
+                                 <h2 className={styles.labelText}>
+                                    Announcements
+                                 </h2>
+                                 <a
+                                    href="enrolled-courses"
+                                    className={styles.iconCta}
+                                 >
+                                    View all
+                                    <TbArrowRight size={SMALL_ICON_SIZE} />
+                                 </a>
+                              </div>
+                              <div className={styles.sectionContent}>
+                                 <AnnouncementCard
+                                    title="Boto mo"
+                                    date="September 1, 2024"
+                                    link="html"
+                                 />
+                                 <AnnouncementCard
+                                    title="Boto mo"
+                                    date="September 1, 2024"
+                                    link="html"
+                                 />
+                                 <AnnouncementCard
+                                    title="Boto mo"
+                                    date="September 1, 2024"
+                                    link="html"
+                                 />
+                                 <AnnouncementCard
+                                    title="Boto mo"
+                                    date="September 1, 2024"
+                                    link="html"
+                                 />
+                                 <AnnouncementCard
+                                    title="Boto mo"
+                                    date="September 1, 2024"
+                                    link="html"
+                                 />
+                              </div>
+                           </section>
                         </div>
-                     </section>
+                     </main>
+                     <aside className={styles.sideContent}>
+                        <section className={styles.previewSchedule}>
+                           <div className={styles.sectionLabel}>
+                              <h2 className={styles.labelText}>Calendar</h2>
+                              <a
+                                 href="enrolled-courses"
+                                 className={styles.iconCta}
+                              >
+                                 View schedule
+                                 <TbArrowRight size={SMALL_ICON_SIZE} />
+                              </a>
+                           </div>
+                           <CalendarCard />
+                        </section>
+                        <section className={styles.previewAssignments}>
+                           <div className={styles.sectionLabel}>
+                              <h2 className={styles.labelText}>Assignments</h2>
+                              <a
+                                 href="enrolled-courses"
+                                 className={styles.iconCta}
+                              >
+                                 View all
+                                 <TbArrowRight size={SMALL_ICON_SIZE} />
+                              </a>
+                           </div>
+                           <div className={styles.sectionContent}>
+                              <AssignmentCard
+                                 name="Fundamentals in Programming"
+                                 status="Incomplete"
+                                 desc="Create a website that displays a penis"
+                                 due="November 1, 2024"
+                              />
+                              <AssignmentCard
+                                 name="Fundamentals in Programming"
+                                 status="Incomplete"
+                                 desc="Create a website that displays a penis"
+                                 due="November 1, 2024"
+                              />
+                              <AssignmentCard
+                                 name="Fundamentals in Programming"
+                                 status="Incomplete"
+                                 desc="Create a website that displays a penis"
+                                 due="November 1, 2024"
+                              />
+                           </div>
+                        </section>
+                     </aside>
                   </div>
-                  <div className={styles.sideContent}>side</div>
                </div>
             </div>
          </div>

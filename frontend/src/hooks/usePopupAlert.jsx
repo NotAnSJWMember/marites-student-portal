@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export const usePopup = () => {
+export const usePopupAlert = () => {
    const defaultState = {
       icon: "",
       title: "",
