@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styles from "./Navbar.module.scss";
 
@@ -14,7 +14,7 @@ import {
    TbSpeakerphone,
 } from "react-icons/tb";
 
-const ICON_SIZE = 26;
+var ICON_SIZE = 26;
 
 export const Navbar = ({ role }) => {
    const [activeTab, setActiveTab] = useState("dashboard");
@@ -22,6 +22,24 @@ export const Navbar = ({ role }) => {
    const handleTabClick = (tab) => {
       setActiveTab(tab);
    };
+
+   // useEffect(() => {
+   //    const mediaQuery = window.matchMedia("(max-width: 1400px)");
+
+   //    const handleChange = (mediaQuery) => {
+   //       if (mediaQuery.matches) {
+   //          ICON_SIZE = 20;
+   //       } else {
+   //          ICON_SIZE = 26;
+   //       }
+   //    };
+
+   //    handleChange();
+
+   //    mediaQuery.addEventListener(handleChange);
+
+   //    return () => mediaQuery.removeEventListener(handleChange);
+   // });
 
    const getNavItems = () => {
       switch (role) {

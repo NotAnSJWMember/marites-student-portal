@@ -1,6 +1,7 @@
 @import "../../styles/global.scss";
 
 .navBar {
+   overflow: hidden;
    height: 100vh;
    background-color: $light-primary-color;
    color: $light-primary-background;
@@ -21,8 +22,7 @@
 
       img {
          display: block;
-         height: 75px;
-         width: 75px;
+         max-width: 75px;
       }
 
       .sealContainerText {
