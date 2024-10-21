@@ -1,16 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-export enum UserRole {
-   STUDENT = 'student',
-   TEACHER = 'teacher',
-   ADMIN = 'admin',
-}
-
-export type UserDocument = User & Document;
-
-@Schema()
-export class User {
+@Schema({ timestamps: true })
+export class User extends Document {
    @Prop({ required: true, unique: true })
    userId: string;
 
@@ -23,7 +15,7 @@ export class User {
    @Prop({ required: true, unique: true, match: /.+\@.+\..+/ })
    email: string;
 
-   @Prop({ required: true, type: String })
+   @Prop({ required: true, type: String, match: /^\+?\d{10,15}$/ })
    phoneNum: string;
 
    @Prop({ required: true })
@@ -33,10 +25,10 @@ export class User {
    gender: string;
 
    @Prop({ required: true })
-   programme: string;
+   program: string;
 
    @Prop({ required: true })
-   year: number;
+   yearLevel: number;
 
    @Prop({ required: true, unique: true })
    username: string;
@@ -44,14 +36,12 @@ export class User {
    @Prop({ required: true })
    password: string;
 
-   @Prop({ type: String, enum: UserRole, default: UserRole.STUDENT })
-   role: UserRole;
-
-   @Prop({ default: Date.now() })
-   createdAt: Date;
-
-   @Prop({ default: Date.now() })
-   updatedAt: Date;
+   @Prop({ default: 'student' })
+   role: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
+
+UserSchema.virtual('fullName').get(function () {
+   return `${this.firstName} ${this.lastName}`;
+});

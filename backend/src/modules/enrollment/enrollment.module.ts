@@ -2,8 +2,8 @@ import { forwardRef, Module } from '@nestjs/common';
 import { DatabaseModule } from 'src/common/database/database.module';
 import { AuthModule } from '../auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
-import { FinanceService } from './finance.service';
-import { FinanceController } from './finance.controller';
+import { EnrollmentService } from './enrollment.service';
+import { EnrollmentController } from './enrollment.controller';
 
 @Module({
    imports: [
@@ -16,8 +16,8 @@ import { FinanceController } from './finance.controller';
          }),
       }),
    ],
-   providers: [FinanceService],
-   controllers: [FinanceController],
-   exports: [FinanceService],
+   providers: [EnrollmentService],
+   controllers: [EnrollmentController],
+   exports: [EnrollmentService],
 })
-export class FinanceModule {}
+export class EnrollmentModule {}

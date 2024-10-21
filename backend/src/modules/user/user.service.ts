@@ -6,7 +6,7 @@ import {
    Logger,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { User, UserDocument } from './user.schema';
+import { User } from './user.schema';
 import { IdGenerator } from 'src/common/utils/generate-id.helper';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
@@ -16,7 +16,7 @@ export class UserService {
    private readonly logger = new Logger(UserService.name);
 
    constructor(
-      @InjectModel(User.name) private userModel: Model<UserDocument>,
+      @InjectModel(User.name) private userModel: Model<User>,
       private readonly idGenerator: IdGenerator,
    ) {}
 

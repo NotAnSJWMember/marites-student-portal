@@ -1,9 +1,9 @@
 import { forwardRef, Module } from '@nestjs/common';
+import { BlockSectionService } from './block-section.service';
+import { BlockSectionController } from './block-section.controller';
 import { DatabaseModule } from 'src/common/database/database.module';
 import { AuthModule } from '../auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
-import { FinanceService } from './finance.service';
-import { FinanceController } from './finance.controller';
 
 @Module({
    imports: [
@@ -16,8 +16,8 @@ import { FinanceController } from './finance.controller';
          }),
       }),
    ],
-   providers: [FinanceService],
-   controllers: [FinanceController],
-   exports: [FinanceService],
+   providers: [BlockSectionService],
+   controllers: [BlockSectionController],
+   exports: [BlockSectionService],
 })
-export class FinanceModule {}
+export class BlockSectionModule {}
