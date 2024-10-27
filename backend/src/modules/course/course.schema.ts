@@ -1,15 +1,15 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 
-@Schema()
+@Schema({ timestamps: true })
 export class Course extends Document {
    @Prop({ required: true, type: Types.ObjectId })
    courseId: Types.ObjectId;
 
-   @Prop({ required: true })
+   @Prop({ required: true, unique: true })
    courseCode: string;
 
-   @Prop({ required: true })
+   @Prop({ required: true, unique: true })
    courseDescription: string;
 
    @Prop({ required: true })
@@ -20,12 +20,6 @@ export class Course extends Document {
 
    @Prop({ required: true })
    totalUnit: number;
-
-   @Prop({ default: Date.now() })
-   createdAt: Date;
-
-   @Prop({ default: Date.now() })
-   updateAt: Date;
 }
 
 export const CourseSchema = SchemaFactory.createForClass(Course);

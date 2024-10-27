@@ -1,11 +1,15 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { UserService } from 'src/modules/user/user.service';
+import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Instructor } from 'src/modules/user/roles/instructor/instructor.schema';
+import { User } from 'src/modules/user/user.schema';
 
 @Injectable()
 export class IdGenerator {
    constructor(
-      @Inject(forwardRef(() => UserService))
-      private readonly userService: UserService,
+      @InjectModel(User.name) private readonly userModel: Model<User>,
+      @InjectModel(Instructor.name)
+      private readonly instructorModel: Model<Instructor>,
    ) {}
 
    async generateId(): Promise<string> {
@@ -20,8 +24,11 @@ export class IdGenerator {
 
       while (!isUnique && retries < maxRetries) {
          userId = Math.floor(Math.random() * (max - min + 1) + min).toString();
-         const userExists = await this.userService.findOne(userId);
-         if (!userExists) {
+         const userExists = await this.userModel.findOne({ userId });
+         const instructorExists = await this.instructorModel.findOne({
+            userId,
+         });
+         if (!userExists && !instructorExists) {
             isUnique = true;
          }
          retries++;

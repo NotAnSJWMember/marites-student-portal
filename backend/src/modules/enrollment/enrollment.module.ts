@@ -4,6 +4,8 @@ import { AuthModule } from '../auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
 import { EnrollmentService } from './enrollment.service';
 import { EnrollmentController } from './enrollment.controller';
+import { StudentModule } from '../user/roles/student/student.module';
+import { ProgramModule } from '../program/program.module';
 
 @Module({
    imports: [
@@ -15,6 +17,8 @@ import { EnrollmentController } from './enrollment.controller';
             signOptions: { expiresIn: '1h' },
          }),
       }),
+      StudentModule,
+      ProgramModule,
    ],
    providers: [EnrollmentService],
    controllers: [EnrollmentController],

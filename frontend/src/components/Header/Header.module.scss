@@ -111,6 +111,10 @@
       flex-direction: column;
       gap: 0.4rem;
 
+      button {
+         background-color: transparent;
+      }
+
       .iconCta {
          color: $light-primary-text;
          padding: 0.7rem;

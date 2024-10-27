@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import styles from "./Navbar.module.scss";
 
+import { useAuth } from "hooks";
 import logo from "assets/images/logo.png";
 import {
    TbBook,
@@ -23,23 +24,7 @@ export const Navbar = ({ role }) => {
       setActiveTab(tab);
    };
 
-   // useEffect(() => {
-   //    const mediaQuery = window.matchMedia("(max-width: 1400px)");
-
-   //    const handleChange = (mediaQuery) => {
-   //       if (mediaQuery.matches) {
-   //          ICON_SIZE = 20;
-   //       } else {
-   //          ICON_SIZE = 26;
-   //       }
-   //    };
-
-   //    handleChange();
-
-   //    mediaQuery.addEventListener(handleChange);
-
-   //    return () => mediaQuery.removeEventListener(handleChange);
-   // });
+   const { logout } = useAuth();
 
    const getNavItems = () => {
       switch (role) {
@@ -163,10 +148,10 @@ export const Navbar = ({ role }) => {
                   </div>
                </>
             );
-         case "teacher":
+         case "instructor":
             return (
                <>
-                  <Link to="/teacher-dashboard">Teacher Dashboard</Link>
+                  <Link to="/instructor-dashboard">Instructor Dashboard</Link>
                   {/* Add more teacher nav items here */}
                </>
             );
@@ -193,12 +178,12 @@ export const Navbar = ({ role }) => {
          </div>
          {getNavItems()}
          <div className={styles.itemContainer}>
-            <Link to="/sign-out" className={styles.itemBtn}>
-               <button type="button">
+            <div className={styles.itemBtn}>
+               <button onClick={logout} type="button">
                   <TbLogout size={ICON_SIZE} />
                   Sign out
                </button>
-            </Link>
+            </div>
          </div>
       </nav>
    );

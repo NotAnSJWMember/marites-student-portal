@@ -14,7 +14,7 @@ import { BlockSectionModule } from './modules/block-section/block-section.module
 import { CourseModule } from './modules/course/course.module';
 import { EnrollmentModule } from './modules/enrollment/enrollment.module';
 import { FinanceModule } from './modules/finance/finance.module';
-import { InstructorModule } from './modules/instructor/instructor.module';
+import { InstructorModule } from './modules/user/roles/instructor/instructor.module';
 import { NotificationModule } from './modules/notification/notification.module';
 import { ProgramModule } from './modules/program/program.module';
 import { ScheduleModule } from './modules/schedule/schedule.module';

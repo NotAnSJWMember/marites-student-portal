@@ -7,8 +7,8 @@ import Login from "./pages/Login/Login";
 import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword/ResetPassword";
 import AdminDashboard from "./pages/Dashboard/Admin/AdminDashboard/AdminDashboard";
-import TeacherDashboard from "./pages/Dashboard/Teacher/TeacherDashboard/TeacherDashboard";
 import StudentDashboard from "./pages/Dashboard/Student/StudentDashboard/StudentDashboard";
+import InstructorDashboard from "pages/Dashboard/Instructor/InstructorDashboard/InstructorDashboard";
 
 function App() {
    return (
@@ -29,11 +29,11 @@ function App() {
                   }
                />
                <Route
-                  path="/teacher/dashboard"
+                  path="/instructor/dashboard"
                   element={
                      <PrivateRoute
-                        element={<TeacherDashboard />}
-                        roles={["teacher"]}
+                        element={<InstructorDashboard />}
+                        roles={["instructor"]}
                      />
                   }
                />

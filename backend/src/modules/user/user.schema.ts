@@ -3,7 +3,7 @@ import { Document } from 'mongoose';
 
 @Schema({ timestamps: true })
 export class User extends Document {
-   @Prop({ required: true, unique: true })
+   @Prop({ unique: true })
    userId: string;
 
    @Prop({ required: true })
@@ -12,23 +12,20 @@ export class User extends Document {
    @Prop({ required: true })
    lastName: string;
 
+   @Prop({ type: String, default: null })
+   userPhoto: string;
+
    @Prop({ required: true, unique: true, match: /.+\@.+\..+/ })
    email: string;
 
    @Prop({ required: true, type: String, match: /^\+?\d{10,15}$/ })
    phoneNum: string;
 
-   @Prop({ required: true })
+   @Prop({ type: Date, required: true })
    birthDate: Date;
 
    @Prop({ required: true, enum: ['Male', 'Female', 'Other'] })
    gender: string;
-
-   @Prop({ required: true })
-   program: string;
-
-   @Prop({ required: true })
-   yearLevel: number;
 
    @Prop({ required: true, unique: true })
    username: string;

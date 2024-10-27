@@ -5,7 +5,12 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import Loading from "../../components/Loading/Loading";
-import { usePopupAlert, useTogglePassword, useLoading } from "../../hooks";
+import {
+   usePopupAlert,
+   useTogglePassword,
+   useLoading,
+   useAuth,
+} from "../../hooks";
 
 import PopupAlert from "../../components/Popup/PopupAlert";
 import logo from "assets/images/logo.png";
@@ -15,7 +20,7 @@ const Login = () => {
    const [showPassword, togglePasswordVisibility] = useTogglePassword();
    const { popupState, showPopup, setShowPopup, showError } = usePopupAlert();
    const { isLoading, withLoading } = useLoading();
-
+   const { login } = useAuth();
    const navigate = useNavigate();
 
    const {
@@ -28,36 +33,25 @@ const Login = () => {
    const onSubmit = async (data) => {
       await withLoading(async () => {
          try {
-            const url = "http://localhost:8080/user/login";
-            const response = await fetch(url, {
-               method: "POST",
-               headers: {
-                  "Content-Type": "application/json",
-               },
-               body: JSON.stringify(data),
-            });
+            const responseData = await login(data.userId, data.password);
+            
+            const { role } = responseData;
 
-            if (response.ok) {
-               const responseData = await response.json();
-               const { token, role } = responseData;
-
-               localStorage.setItem("token", token);
-
-               if (role === "admin") {
-                  navigate("/admin/dashboard");
-               } else if (role === "teacher") {
-                  navigate("/teacher/dashboard");
-               } else if (role === "student") {
-                  navigate("/student/dashboard");
-               }
-               reset();
-            } else {
-               const errorData = await response.json();
-               showError(
-                  "Oops! Something went wrong",
-                  errorData?.message || "Could not login to your account."
-               );
+            if (role === "admin") {
+               navigate("/admin/dashboard");
+            } else if (role === "instructor") {
+               navigate("/instructor/dashboard");
+            } else if (role === "student") {
+               navigate("/student/dashboard");
             }
+
+            reset();
+         } catch (error) {
+            showError(
+               "Oops! Something went wrong",
+               error.response?.data?.message ||
+                  "Could not login to your account."
+            );
          } finally {
             setShowPopup(true);
          }

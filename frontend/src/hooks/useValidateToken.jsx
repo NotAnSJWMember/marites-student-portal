@@ -15,7 +15,7 @@ export const useValidateToken = () => {
          }
 
          try {
-            const url = `http://localhost:8080/user/validate-reset-token?token=${resetToken}`;
+            const url = `http://localhost:8080/auth/validate-reset-token?token=${resetToken}`;
 
             const response = await fetch(url, {
                method: "POST",

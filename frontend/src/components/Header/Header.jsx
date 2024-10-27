@@ -2,15 +2,11 @@ import React, { useState } from "react";
 import styles from "./Header.module.scss";
 
 import Popup from "components/Popup/Popup";
+import { useAuth } from "hooks";
 import SearchBar from "components/SearchBar/SearchBar";
 
 import userIcon from "assets/images/profile.jpg";
-import {
-   TbBell,
-   TbLogout,
-   TbSettings,
-   TbUser,
-} from "react-icons/tb";
+import { TbBell, TbLogout, TbSettings, TbUser } from "react-icons/tb";
 
 export const Header = () => {
    const [isPopupVisibleUser, setPopupVisibleUser] = useState(false);
@@ -31,6 +27,8 @@ export const Header = () => {
    const closePopupNotif = () => {
       setPopupVisibleNotif(false);
    };
+
+   const { logout } = useAuth();
 
    return (
       <header className={styles.header}>
@@ -70,10 +68,10 @@ export const Header = () => {
                      Account Settings
                   </a>
                   <div className={styles.line}></div>
-                  <a href="a" className={styles.iconCta}>
+                  <button onClick={logout} className={styles.iconCta}>
                      <TbLogout size={25} />
                      Sign out
-                  </a>
+                  </button>
                </div>
             </div>
          </Popup>

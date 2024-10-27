@@ -20,6 +20,7 @@ export class AuthService {
       const payload = { userId, role };
       const token = this.jwtService.sign(payload, { expiresIn: '1h' });
       this.logger.log(`Generated token for user ID: ${userId}`);
+      this.logger.log(`Token: ${token}`);
       return token;
    }
 

@@ -6,7 +6,7 @@ export const useForgetPassword = () => {
 
    const forgetPassword = async (data, resetForm) => {
       try {
-         const url = "http://localhost:8080/user/forgot-password";
+         const url = "http://localhost:8080/auth/forgot-password";
          const response = await fetch(url, {
             method: "POST",
             headers: {

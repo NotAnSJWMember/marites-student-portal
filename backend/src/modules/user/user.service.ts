@@ -9,28 +9,34 @@ import { InjectModel } from '@nestjs/mongoose';
 import { User } from './user.schema';
 import { IdGenerator } from 'src/common/utils/generate-id.helper';
 import { Model } from 'mongoose';
+import { CreateUserDto } from './user.dto';
+
 import * as bcrypt from 'bcrypt';
+import { Student } from './roles/student/student.schema';
+import { Instructor } from './roles/instructor/instructor.schema';
 
 @Injectable()
 export class UserService {
-   private readonly logger = new Logger(UserService.name);
+   protected logger = new Logger(UserService.name);
 
    constructor(
       @InjectModel(User.name) private userModel: Model<User>,
-      private readonly idGenerator: IdGenerator,
+      @InjectModel(Student.name) private studentModel: Model<Student>,
+      @InjectModel(Instructor.name) private instructorModel: Model<Instructor>,
+      private idGenerator: IdGenerator,
    ) {}
 
-   async create(userData: Partial<User>): Promise<User> {
+   async create(createUserDto: CreateUserDto): Promise<User> {
       this.logger.log('Creating new user...');
 
       try {
-         userData.userId = await this.idGenerator.generateId();
-         this.logger.log(`Generated user id: ${userData.userId}`);
+         createUserDto.userId = await this.idGenerator.generateId();
+         this.logger.log(`Generated user id: ${createUserDto.userId}`);
 
-         const hashedPassword = await this.hashPassword(userData.password);
+         const hashedPassword = await this.hashPassword(createUserDto.password);
 
          const newUser = new this.userModel({
-            ...userData,
+            ...createUserDto,
             password: hashedPassword,
          });
 
@@ -142,8 +148,12 @@ export class UserService {
       }
    }
 
-   async update(userId: string, userData: Partial<User>): Promise<User | null> {
+   async update(
+      userId: string,
+      userData: Partial<CreateUserDto>,
+   ): Promise<User | null> {
       this.logger.log(`Updating user with ID: ${userId}`);
+
       const updatedUser = await this.userModel
          .findOneAndUpdate({ userId }, userData, { new: true })
          .exec();
@@ -157,18 +167,38 @@ export class UserService {
       return updatedUser || null;
    }
 
-   async delete(userId: string): Promise<User> {
+   async delete(userId: string): Promise<User | null> {
       this.logger.log(`Deleting user with ID: ${userId}`);
+
       const deletedUser = await this.userModel
          .findOneAndDelete({ userId })
          .exec();
 
       if (deletedUser) {
-         this.logger.log(`Successfully deleted user: ${deletedUser}`);
-      } else {
-         this.logger.warn(`No user found with ID: ${userId} to delete.`);
-      }
+         this.logger.log(
+            `Successfully deleted user from userModel: ${deletedUser}`,
+         );
 
-      return deletedUser || null;
+         await this.studentModel.findOneAndDelete({ userId }).exec();
+         await this.instructorModel.findOneAndDelete({ userId }).exec();
+         return deletedUser;
+      } else {
+         const deletedStudent = await this.studentModel
+            .findOneAndDelete({ userId })
+            .exec();
+         const deletedInstructor = await this.instructorModel
+            .findOneAndDelete({ userId })
+            .exec();
+
+         if (deletedStudent || deletedInstructor) {
+            this.logger.log(
+               `Successfully deleted user from ${deletedStudent ? 'studentModel' : 'instructorModel'}.`,
+            );
+            return deletedStudent || deletedInstructor;
+         } else {
+            this.logger.warn(`No user found with ID: ${userId} to delete.`);
+            return null;
+         }
+      }
    }
 }

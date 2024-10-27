@@ -11,6 +11,9 @@ export class Program extends Document {
 
    @Prop({ required: true })
    collegeCode: string;
+
+   @Prop({ required: true })
+   duration: number;
 }
 
 export const ProgramSchema = SchemaFactory.createForClass(Program);

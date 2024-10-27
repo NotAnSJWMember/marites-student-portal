@@ -1,4 +1,5 @@
 export { usePopupAlert } from "./usePopupAlert";
+export { useAuth } from "./useAuth";
 export { useRegister } from "./useRegister";
 export { useResetPassword } from "./useResetPassword";
 export { useForgetPassword } from "./useForgetPassword";
