@@ -40,19 +40,88 @@ export class ProgramService {
       const programs = [
          {
             programId: new Types.ObjectId(),
-            programDescription: 'Bachelor of Science in Information Technology',
-            collegeCode: 'BSIT',
+            programDescription: 'Bachelor of Science in Information Systems',
+            collegeCode: 'BSIS',
+            duration: 4,
          },
          {
             programId: new Types.ObjectId(),
-            programDescription: 'Bachelor of Science in Computer Science',
-            collegeCode: 'BSCS',
+            programDescription: 'Bachelor of Science in Accountancy',
+            collegeCode: 'BSA',
+            duration: 5,
          },
          {
             programId: new Types.ObjectId(),
             programDescription:
-               'Bachelor of Science in Electronics Engineering',
-            collegeCode: 'BSEE',
+               'Bachelor of Science in Business Administration',
+            collegeCode: 'BSBA',
+            duration: 4,
+         },
+         {
+            programId: new Types.ObjectId(),
+            programDescription: 'Bachelor of Science in Civil Engineering',
+            collegeCode: 'BSCE',
+            duration: 5,
+         },
+         {
+            programId: new Types.ObjectId(),
+            programDescription: 'Bachelor of Science in Mechanical Engineering',
+            collegeCode: 'BSME',
+            duration: 5,
+         },
+         {
+            programId: new Types.ObjectId(),
+            programDescription: 'Bachelor of Science in Nursing',
+            collegeCode: 'BSN',
+            duration: 4,
+         },
+         {
+            programId: new Types.ObjectId(),
+            programDescription: 'Bachelor of Science in Psychology',
+            collegeCode: 'BSPsych',
+            duration: 4,
+         },
+         {
+            programId: new Types.ObjectId(),
+            programDescription: 'Bachelor of Science in Biology',
+            collegeCode: 'BSBio',
+            duration: 4,
+         },
+         {
+            programId: new Types.ObjectId(),
+            programDescription: 'Bachelor of Science in Architecture',
+            collegeCode: 'BSArch',
+            duration: 5,
+         },
+         {
+            programId: new Types.ObjectId(),
+            programDescription: 'Bachelor of Science in Education',
+            collegeCode: 'BSEd',
+            duration: 4,
+         },
+         {
+            programId: new Types.ObjectId(),
+            programDescription: 'Bachelor of Arts in Communication',
+            collegeCode: 'BACOMM',
+            duration: 4,
+         },
+         {
+            programId: new Types.ObjectId(),
+            programDescription: 'Bachelor of Science in Hospitality Management',
+            collegeCode: 'BSHM',
+            duration: 4,
+         },
+         {
+            programId: new Types.ObjectId(),
+            programDescription: 'Bachelor of Science in Tourism Management',
+            collegeCode: 'BSTM',
+            duration: 4,
+         },
+         {
+            programId: new Types.ObjectId(),
+            programDescription: 'Bachelor of Science in Criminology',
+            collegeCode: 'BSCrim',
+            duration: 4,
          },
       ];
 

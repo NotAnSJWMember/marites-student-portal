@@ -2,17 +2,12 @@ import React, { useRef, useState } from "react";
 import Layout from "components/Layout/Layout";
 import SearchBar from "components/SearchBar/SearchBar";
 import Popup from "components/Popup/Popup";
-import Checkbox from "components/Checkbox/Checkbox";
+import Checkbox from "components/ui/Checkbox/Checkbox";
 import Loading from "components/Loading/Loading";
-import useFetchUsers from "hooks/useFetchUsers";
-import { useForm } from "react-hook-form";
-import { usePopupAlert, useRegister, useTogglePassword } from "hooks";
 import { format } from "date-fns";
 import styles from "./UserManagement.module.scss";
 import userIcon from "assets/images/profile.jpg";
-import UserIcon from "components/UserIcon/UserIcon";
 import {
-   TbCloudDownload,
    TbDotsVertical,
    TbEdit,
    TbFileArrowRight,
@@ -20,45 +15,34 @@ import {
    TbPlus,
    TbTrash,
 } from "react-icons/tb";
-import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
-import PopupAlert from "components/Popup/PopupAlert";
+import { usePopupAlert } from "hooks";
+import { FormUser } from "components/Forms/FormUser";
+import useFetchData from "hooks/useFetchData";
+import { FormStudent } from "components/Forms/FormStudent";
 
 const POPUP_ICON_SIZE = 25;
 const MEDIUM_ICON_SIZE = 22;
 const SMALL_ICON_SIZE = 19;
 
 const UserManagement = () => {
-   const [showPassword, togglePasswordVisibility] = useTogglePassword();
+   const timeoutId = useRef(null);
+
    const [activePopup, setActivePopup] = useState(null);
    const [popupPosition, setPopupPosition] = useState({ top: 0, right: 0 });
+
    const [isPopupVisible, setIsPopupVisible] = useState(false);
    const [isPopupCenterVisible, setIsPopupCenterVisible] = useState(false);
-   const [popupCenterPosition] = useState({
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-   });
+
    const [currentPage, setCurrentPage] = useState(1);
    const [selectedUsers, setSelectedUsers] = useState([]);
-   const { showError } = usePopupAlert();
+
+   const [currentStep, setCurrentStep] = useState(1);
 
    const token = localStorage.getItem("token");
    const usersPerPage = 8;
-   const timeoutId = useRef(null);
 
-   const { users, loading, error } = useFetchUsers(
-      "http://localhost:8080/user",
-      token
-   );
-
-   const { popupState, showPopup, setShowPopup, createAccount } = useRegister();
-
-   const {
-      register,
-      handleSubmit,
-      reset,
-      formState: { errors },
-   } = useForm();
+   const { showError } = usePopupAlert();
+   const { data: users, loading, error } = useFetchData("user", token);
 
    const totalPages = Math.ceil(users.length / usersPerPage);
    const indexOfLastUser = currentPage * usersPerPage;
@@ -75,7 +59,6 @@ const UserManagement = () => {
          setIsPopupVisible(true);
       }
    };
-
    const closePopupAction = () => {
       clearTimeout(timeoutId.current);
       setIsPopupVisible(false);
@@ -85,12 +68,10 @@ const UserManagement = () => {
       }, 300);
    };
 
-   const togglePopupCenter = () => {
-      setIsPopupCenterVisible((prev) => !prev);
-   };
-
+   const togglePopupCenter = () => setIsPopupCenterVisible((prev) => !prev);
    const closePopupCenter = () => {
       setIsPopupCenterVisible(false);
+      setCurrentStep(1);
    };
 
    const handleCheckboxChange = (userId) => {
@@ -100,7 +81,6 @@ const UserManagement = () => {
          setSelectedUsers([...selectedUsers, userId]);
       }
    };
-
    const handleSelectAll = () => {
       if (selectedUsers.length === currentUsers.length) {
          setSelectedUsers([]);
@@ -109,32 +89,16 @@ const UserManagement = () => {
       }
    };
 
-   const handlePageChange = (pageNumber) => {
-      setCurrentPage(pageNumber);
-   };
-
-   const handleClosePopup = () => {
-      setShowPopup(false);
-   };
+   const handleNextStep = () => setCurrentStep((prevStep) => prevStep + 1);
+   const handlePreviousStep = () => setCurrentStep((prevStep) => prevStep - 1);
+   const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
 
    const formatDate = (isoString) => {
       return format(new Date(isoString), "MMMM d, yyyy");
    };
 
-   if (loading) {
-      return <Loading />;
-   }
-
-   if (error) {
-      showError("Oops! Something went wrong", error);
-   }
-
-   const onCreateSubmit = async (data) => {
-      const response = await createAccount(data, reset);
-      if (response.ok) {
-         setShowPopup(true);
-      }
-   };
+   if (loading) return <Loading />;
+   if (error) showError("Oops! Something went wrong", error);
 
    return (
       <Layout role="admin" pageName="User Management">
@@ -266,277 +230,54 @@ const UserManagement = () => {
          <Popup
             show={isPopupCenterVisible}
             close={closePopupCenter}
-            position={popupCenterPosition}
+            position={{
+               top: "50%",
+               left: "50%",
+               transform: "translate(-50%, -50%)",
+            }}
             handleClickOutside={false}
          >
             <div className={styles.popupCreateUserWrapper}>
                <div className={styles.popupContent}>
                   <h3>Create a new user</h3>
-                  <form
-                     className={styles.formContainer}
-                     onSubmit={handleSubmit(onCreateSubmit)}
-                     autoComplete="off"
-                  >
-                     <div className={styles.twoColumn}>
-                        <h4>Name</h4>
-                        <div className={styles.twoColumn}>
-                           <div className={styles.formItem}>
-                              <label>
-                                 {errors.firstName && (
-                                    <span className={styles.errorMsg}>
-                                       ({errors.firstName.message})
-                                    </span>
-                                 )}
-                              </label>
-                              <input
-                                 type="text"
-                                 {...register("firstName", {
-                                    required: "First name is required",
-                                 })}
-                              />
-                           </div>
-                           <div className={styles.formItem}>
-                              <label>
-                                 {errors.lastName && (
-                                    <span className={styles.errorMsg}>
-                                       ({errors.lastName.message})
-                                    </span>
-                                 )}
-                              </label>
-                              <input
-                                 type="text"
-                                 {...register("lastName", {
-                                    required: "Last name is required",
-                                 })}
-                              />
-                           </div>
-                        </div>
-                     </div>
-                     <div className={styles.line}></div>
-                     <div className={styles.twoColumn}>
-                        <h4>Birthdate</h4>
-                        <div className={styles.formItem}>
-                           <label>
-                              {errors.birthDate && (
-                                 <span className={styles.errorMsg}>
-                                    ({errors.birthDate.message})
-                                 </span>
-                              )}
-                           </label>
-                           <input
-                              type="date"
-                              {...register("birthDate", {
-                                 required: "Birthdate is required",
-                              })}
-                           />
-                        </div>
-                     </div>
-                     <div className={styles.line}></div>
-                     <div className={styles.twoColumn}>
-                        <h4>Gender</h4>
-                        <div className={styles.formItem}>
-                           <label>
-                              {errors.gender && (
-                                 <span className={styles.errorMsg}>
-                                    ({errors.gender.message})
-                                 </span>
-                              )}
-                           </label>
-                           <select
-                              {...register("gender", {
-                                 required: "Gender is required",
-                              })}
-                           >
-                              <option value="">Select gender</option>
-                              <option value="Female">Female</option>
-                              <option value="Male">Male</option>
-                              <option value="Other">Other</option>
-                           </select>
-                        </div>
-                     </div>
-                     <div className={styles.line}></div>
-                     <div className={styles.twoColumn}>
-                        <h4>Program</h4>
-                        <div className={styles.twoColumn}>
-                           <div className={styles.formItem}>
-                              <label>
-                                 {errors.program && (
-                                    <span className={styles.errorMsg}>
-                                       ({errors.program.message})
-                                    </span>
-                                 )}
-                              </label>
-                              <input
-                                 type="text"
-                                 {...register("program", {
-                                    required: "program is required",
-                                 })}
-                              />
-                           </div>
-                           <div className={styles.formItem}>
-                              <label>
-                                 {errors.year && (
-                                    <span className={styles.errorMsg}>
-                                       ({errors.year.message})
-                                    </span>
-                                 )}
-                              </label>
-                              <select
-                                 {...register("year", {
-                                    required: "Year is required",
-                                 })}
+                  {currentStep === 1 && (
+                     <>
+                        <FormUser
+                           closePopup={closePopupCenter}
+                           onNext={handleNextStep}
+                        />
+                     </>
+                  )}
+                  {currentStep === 2 && (
+                     <>
+                        <form>
+                           <div className={styles.buttonContainer}>
+                              <button
+                                 type="button"
+                                 onClick={handlePreviousStep}
+                                 className={`${styles.cancelBtn} ${styles.ctaBtn}`}
                               >
-                                 <option value="">Select Year</option>
-                                 <option value="1">First year</option>
-                                 <option value="2">Second year</option>
-                                 <option value="3">Third year</option>
-                                 <option value="4">Fourth year</option>
-                              </select>
-                           </div>
-                        </div>
-                     </div>
-                     <div className={styles.line}></div>
-                     <div className={styles.twoColumn}>
-                        <h4>Login</h4>
-                        <div className={styles.twoColumn}>
-                           <div className={styles.formItem}>
-                              <label>
-                                 {errors.username && (
-                                    <span className={styles.errorMsg}>
-                                       ({errors.username.message})
-                                    </span>
-                                 )}
-                              </label>
-                              <input
-                                 type="text"
-                                 {...register("username", {
-                                    required: "Username is required",
-                                 })}
-                              />
-                           </div>
-                           <div className={styles.formItem}>
-                              <label>
-                                 {errors.password && (
-                                    <span className={styles.errorMsg}>
-                                       ({errors.password.message})
-                                    </span>
-                                 )}
-                              </label>
-                              <div className={styles.inputMerge}>
-                                 <input
-                                    type={showPassword ? "text" : "password"}
-                                    {...register("password", {
-                                       required: "Password is required",
-                                    })}
-                                 />
-                                 <span
-                                    className={styles.inputIcon}
-                                    onClick={togglePasswordVisibility}
-                                 >
-                                    {showPassword ? (
-                                       <IoEyeOffOutline
-                                          color="gray"
-                                          size={20}
-                                       />
-                                    ) : (
-                                       <IoEyeOutline color="gray" size={20} />
-                                    )}
-                                 </span>
-                              </div>
-                           </div>
-                        </div>
-                     </div>
-                     <div className={styles.line}></div>
-                     <div className={styles.twoColumn}>
-                        <h4>Contact</h4>
-                        <div className={styles.twoColumn}>
-                           <div className={styles.formItem}>
-                              <label>
-                                 {errors.email && (
-                                    <span className={styles.errorMsg}>
-                                       ({errors.email.message})
-                                    </span>
-                                 )}
-                              </label>
-                              <input
-                                 type="email"
-                                 {...register("email", {
-                                    required: "Email address is required",
-                                 })}
-                              />
-                           </div>
-                           <div className={styles.formItem}>
-                              <label>
-                                 {errors.phoneNum && (
-                                    <span className={styles.errorMsg}>
-                                       ({errors.phoneNum.message})
-                                    </span>
-                                 )}
-                              </label>
-                              <input
-                                 type="tel"
-                                 {...register("phoneNum", {
-                                    required: "Phone number is required",
-                                    pattern: {
-                                       value: /^\+?\d{1,3}?\s?\d{10}$/,
-                                       message:
-                                          "Phone number must be 10 digits",
-                                    },
-                                 })}
-                              />
-                           </div>
-                        </div>
-                     </div>
-                     <div className={styles.line}></div>
-                     <div className={styles.twoColumn}>
-                        <h4>Profile Photo</h4>
-                        <div className={styles.changePhotoContainer}>
-                           <UserIcon
-                              image={userIcon}
-                              desc="New user's profile photo"
-                              size={80}
-                           />
-                           <div className={styles.changePhoto}>
-                              <button type="button" className={styles.iconBtn}>
-                                 <TbCloudDownload size={MEDIUM_ICON_SIZE} />
+                                 Previous step
                               </button>
-                              <p>
-                                 <span>Click to upload</span> or drag and drop{" "}
-                                 <br />
-                                 SVG, PNG, or JPG (max. 2MB)
-                              </p>
+                              <button
+                                 type="submit"
+                                 onClick={handleNextStep}
+                                 className={`${styles.submitBtn} ${styles.ctaBtn}`}
+                              >
+                                 Next step
+                              </button>
                            </div>
-                        </div>
-                     </div>
-                     <div className={styles.line}></div>
-                     <div className={styles.buttonContainer}>
-                        <button
-                           onClick={closePopupCenter}
-                           type="button"
-                           className={`${styles.cancelBtn} ${styles.ctaBtn}`}
-                        >
-                           Cancel
-                        </button>
-                        <button
-                           type="submit"
-                           className={`${styles.submitBtn} ${styles.ctaBtn}`}
-                        >
-                           Add user
-                        </button>
-                     </div>
-                  </form>
+                        </form>
+                     </>
+                  )}
+                  {currentStep === 3 && (
+                     <>
+                        <FormStudent onBack={handlePreviousStep} />
+                     </>
+                  )}
                </div>
             </div>
          </Popup>
-         <PopupAlert
-            icon={popupState.icon}
-            border={popupState.border}
-            color={popupState.color}
-            title={popupState.title}
-            message={popupState.message}
-            onClose={handleClosePopup}
-            show={showPopup}
-         />
       </Layout>
    );
 };

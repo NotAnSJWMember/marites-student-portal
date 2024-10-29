@@ -23,7 +23,7 @@ export class Student extends User {
    @Prop({ type: Date, default: Date.now() })
    enrollmentDate: Date;
 
-   @Prop({ required: true })
+   @Prop({ default: 1, required: true })
    currentSemester: number;
 
    @Prop({

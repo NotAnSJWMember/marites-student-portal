@@ -3,7 +3,6 @@ import {
    IsEmail,
    IsString,
    IsOptional,
-   IsDate,
    IsEnum,
 } from 'class-validator';
 
@@ -32,7 +31,6 @@ export class CreateUserDto {
    phoneNum: string;
 
    @IsNotEmpty()
-   @IsDate()
    birthDate: Date;
 
    @IsNotEmpty()

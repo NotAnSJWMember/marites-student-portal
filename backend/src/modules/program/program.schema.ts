@@ -6,10 +6,10 @@ export class Program extends Document {
    @Prop({ required: true, type: Types.ObjectId })
    programId: Types.ObjectId;
 
-   @Prop({ required: true })
+   @Prop({ required: true, unique: true })
    programDescription: string;
 
-   @Prop({ required: true })
+   @Prop({ required: true, unique: true })
    collegeCode: string;
 
    @Prop({ required: true })

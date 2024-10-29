@@ -1,16 +1,16 @@
 import { useState, useEffect } from "react";
 
-const useFetchUsers = (endpoint, token) => {
-   const [users, setUsers] = useState([]);
+const useFetchData = (endpoint, token) => {
+   const [data, setData] = useState([]);
    const [loading, setLoading] = useState(true);
    const [error, setError] = useState(null);
 
    useEffect(() => {
       let isMounted = true;
 
-      const fetchUsers = async () => {
+      const fetchData = async () => {
          try {
-            const response = await fetch(endpoint, {
+            const response = await fetch(`http://localhost:8080/${endpoint}`, {
                method: "GET",
                headers: {
                   "Content-Type": "application/json",
@@ -19,28 +19,26 @@ const useFetchUsers = (endpoint, token) => {
             });
 
             if (!response.ok) {
-               throw new Error("Failed to fetch users");
+               throw new Error(`Failed to fetch data from ${endpoint}`);
             }
 
             const data = await response.json();
-            setUsers(data);
+            setData(data);
          } catch (error) {
             setError(error.message);
          } finally {
-            if (isMounted) {
-               setLoading(false);
-            }
+            if (isMounted) setLoading(false);
          }
       };
 
-      fetchUsers();
+      fetchData();
 
       return () => {
          isMounted = false;
       };
    }, [endpoint, token]);
 
-   return { users, loading, error };
+   return { data, loading, error };
 };
 
-export default useFetchUsers;
+export default useFetchData;
