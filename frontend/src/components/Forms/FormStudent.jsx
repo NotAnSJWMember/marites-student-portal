@@ -14,7 +14,6 @@ import { TbCloudDownload } from "react-icons/tb";
 
 export const FormStudent = ({ onBack }) => {
    const [selectedProgram, setSelectedProgram] = useState(null);
-   const [showPassword, togglePasswordVisibility] = useTogglePassword();
    const { popupState, showPopup, setShowPopup, createAccount } = useRegister();
    const { showError } = usePopupAlert();
 
