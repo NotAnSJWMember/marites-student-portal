@@ -19,8 +19,13 @@ import { usePopupAlert } from "hooks";
 import { FormUser } from "components/Forms/FormUser";
 import useFetchData from "hooks/useFetchData";
 import { FormStudent } from "components/Forms/FormStudent";
+import UserIcon from "components/ui/UserIcon/UserIcon";
+import studentIcon from "assets/icons/student.svg";
+import instructorIcon from "assets/icons/instructor.svg";
+import adminIcon from "assets/icons/admin.svg";
 
 const POPUP_ICON_SIZE = 25;
+const LARGE_ICON_SIZE = 70;
 const MEDIUM_ICON_SIZE = 22;
 const SMALL_ICON_SIZE = 19;
 
@@ -35,6 +40,8 @@ const UserManagement = () => {
 
    const [currentPage, setCurrentPage] = useState(1);
    const [selectedUsers, setSelectedUsers] = useState([]);
+
+   const [selectedRole, setSelectedRole] = useState(null);
 
    const [currentStep, setCurrentStep] = useState(1);
 
@@ -87,6 +94,10 @@ const UserManagement = () => {
       } else {
          setSelectedUsers(currentUsers.map((user) => user.userId));
       }
+   };
+   const handleRoleSelect = (event) => {
+      const role = event.currentTarget.getAttribute("data-role");
+      setSelectedRole(role);
    };
 
    const handleNextStep = () => setCurrentStep((prevStep) => prevStep + 1);
@@ -149,9 +160,7 @@ const UserManagement = () => {
                            onChange={() => handleCheckboxChange(user.userId)}
                         />
                         <div className={styles.userContainer}>
-                           <div className={styles.userIcon}>
-                              <img src={userIcon} alt="Your Profile Icon" />
-                           </div>
+                           <UserIcon image={userIcon} size={48} />
                            <div className={styles.userInfo}>
                               <h4>{`${user.firstName} ${user.lastName}`}</h4>
                               <p>{user.email}</p>
@@ -239,7 +248,7 @@ const UserManagement = () => {
          >
             <div className={styles.popupCreateUserWrapper}>
                <div className={styles.popupContent}>
-                  <h3>Create a new user</h3>
+                  <h2>Create a new user</h2>
                   {currentStep === 1 && (
                      <>
                         <FormUser
@@ -250,7 +259,60 @@ const UserManagement = () => {
                   )}
                   {currentStep === 2 && (
                      <>
-                        <form>
+                        <div className={styles.roleWrapper}>
+                           <h3>What role is this user?</h3>
+                           <div className={styles.roleContainer}>
+                              <div
+                                 className={`${styles.roleItem} ${
+                                    selectedRole === "student"
+                                       ? styles.active
+                                       : ""
+                                 }`}
+                                 data-role="student"
+                                 onClick={handleRoleSelect}
+                              >
+                                 <img
+                                    src={studentIcon}
+                                    width={LARGE_ICON_SIZE}
+                                    alt="Student Icon"
+                                 />
+                                 <h4>Student</h4>
+                              </div>
+
+                              <div
+                                 className={`${styles.roleItem} ${
+                                    selectedRole === "instructor"
+                                       ? styles.active
+                                       : ""
+                                 }`}
+                                 data-role="instructor"
+                                 onClick={handleRoleSelect}
+                              >
+                                 <img
+                                    src={instructorIcon}
+                                    width={LARGE_ICON_SIZE}
+                                    alt="Instructor Icon"
+                                 />
+                                 <h4>Instructor</h4>
+                              </div>
+
+                              <div
+                                 className={`${styles.roleItem} ${
+                                    selectedRole === "admin"
+                                       ? styles.active
+                                       : ""
+                                 }`}
+                                 data-role="admin"
+                                 onClick={handleRoleSelect}
+                              >
+                                 <img
+                                    src={adminIcon}
+                                    width={LARGE_ICON_SIZE}
+                                    alt="Admin Icon"
+                                 />
+                                 <h4>Admin</h4>
+                              </div>
+                           </div>
                            <div className={styles.buttonContainer}>
                               <button
                                  type="button"
@@ -267,12 +329,14 @@ const UserManagement = () => {
                                  Next step
                               </button>
                            </div>
-                        </form>
+                        </div>
                      </>
                   )}
                   {currentStep === 3 && (
                      <>
-                        <FormStudent onBack={handlePreviousStep} />
+                        {selectedRole === "student" && (
+                           <FormStudent onBack={handlePreviousStep} />
+                        )}
                      </>
                   )}
                </div>
