@@ -9,7 +9,6 @@ import { useForm } from "react-hook-form";
 import useFetchData from "hooks/useFetchData";
 
 import styles from "./FormUser.module.scss";
-import userIcon from "assets/images/profile.jpg";
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
 import { TbCloudDownload } from "react-icons/tb";
 
