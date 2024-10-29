@@ -1,0 +1,52 @@
+@import "../../../styles/global.scss";
+
+.previewClasses,
+.previewEvents .previewAnnouncements {
+   display: flex;
+   flex-direction: column;
+   flex-grow: 1;
+}
+
+.previewClasses {
+   .sectionContent {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      flex-grow: 1;
+   }
+}
+
+.twoColumn {
+   // display: flex;
+   .sectionContent {
+      display: flex;
+      flex-direction: column;
+      max-height: 18rem;
+      overflow-y: auto;
+      gap: 2rem;
+   }
+}
+
+.previewSchedule {
+   display: flex;
+   flex-direction: column;
+}
+
+.previewAssignments {
+   flex-grow: 1;
+   overflow: hidden;
+
+   .sectionContent {
+      display: flex;
+      flex-direction: column;
+      overflow-y: scroll;
+      max-height: 88%;
+      gap: 1rem;
+   }
+}
+
+.previewEvents, .previewAnnouncements, .previewAssignments {
+   .sectionContent {
+      padding-right: 0.7rem;
+   }
+}

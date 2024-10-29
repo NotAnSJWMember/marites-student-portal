@@ -35,10 +35,9 @@ export class User extends Document {
 
    @Prop({ default: 'student' })
    role: string;
+
+   @Prop({ type: Date, default: Date.now() })
+   lastActive: Date;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
-
-UserSchema.virtual('fullName').get(function () {
-   return `${this.firstName} ${this.lastName}`;
-});

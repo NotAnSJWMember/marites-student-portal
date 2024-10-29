@@ -58,7 +58,7 @@
             gap: 0.7rem;
             width: 100%;
             font-size: 0.9rem;
-            transition: 300ms $trans-smooth;
+            transition: all 150ms $trans-fast, background-color 200ms $trans-smooth;
 
             &:hover {
                background-color: $light-hovered-color;

@@ -12,12 +12,16 @@ import {
 import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
 import { MailService } from 'src/common/services/mail/mail.service';
+import { User } from '../user/user.schema';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
 @Controller('auth')
 export class AuthController {
    private readonly logger = new Logger(AuthController.name);
 
    constructor(
+      @InjectModel(User.name) private userModel: Model<User>,
       private readonly userService: UserService,
       private readonly authService: AuthService,
       private readonly mailService: MailService,
@@ -67,7 +71,14 @@ export class AuthController {
          user.role,
       );
 
-      this.logger.log(`Login successful for ${user.userId}`);
+      await this.userModel.updateOne(
+         { userId: user.userId },
+         { $set: { lastActive: Date.now() } },
+      );
+
+      this.logger.log(
+         `Login successful for ${user.firstName} at ${user.lastActive}`,
+      );
 
       return { token, role: user.role, message: 'Login successful' };
    }

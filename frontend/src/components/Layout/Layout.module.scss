@@ -1,0 +1,36 @@
+@import "../../styles/global.scss";
+
+::-webkit-scrollbar {
+   width: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+   background: $light-gray-color;
+   border-radius: 4px;
+}
+
+.wrapper {
+   display: flex;
+   height: 100vh;
+   width: 100%;
+}
+
+.gridContainer {
+   display: grid;
+   grid-template-columns: 15% auto;
+   height: 100%;
+   width: 100%;
+
+   .contentWrapper {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+
+      .dividerWrapper {
+         overflow: hidden;
+         padding: 1.5rem;
+         height: 100%;
+      }
+   }
+}

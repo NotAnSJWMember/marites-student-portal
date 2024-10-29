@@ -5,11 +5,12 @@
    align-items: center;
    justify-content: flex-start;
    background-color: $light-primary-background;
-   gap: 0.6rem;
-   padding: 0.9rem 1.5rem;
-   border-radius: 0.5rem;
+   gap: 0.7rem;
+   border-radius: $default-radius;
    width: 25rem;
-
+   border: 1px solid $light-gray-color;
+   padding: 0 1rem;
+   
    input {
       border: none;
       background: none;

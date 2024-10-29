@@ -6,9 +6,12 @@ import Register from "./pages/Register/Register";
 import Login from "./pages/Login/Login";
 import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword/ResetPassword";
-import AdminDashboard from "./pages/Dashboard/Admin/AdminDashboard/AdminDashboard";
-import StudentDashboard from "./pages/Dashboard/Student/StudentDashboard/StudentDashboard";
-import InstructorDashboard from "pages/Dashboard/Instructor/InstructorDashboard/InstructorDashboard";
+import AdminDashboard from "./pages/Dashboard/Admin/AdminDashboard";
+import UserManagement from "./pages/Dashboard/Admin/pages/UserManagement";
+import StudentDashboard from "./pages/Dashboard/Student/StudentDashboard";
+import InstructorDashboard from "./pages/Dashboard/Instructor/InstructorDashboard";
+
+import "./App.scss";
 
 function App() {
    return (
@@ -19,6 +22,8 @@ function App() {
                <Route path="/login" element={<Login />} />
                <Route path="/forgot-password" element={<ForgotPassword />} />
                <Route path="/reset-password" element={<ResetPassword />} />
+
+               {/* Admin Routes */}
                <Route
                   path="/admin/dashboard"
                   element={
@@ -29,6 +34,17 @@ function App() {
                   }
                />
                <Route
+                  path="/admin/dashboard/user-management"
+                  element={
+                     <PrivateRoute
+                        element={<UserManagement />}
+                        roles={["admin"]}
+                     />
+                  }
+               />
+
+               {/* Instructor Routes */}
+               <Route
                   path="/instructor/dashboard"
                   element={
                      <PrivateRoute
@@ -37,6 +53,8 @@ function App() {
                      />
                   }
                />
+
+               {/* Student Routes */}
                <Route
                   path="/student/dashboard"
                   element={

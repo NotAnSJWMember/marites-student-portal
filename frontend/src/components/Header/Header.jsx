@@ -3,20 +3,26 @@ import styles from "./Header.module.scss";
 
 import Popup from "components/Popup/Popup";
 import { useAuth } from "hooks";
-import SearchBar from "components/SearchBar/SearchBar";
 
 import userIcon from "assets/images/profile.jpg";
 import { TbBell, TbLogout, TbSettings, TbUser } from "react-icons/tb";
 
 export const Header = () => {
    const [isPopupVisibleUser, setPopupVisibleUser] = useState(false);
-   const [isPopupVisibleNotif, setPopupVisibleNotif] = useState(false);
+   const [popupUserPosition, setPopupUserPosition] = useState({ top: 0, right: 0 });
 
-   const togglePopupUser = () => {
+   const [isPopupVisibleNotif, setPopupVisibleNotif] = useState(false);
+   const [popupNotifPosition, setPopupNotifPosition] = useState({ top: 0, right: 0 });
+
+   const togglePopupUser = (event) => {
+      const rect = event.currentTarget.getBoundingClientRect();
+      setPopupUserPosition({ top: rect.bottom + 10, left: rect.left - 200 });
       setPopupVisibleUser((prev) => !prev);
    };
-
-   const togglePopupNotif = () => {
+   
+   const togglePopupNotif = (event) => {
+      const rect = event.currentTarget.getBoundingClientRect();
+      setPopupNotifPosition({ top: rect.bottom + 10, left: rect.left - 360});
       setPopupVisibleNotif((prev) => !prev);
    };
 
@@ -32,7 +38,7 @@ export const Header = () => {
 
    return (
       <header className={styles.header}>
-         <SearchBar />
+         <div></div>
          <div className={styles.sideBar}>
             <div className={styles.notif} onClick={togglePopupNotif}>
                <TbBell size={24} />
@@ -45,7 +51,7 @@ export const Header = () => {
          <Popup
             show={isPopupVisibleUser}
             close={closePopupUser}
-            position="user"
+            position={popupUserPosition}
          >
             <div className={styles.popupWrapperUser}>
                <div className={styles.userContainer}>
@@ -78,7 +84,7 @@ export const Header = () => {
          <Popup
             show={isPopupVisibleNotif}
             close={closePopupNotif}
-            position="notif"
+            position={popupNotifPosition}
          >
             <div className={styles.popupWrapperNotif}>
                <div className={styles.titleContainer}>

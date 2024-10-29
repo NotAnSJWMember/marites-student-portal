@@ -10,16 +10,6 @@
    box-shadow: $light-box-shadow-gray;
    opacity: 0;
    transition: 300ms $trans-smooth;
-   
-   &.user {
-      top: 5rem;
-      right: 1.5rem;
-   }
-
-   &.notif {
-      top: 5rem;
-      right: 7rem;
-   }
 }
 
 .show {

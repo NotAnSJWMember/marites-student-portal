@@ -1,0 +1,39 @@
+@import "../../styles/global.scss";
+
+.hiddenCheckbox {
+   display: none;
+}
+
+.newCheckbox {
+   display: inline-block;
+   position: relative;
+   width: 20px;
+   height: 20px;
+   background-color: white;
+   border: 1px solid $light-gray-color;
+   border-radius: 0.3rem;
+   cursor: pointer;
+   transition: 100ms $trans-fast;
+}
+
+.hiddenCheckbox:checked + .newCheckbox {
+   background-color: $light-green-color-200;
+   border-color: transparent;
+}
+
+.newCheckbox::after {
+   content: "";
+   display: none;
+   position: absolute;
+   width: 4px;
+   height: 9px;
+   border: solid white;
+   border-width: 0 2px 2px 0;
+   transform: rotate(45deg);
+   top: 2px;
+   left: 6px;
+}
+
+.hiddenCheckbox:checked + .newCheckbox::after {
+   display: block;
+}

@@ -1,31 +1,41 @@
 @import "./variables.scss";
 
-* {
-   margin: 0;
-   padding: 0;
-   box-sizing: border-box;
-   font-family: "Fira Sans", sans-serif;
+.contentDivider {
+   display: grid;
+   grid-template-columns: 75% 1fr;
+   gap: 1rem;
+   height: 100%;
 }
 
-body {
-   font-size: 15px;
-   background-color: $light-primary-background;
-   background-color: #f0f0f0;
-}
+.mainContent,
+.sideContent {
+   display: flex;
+   flex-direction: column;
+   overflow: hidden;
+   gap: 1rem;
+   height: 100%;
 
-a {
-   width: max-content;
-   color: $light-anchor-color;
-   text-underline-offset: 5px;
-}
+   section {
+      background-color: $light-primary-background;
+      padding: 1.5rem;
+      border-radius: 0.5rem;
+   }
 
-button {
-   cursor: pointer;
-   border: none;
-   outline: none;
-   padding: 0.7rem;
-   background-color: $light-primary-color;
-   color: $light-primary-background;
+   .sectionLabel {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 1.3rem;
+
+      .labelText {
+         display: flex;
+         align-items: center;
+         justify-content: flex-start;
+         font-size: 1.3rem;
+         font-weight: 500;
+         gap: 0.5rem;
+      }
+   }
 }
 
 .cta {
@@ -33,19 +43,23 @@ button {
    color: $light-primary-color;
 }
 
-.ctaBtn {
-   button {
-      padding: 0.7rem 1.3rem;
-      font-size: 0.8rem;
-      border-radius: 0.3rem;
-   }
+.submitBtn {
+   background-color: $light-green-color-200;
 }
 
-.iconBtn, .iconCta {
+.ctaBtn {
+   font-weight: 600;
+   font-size: 0.8rem;
+   border-radius: $small-radius;
+}
+
+.iconBtn,
+.iconCta {
    display: flex;
    justify-content: center;
    align-items: center;
    gap: 0.6rem;
+   border-radius: $small-radius;
 }
 
 .iconCta {
@@ -90,12 +104,13 @@ button {
    display: flex;
    justify-content: space-between;
    align-items: center;
+   background-color: white;
+   border-radius: $small-radius;
 
    input {
       flex: 1;
       height: 100%;
       border: 1px solid $light-gray-color;
-      padding: 10px;
    }
 
    .inputIcon {
@@ -103,17 +118,14 @@ button {
       display: flex;
       align-items: center;
       justify-content: center;
-      background-color: #f0f0f0;
-      height: 100%;
       padding: 0 10px;
       cursor: pointer;
-      padding: 1rem;
    }
 }
 
 .twoColumn {
    display: grid;
-   grid-template-columns: repeat(2, auto);
+   grid-template-columns: repeat(2, 50%);
    gap: 0.7rem;
 }
 

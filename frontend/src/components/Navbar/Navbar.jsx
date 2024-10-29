@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import styles from "./Navbar.module.scss";
 
 import { useAuth } from "hooks";
@@ -8,29 +8,62 @@ import {
    TbBook,
    TbCalendarEvent,
    TbCertificate,
+   TbChartBar,
    TbLayoutDashboardFilled,
    TbLogout,
    TbNotebook,
    TbReceipt,
+   TbSettings,
    TbSpeakerphone,
+   TbUser,
 } from "react-icons/tb";
 
 var ICON_SIZE = 26;
 
 export const Navbar = ({ role }) => {
-   const [activeTab, setActiveTab] = useState("dashboard");
+   const [activeTab, setActiveTab] = useState("");
+   const { logout } = useAuth();
+   const location = useLocation();
+
+   useEffect(() => {
+      const pathToTabMapping = {
+         "/student/dashboard": "dashboard",
+         "/student/dashboard/schedule": "schedule",
+         "/student/dashboard/examboard": "examboard",
+         "/student/dashboard/assignments": "assignments",
+         "/student/dashboard/enrolled-courses": "enrolledCourses",
+         "/student/dashboard/finance": "finance",
+         "/student/dashboard/announcements": "announcements",
+         "/admin/dashboard": "dashboard",
+         "/admin/dashboard/user-management": "userManagement",
+         "/admin/dashboard/course-management": "courseManagement",
+         "/admin/dashboard/reports": "reports",
+         "/admin/dashboard/system-settings": "systemSettings",
+         "/admin/dashboard/manage-notifications": "manageNotifications",
+      };
+
+      const activeRoute = pathToTabMapping[location.pathname];
+      if (activeRoute) {
+         setActiveTab(activeRoute);
+      }
+   }, [location.pathname]);
 
    const handleTabClick = (tab) => {
       setActiveTab(tab);
    };
-
-   const { logout } = useAuth();
 
    const getNavItems = () => {
       switch (role) {
          case "student":
             return (
                <>
+                  <div className={styles.sealContainer}>
+                     <img src={logo} alt="Dr. AMMC Seal" />
+                     <div className={styles.sealContainerText}>
+                        <h1>Aurelio Mendoza Memorial College</h1>
+                        <p>Student Portal</p>
+                     </div>
+                  </div>
                   <div className={styles.itemContainer}>
                      <Link
                         to="/dashboard"
@@ -158,8 +191,116 @@ export const Navbar = ({ role }) => {
          case "admin":
             return (
                <>
-                  <Link to="/admin-dashboard">Admin Dashboard</Link>
-                  {/* Add more admin nav items here */}
+                  <div className={styles.sealContainer}>
+                     <img src={logo} alt="Dr. AMMC Seal" />
+                     <div className={styles.sealContainerText}>
+                        <h1>Aurelio Mendoza Memorial College</h1>
+                        <p>Admin Portal</p>
+                     </div>
+                  </div>
+                  <div className={styles.itemContainer}>
+                     <Link
+                        to="/admin/dashboard"
+                        className={styles.itemBtn}
+                        onClick={() => handleTabClick("dashboard")}
+                     >
+                        <button
+                           type="button"
+                           className={
+                              activeTab === "dashboard" ? styles.active : ""
+                           }
+                        >
+                           <TbLayoutDashboardFilled size={ICON_SIZE} />
+                           Dashboard
+                        </button>
+                     </Link>
+                  </div>
+                  <div className={styles.itemContainer}>
+                     <h2 className={styles.itemLabel}>Administrative</h2>
+                     <Link
+                        to="/admin/dashboard/user-management"
+                        className={styles.itemBtn}
+                        onClick={() => handleTabClick("userManagement")}
+                     >
+                        <button
+                           type="button"
+                           className={
+                              activeTab === "userManagement"
+                                 ? styles.active
+                                 : ""
+                           }
+                        >
+                           <TbUser size={ICON_SIZE} />
+                           User Management
+                        </button>
+                     </Link>
+                     <Link
+                        to="/admin/dashboard/course-management"
+                        className={styles.itemBtn}
+                        onClick={() => handleTabClick("courseManagement")}
+                     >
+                        <button
+                           type="button"
+                           className={
+                              activeTab === "courseManagement"
+                                 ? styles.active
+                                 : ""
+                           }
+                        >
+                           <TbCertificate size={ICON_SIZE} />
+                           Course Management
+                        </button>
+                     </Link>
+                     <Link
+                        to="/admin/dashboard/reports"
+                        className={styles.itemBtn}
+                        onClick={() => handleTabClick("reports")}
+                     >
+                        <button
+                           type="button"
+                           className={
+                              activeTab === "reports" ? styles.active : ""
+                           }
+                        >
+                           <TbChartBar size={ICON_SIZE} />
+                           Reports
+                        </button>
+                     </Link>
+                     <Link
+                        to="/admin/dashboard/system-settings"
+                        className={styles.itemBtn}
+                        onClick={() => handleTabClick("systemSettings")}
+                     >
+                        <button
+                           type="button"
+                           className={
+                              activeTab === "systemSettings"
+                                 ? styles.active
+                                 : ""
+                           }
+                        >
+                           <TbSettings size={ICON_SIZE} />
+                           System Settings
+                        </button>
+                     </Link>
+                     <Link
+                        to="/admin/dashboard/manage-notifications"
+                        className={styles.itemBtn}
+                        onClick={() => handleTabClick("manageNotifications")}
+                     >
+                        <button
+                           type="button"
+                           className={
+                              activeTab === "manageNotifications"
+                                 ? styles.active
+                                 : ""
+                           }
+                        >
+                           <TbSpeakerphone size={ICON_SIZE} />
+                           Manage Notifications
+                        </button>
+                     </Link>
+                  </div>
                </>
             );
          default:
@@ -169,13 +310,6 @@ export const Navbar = ({ role }) => {
 
    return (
       <nav className={styles.navBar}>
-         <div className={styles.sealContainer}>
-            <img src={logo} alt="Dr. AMMC Seal" />
-            <div className={styles.sealContainerText}>
-               <h1>Aurelio Mendoza Memorial College</h1>
-               <p>Student Portal</p>
-            </div>
-         </div>
          {getNavItems()}
          <div className={styles.itemContainer}>
             <div className={styles.itemBtn}>

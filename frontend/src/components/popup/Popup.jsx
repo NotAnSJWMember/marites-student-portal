@@ -2,13 +2,19 @@
 import React, { useEffect, useRef, useState } from "react";
 import styles from "./Popup.module.scss";
 
-const Popup = ({ show, close, position, children }) => {
+const Popup = ({
+   show,
+   close,
+   position,
+   children,
+   handleClickOutside = true,
+}) => {
    const [shouldRender, setShouldRender] = useState(false);
    const popupRef = useRef(null);
 
-   const handleClickOutside = (event) => {
+   const handleOutsideClick = (event) => {
       if (popupRef.current && !popupRef.current.contains(event.target)) {
-         onClose();
+         close();
       }
    };
 
@@ -21,7 +27,9 @@ const Popup = ({ show, close, position, children }) => {
             }
          }, 100);
 
-         document.addEventListener("mousedown", handleClickOutside);
+         if (handleClickOutside) {
+            document.addEventListener("mousedown", handleOutsideClick);
+         }
       } else {
          if (popupRef.current) {
             popupRef.current.classList.remove(styles.show);
@@ -32,20 +40,25 @@ const Popup = ({ show, close, position, children }) => {
       }
 
       return () => {
-         document.removeEventListener("mousedown", handleClickOutside);
+         if (handleClickOutside) {
+            document.removeEventListener("mousedown", handleOutsideClick);
+         }
       };
-   }, [show]);
-
-   const onClose = () => {
-      close();
-   };
+   }, [show, handleClickOutside]);
 
    if (!shouldRender) return null;
+
+   const popupStyles = {
+      top: position.top,
+      left: position.left,
+      transform: position.transform,
+   };
 
    return (
       <div
          ref={popupRef}
-         className={`${styles.popupContent} ${styles[position]}`}
+         className={`${styles.popupContent}`}
+         style={popupStyles}
          onClick={(e) => e.stopPropagation()}
       >
          {children}
