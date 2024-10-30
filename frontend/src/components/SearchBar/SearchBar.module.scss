@@ -6,10 +6,9 @@
    justify-content: flex-start;
    background-color: $light-primary-background;
    gap: 0.7rem;
-   border-radius: $default-radius;
-   width: 25rem;
+   border-radius: $small-radius;
    border: 1px solid $light-gray-color;
-   padding: 0 1rem;
+   padding: 0.8rem 1rem;
    
    input {
       border: none;

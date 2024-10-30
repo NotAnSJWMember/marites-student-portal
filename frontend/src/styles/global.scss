@@ -18,7 +18,7 @@
    section {
       background-color: $light-primary-background;
       padding: 1.5rem;
-      border-radius: 0.5rem;
+      border-radius: $default-radius;
    }
 
    .sectionLabel {
@@ -38,9 +38,11 @@
    }
 }
 
-.cta {
-   cursor: pointer;
-   color: $light-primary-color;
+.badge {
+   border: 1px solid $light-gray-color;
+   border-radius: $small-radius;
+   width: max-content;
+   padding: 0.4rem 1rem;
 }
 
 .submitBtn {
@@ -125,7 +127,7 @@
 
 .twoColumn {
    display: grid;
-   grid-template-columns: repeat(2, 50%);
+   grid-template-columns: repeat(2, 1fr);
    gap: 0.7rem;
 }
 

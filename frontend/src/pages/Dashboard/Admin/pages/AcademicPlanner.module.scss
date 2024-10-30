@@ -1,13 +1,77 @@
 @import "../../../../styles/global.scss";
 
+.line {
+   background-color: $light-gray-color;
+}
+
 .overviewContainer {
    display: grid;
    grid-template-columns: repeat(3, 1fr);
    gap: 1rem;
 
    .overviewCard {
+      display: flex;
+      flex-direction: column;
       border: 1px solid $light-gray-color;
       border-radius: $small-radius;
-      padding: 1rem;
+      padding: 1.5rem;
+      gap: 1.25rem;
+
+      .cta {
+         display: grid;
+         grid-template-columns: 70% 1fr;
+         align-items: flex-start;
+         width: 100%;
+      }
+
+      p {
+         color: $light-gray-color-600;
+      }
+
+      .flexContainer {
+         display: flex;
+         align-items: center;
+         gap: 1.25rem;
+
+         .iconBtn {
+            background-color: $light-green-color-200;
+            color: $light-primary-background;
+            padding: 0.8rem;
+         }
+
+         h2 {
+            font-size: 1.6rem;
+         }
+      }
+   }
+}
+
+.semesterSummary {
+   display: flex;
+   flex-direction: column;
+   gap: 1.25rem;
+
+   h4 {
+      font-weight: 600;
+   }
+
+   .semesterTitle {
+      h2 {
+         margin-bottom: 0.2rem;
+      }
+
+      p {
+         color: $light-gray-color-600;
+      }
+   }
+
+   .semesterDates {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+
+      p {
+         color: $light-gray-color-600;
+      }
    }
 }
