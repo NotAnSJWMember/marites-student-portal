@@ -19,6 +19,8 @@ import { NotificationModule } from './modules/notification/notification.module';
 import { ProgramModule } from './modules/program/program.module';
 import { ScheduleModule } from './modules/schedule/schedule.module';
 import { UserModule } from './modules/user/user.module';
+import { CurriculumService } from './modules/curriculum/curriculum.service';
+import { CurriculumModule } from './modules/curriculum/curriculum.module';
 
 @Module({
    imports: [
@@ -44,9 +46,10 @@ import { UserModule } from './modules/user/user.module';
       BlockSectionModule,
       ProgramModule,
       InstructorModule,
+      CurriculumModule,
    ],
    controllers: [AppController],
-   providers: [AppService],
+   providers: [AppService, CurriculumService],
    exports: [JwtModule],
 })
 export class AppModule {}

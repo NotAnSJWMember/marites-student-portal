@@ -48,4 +48,9 @@ export class CourseController {
       await this.courseService.createDummyData();
       return 'Dummy courses created successfully!';
    }
+
+   @Post('test/:userId')
+   async test(@Param('userId') id: string): Promise<void> {
+      return this.courseService.testData(id);
+   }
 }

@@ -11,6 +11,7 @@ import {
 import { Type } from 'class-transformer';
 import { Status } from './student.schema';
 import { CreateUserDto } from '../../user.dto';
+import { Types } from 'mongoose';
 
 class CourseRecordDto {
    @IsMongoId()
@@ -47,4 +48,7 @@ export class CreateStudentDto extends CreateUserDto {
    @Type(() => CourseRecordDto)
    @IsOptional()
    courseRecords?: CourseRecordDto[];
+
+   @IsArray()
+   courses: Types.ObjectId[];
 }

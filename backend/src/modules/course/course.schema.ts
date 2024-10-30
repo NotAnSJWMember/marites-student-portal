@@ -6,6 +6,9 @@ export class Course extends Document {
    @Prop({ required: true, type: Types.ObjectId })
    courseId: Types.ObjectId;
 
+   @Prop({ required: true, ref: 'User' })
+   instructorId: string;
+
    @Prop({ required: true, unique: true })
    courseCode: string;
 

@@ -1,14 +1,34 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+   BadRequestException,
+   Injectable,
+   NotFoundException,
+} from '@nestjs/common';
 import { Course } from './course.schema';
 import { CreateCourseDto } from './course.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
+import { User } from '../user/user.schema';
 
 @Injectable()
 export class CourseService {
-   constructor(@InjectModel(Course.name) private courseModel: Model<Course>) {}
+   constructor(
+      @InjectModel(User.name) private userModel: Model<User>,
+      @InjectModel(Course.name) private courseModel: Model<Course>,
+   ) {}
 
    async create(createCourseDto: CreateCourseDto): Promise<Course> {
+      const { instructorId } = createCourseDto;
+
+      const instructor = await this.userModel.findOne({
+         userId: instructorId,
+         role: 'instructor',
+      });
+
+      if (!instructor)
+         throw new BadRequestException(
+            `The instructor ID (${instructorId}) provided does not belong to the role instructor.`,
+         );
+
       const newCourse = new this.courseModel(createCourseDto);
       return newCourse.save();
    }
@@ -48,189 +68,32 @@ export class CourseService {
 
    async createDummyData(): Promise<void> {
       const dummyCourses: CreateCourseDto[] = [
-         // General Education & Core Subjects
          {
             courseId: new Types.ObjectId(),
-            courseCode: 'MATH102',
-            courseDescription: 'Calculus I',
+            instructorId: '000001',
+            courseCode: 'TITTT',
+            courseDescription: 'Calculus XXX',
             labHour: 0,
             lecHour: 4,
             totalUnit: 4,
          },
-         {
-            courseId: new Types.ObjectId(),
-            courseCode: 'MATH103',
-            courseDescription: 'Linear Algebra',
-            labHour: 0,
-            lecHour: 3,
-            totalUnit: 3,
-         },
-         {
-            courseId: new Types.ObjectId(),
-            courseCode: 'PHY101',
-            courseDescription: 'General Physics I',
-            labHour: 1,
-            lecHour: 3,
-            totalUnit: 4,
-         },
-         {
-            courseId: new Types.ObjectId(),
-            courseCode: 'PHY102',
-            courseDescription: 'General Physics II',
-            labHour: 1,
-            lecHour: 3,
-            totalUnit: 4,
-         },
-         {
-            courseId: new Types.ObjectId(),
-            courseCode: 'CHEM101',
-            courseDescription: 'General Chemistry',
-            labHour: 2,
-            lecHour: 2,
-            totalUnit: 4,
-         },
-         {
-            courseId: new Types.ObjectId(),
-            courseCode: 'BIO101',
-            courseDescription: 'Introduction to Biology',
-            labHour: 2,
-            lecHour: 2,
-            totalUnit: 4,
-         },
-         {
-            courseId: new Types.ObjectId(),
-            courseCode: 'STAT101',
-            courseDescription: 'Introduction to Statistics',
-            labHour: 0,
-            lecHour: 3,
-            totalUnit: 3,
-         },
-         {
-            courseId: new Types.ObjectId(),
-            courseCode: 'HUM101',
-            courseDescription: 'Introduction to Philosophy',
-            labHour: 0,
-            lecHour: 3,
-            totalUnit: 3,
-         },
-         {
-            courseId: new Types.ObjectId(),
-            courseCode: 'HUM102',
-            courseDescription: 'Art Appreciation',
-            labHour: 0,
-            lecHour: 3,
-            totalUnit: 3,
-         },
-         {
-            courseId: new Types.ObjectId(),
-            courseCode: 'SOC101',
-            courseDescription: 'Introduction to Sociology',
-            labHour: 0,
-            lecHour: 3,
-            totalUnit: 3,
-         },
-
-         // IT & Computer Science Related
-         {
-            courseId: new Types.ObjectId(),
-            courseCode: 'BSIT405',
-            courseDescription: 'Artificial Intelligence',
-            labHour: 1,
-            lecHour: 2,
-            totalUnit: 3,
-         },
-         {
-            courseId: new Types.ObjectId(),
-            courseCode: 'BSIT406',
-            courseDescription: 'Cloud Computing',
-            labHour: 2,
-            lecHour: 2,
-            totalUnit: 4,
-         },
-         {
-            courseId: new Types.ObjectId(),
-            courseCode: 'BSIT407',
-            courseDescription: 'Advanced Programming Techniques',
-            labHour: 2,
-            lecHour: 3,
-            totalUnit: 5,
-         },
-         {
-            courseId: new Types.ObjectId(),
-            courseCode: 'BSIT408',
-            courseDescription: 'Game Development',
-            labHour: 2,
-            lecHour: 2,
-            totalUnit: 4,
-         },
-         {
-            courseId: new Types.ObjectId(),
-            courseCode: 'BSIT409',
-            courseDescription: 'Blockchain Technology',
-            labHour: 1,
-            lecHour: 2,
-            totalUnit: 3,
-         },
-         {
-            courseId: new Types.ObjectId(),
-            courseCode: 'BSIT410',
-            courseDescription: 'Internet of Things (IoT)',
-            labHour: 2,
-            lecHour: 2,
-            totalUnit: 4,
-         },
-         {
-            courseId: new Types.ObjectId(),
-            courseCode: 'BSIT411',
-            courseDescription: 'Big Data Analytics',
-            labHour: 2,
-            lecHour: 2,
-            totalUnit: 4,
-         },
-         {
-            courseId: new Types.ObjectId(),
-            courseCode: 'BSIT412',
-            courseDescription: 'Machine Learning',
-            labHour: 2,
-            lecHour: 2,
-            totalUnit: 4,
-         },
-
-         // Business & Economics
-         {
-            courseId: new Types.ObjectId(),
-            courseCode: 'BUS101',
-            courseDescription: 'Principles of Management',
-            labHour: 0,
-            lecHour: 3,
-            totalUnit: 3,
-         },
-         {
-            courseId: new Types.ObjectId(),
-            courseCode: 'BUS102',
-            courseDescription: 'Principles of Marketing',
-            labHour: 0,
-            lecHour: 3,
-            totalUnit: 3,
-         },
-         {
-            courseId: new Types.ObjectId(),
-            courseCode: 'ECO101',
-            courseDescription: 'Introduction to Microeconomics',
-            labHour: 0,
-            lecHour: 3,
-            totalUnit: 3,
-         },
-         {
-            courseId: new Types.ObjectId(),
-            courseCode: 'ECO102',
-            courseDescription: 'Introduction to Macroeconomics',
-            labHour: 0,
-            lecHour: 3,
-            totalUnit: 3,
-         },
       ];
 
       await this.courseModel.insertMany(dummyCourses);
+   }
+
+   async testData(id: string): Promise<void> {
+      const courses: Course[] = await this.findAll();
+
+      console.log(id);
+      console.log(courses);
+
+      for (const course of courses) {
+         console.log(course.instructorId);
+      }
+
+      // this.courseModel.findOne({
+      //    instructorId:
+      // })
    }
 }

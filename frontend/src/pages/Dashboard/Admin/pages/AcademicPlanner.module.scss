@@ -1,0 +1,13 @@
+@import "../../../../styles/global.scss";
+
+.overviewContainer {
+   display: grid;
+   grid-template-columns: repeat(3, 1fr);
+   gap: 1rem;
+
+   .overviewCard {
+      border: 1px solid $light-gray-color;
+      border-radius: $small-radius;
+      padding: 1rem;
+   }
+}

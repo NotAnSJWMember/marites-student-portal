@@ -9,6 +9,9 @@ export class Enrollment extends Document {
    @Prop({ required: true, type: Types.ObjectId, ref: 'Schedule' })
    scheduleId: Types.ObjectId;
 
+   @Prop({ required: true, type: Types.ObjectId, ref: 'Curriculum' })
+   curriculumId: Types.ObjectId;
+
    @Prop({ required: true, type: Types.ObjectId, ref: 'Program' })
    programId: Types.ObjectId;
 
@@ -33,7 +36,7 @@ export class Enrollment extends Document {
    @Prop({ required: true, default: false })
    dropped: boolean;
 
-   @Prop({ required: true, type: Date })
+   @Prop({ required: true, type: Date, default: Date.now() })
    dateEnrolled: Date;
 }
 

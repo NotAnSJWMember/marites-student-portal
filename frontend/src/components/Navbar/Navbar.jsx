@@ -36,7 +36,7 @@ export const Navbar = ({ role }) => {
          "/student/dashboard/announcements": "announcements",
          "/admin/dashboard": "dashboard",
          "/admin/dashboard/user-management": "userManagement",
-         "/admin/dashboard/course-management": "courseManagement",
+         "/admin/dashboard/academic-planner": "academicPlanner",
          "/admin/dashboard/reports": "reports",
          "/admin/dashboard/system-settings": "systemSettings",
          "/admin/dashboard/manage-notifications": "manageNotifications",
@@ -235,20 +235,20 @@ export const Navbar = ({ role }) => {
                         </button>
                      </Link>
                      <Link
-                        to="/admin/dashboard/course-management"
+                        to="/admin/dashboard/academic-planner"
                         className={styles.itemBtn}
-                        onClick={() => handleTabClick("courseManagement")}
+                        onClick={() => handleTabClick("academicPlanner")}
                      >
                         <button
                            type="button"
                            className={
-                              activeTab === "courseManagement"
+                              activeTab === "academicPlanner"
                                  ? styles.active
                                  : ""
                            }
                         >
                            <TbCertificate size={ICON_SIZE} />
-                           Course Management
+                           Academic Planner
                         </button>
                      </Link>
                      <Link

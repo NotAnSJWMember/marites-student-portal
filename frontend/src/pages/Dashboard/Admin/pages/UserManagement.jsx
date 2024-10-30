@@ -108,133 +108,136 @@ const UserManagement = () => {
       return format(new Date(isoString), "MMMM d, yyyy");
    };
 
-   if (loading) return <Loading />;
    if (error) showError("Oops! Something went wrong", error);
 
    return (
       <Layout role="admin" pageName="User Management">
          <main className={styles.mainContent}>
-            <section className={styles.table}>
-               <div className={styles.toolHeader}>
-                  <div className={styles.labelContainer}>
-                     <h3>
-                        All users <span>{users.length}</span>
-                     </h3>
-                  </div>
-                  <div className={styles.toolContainer}>
-                     <SearchBar />
-                     <button
-                        type="button"
-                        className={`${styles.filterBtn} ${styles.iconBtn}`}
-                     >
-                        <TbFilter size={SMALL_ICON_SIZE} />
-                        Filters
-                     </button>
-                     <button
-                        type="button"
-                        onClick={togglePopupCenter}
-                        className={`${styles.filterBtn} ${styles.iconBtn}`}
-                     >
-                        <TbPlus size={SMALL_ICON_SIZE} />
-                        Add user
-                     </button>
-                  </div>
-               </div>
-               <div className={styles.tableHeader}>
-                  <Checkbox
-                     id="select-all"
-                     isChecked={selectedUsers.length === currentUsers.length}
-                     onChange={handleSelectAll}
-                  />
-                  <h4>Name</h4>
-                  <h4>Role</h4>
-                  <h4>Last Active</h4>
-                  <h4>Date Added</h4>
-               </div>
-               <div className={styles.tableContent}>
-                  {currentUsers.map((user) => (
-                     <div className={styles.tableItem} key={user.userId}>
-                        <Checkbox
-                           id={`checkbox-${user.userId}`}
-                           isChecked={selectedUsers.includes(user.userId)}
-                           onChange={() => handleCheckboxChange(user.userId)}
-                        />
-                        <div className={styles.userContainer}>
-                           <UserIcon image={userIcon} size={48} />
-                           <div className={styles.userInfo}>
-                              <h4>{`${user.firstName} ${user.lastName}`}</h4>
-                              <p>{user.email}</p>
-                           </div>
-                        </div>
-                        <p className={styles.role}>{user.role}</p>
-                        <p className={styles.lastActive}>
-                           {formatDate(user.lastActive)}
-                        </p>
-                        <p className={styles.createdAt}>
-                           {formatDate(user.createdAt)}
-                        </p>
+            {loading ? (
+               <Loading />
+            ) : (
+               <section className={styles.table}>
+                  <div className={styles.toolHeader}>
+                     <div className={styles.labelContainer}>
+                        <h3>
+                           All users <span>{users.length}</span>
+                        </h3>
+                     </div>
+                     <div className={styles.toolContainer}>
+                        <SearchBar />
                         <button
                            type="button"
-                           className={`${styles.actionBtn} ${styles.iconBtn}`}
-                           onClick={(event) =>
-                              togglePopupAction(user.userId, event)
-                           }
+                           className={`${styles.filterBtn} ${styles.iconBtn}`}
                         >
-                           <TbDotsVertical size={MEDIUM_ICON_SIZE} />
+                           <TbFilter size={SMALL_ICON_SIZE} />
+                           Filters
                         </button>
-                        {activePopup === user.userId && (
-                           <Popup
-                              show={isPopupVisible}
-                              close={closePopupAction}
-                              position={popupPosition}
-                           >
-                              <div className={styles.popupWrapper}>
-                                 <div className={styles.popupContent}>
-                                    <button
-                                       type="button"
-                                       className={styles.iconCta}
-                                    >
-                                       <TbEdit size={POPUP_ICON_SIZE} />
-                                       Edit details
-                                    </button>
-                                    <button
-                                       type="button"
-                                       className={styles.iconCta}
-                                    >
-                                       <TbFileArrowRight
-                                          size={POPUP_ICON_SIZE}
-                                       />
-                                       Export details
-                                    </button>
-                                    <button
-                                       type="button"
-                                       className={`${styles.deleteBtn} ${styles.iconCta}`}
-                                    >
-                                       <TbTrash size={POPUP_ICON_SIZE} />
-                                       Delete user
-                                    </button>
-                                 </div>
-                              </div>
-                           </Popup>
-                        )}
+                        <button
+                           type="button"
+                           onClick={togglePopupCenter}
+                           className={`${styles.filterBtn} ${styles.iconBtn}`}
+                        >
+                           <TbPlus size={SMALL_ICON_SIZE} />
+                           Add user
+                        </button>
                      </div>
-                  ))}
-               </div>
-               <div className={styles.pagination}>
-                  {[...Array(totalPages)].map((_, index) => (
-                     <button
-                        key={index}
-                        type="button"
-                        className={
-                           currentPage === index + 1 ? styles.active : ""
-                        }
-                        onClick={() => handlePageChange(index + 1)}
-                     >
-                        {index + 1}
-                     </button>
-                  ))}
-               </div>
-            </section>
+                  </div>
+                  <div className={styles.tableHeader}>
+                     <Checkbox
+                        id="select-all"
+                        isChecked={selectedUsers.length === currentUsers.length}
+                        onChange={handleSelectAll}
+                     />
+                     <h4>Name</h4>
+                     <h4>Role</h4>
+                     <h4>Last Active</h4>
+                     <h4>Date Added</h4>
+                  </div>
+                  <div className={styles.tableContent}>
+                     {currentUsers.map((user) => (
+                        <div className={styles.tableItem} key={user.userId}>
+                           <Checkbox
+                              id={`checkbox-${user.userId}`}
+                              isChecked={selectedUsers.includes(user.userId)}
+                              onChange={() => handleCheckboxChange(user.userId)}
+                           />
+                           <div className={styles.userContainer}>
+                              <UserIcon image={userIcon} size={48} />
+                              <div className={styles.userInfo}>
+                                 <h4>{`${user.firstName} ${user.lastName}`}</h4>
+                                 <p>{user.email}</p>
+                              </div>
+                           </div>
+                           <p className={styles.role}>{user.role}</p>
+                           <p className={styles.lastActive}>
+                              {formatDate(user.lastActive)}
+                           </p>
+                           <p className={styles.createdAt}>
+                              {formatDate(user.createdAt)}
+                           </p>
+                           <button
+                              type="button"
+                              className={`${styles.actionBtn} ${styles.iconBtn}`}
+                              onClick={(event) =>
+                                 togglePopupAction(user.userId, event)
+                              }
+                           >
+                              <TbDotsVertical size={MEDIUM_ICON_SIZE} />
+                           </button>
+                           {activePopup === user.userId && (
+                              <Popup
+                                 show={isPopupVisible}
+                                 close={closePopupAction}
+                                 position={popupPosition}
+                              >
+                                 <div className={styles.popupWrapper}>
+                                    <div className={styles.popupContent}>
+                                       <button
+                                          type="button"
+                                          className={styles.iconCta}
+                                       >
+                                          <TbEdit size={POPUP_ICON_SIZE} />
+                                          Edit details
+                                       </button>
+                                       <button
+                                          type="button"
+                                          className={styles.iconCta}
+                                       >
+                                          <TbFileArrowRight
+                                             size={POPUP_ICON_SIZE}
+                                          />
+                                          Export details
+                                       </button>
+                                       <button
+                                          type="button"
+                                          className={`${styles.deleteBtn} ${styles.iconCta}`}
+                                       >
+                                          <TbTrash size={POPUP_ICON_SIZE} />
+                                          Delete user
+                                       </button>
+                                    </div>
+                                 </div>
+                              </Popup>
+                           )}
+                        </div>
+                     ))}
+                  </div>
+                  <div className={styles.pagination}>
+                     {[...Array(totalPages)].map((_, index) => (
+                        <button
+                           key={index}
+                           type="button"
+                           className={
+                              currentPage === index + 1 ? styles.active : ""
+                           }
+                           onClick={() => handlePageChange(index + 1)}
+                        >
+                           {index + 1}
+                        </button>
+                     ))}
+                  </div>
+               </section>
+            )}
          </main>
          <Popup
             show={isPopupCenterVisible}

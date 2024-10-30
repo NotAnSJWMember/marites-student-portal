@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Enrollment } from './enrollment.schema';
 import { CreateEnrollmentDto } from './enrollment.dto';
 import { ProgramService } from '../program/program.service';
@@ -61,12 +61,12 @@ export class EnrollmentService {
       return this.enrollmentModel.find().exec();
    }
 
-   async findOne(id: string): Promise<Enrollment> {
+   async findOne(id: Types.ObjectId): Promise<Enrollment> {
       return this.enrollmentModel.findById(id).exec();
    }
 
    async update(
-      id: string,
+      id: Types.ObjectId,
       newData: Partial<CreateEnrollmentDto>,
    ): Promise<Enrollment> {
       return this.enrollmentModel
@@ -74,7 +74,7 @@ export class EnrollmentService {
          .exec();
    }
 
-   async delete(id: string): Promise<Enrollment> {
+   async delete(id: Types.ObjectId): Promise<Enrollment> {
       return this.enrollmentModel.findByIdAndDelete(id).exec();
    }
 }

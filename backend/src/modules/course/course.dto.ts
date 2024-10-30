@@ -6,6 +6,9 @@ export class CreateCourseDto {
    courseId: Types.ObjectId;
 
    @IsNotEmpty()
+   instructorId: string;
+
+   @IsNotEmpty()
    @IsString()
    courseCode: string;
 

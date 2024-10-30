@@ -23,7 +23,7 @@ export class Student extends User {
    @Prop({ type: Date, default: Date.now() })
    enrollmentDate: Date;
 
-   @Prop({ default: 1, required: true })
+   @Prop({ default: 1, required: true, min: 1 })
    currentSemester: number;
 
    @Prop({
@@ -35,7 +35,7 @@ export class Student extends User {
                enum: Object.values(Status),
                default: 'enrolled',
             },
-            grade: Number,
+            grade: { type: Number, min: 0, max: 100 },
          },
       ],
       default: [],
@@ -45,6 +45,9 @@ export class Student extends User {
       status: string;
       grade?: number;
    }[];
+
+   @Prop({ type: [Types.ObjectId], ref: 'Course' })
+   courses: Types.ObjectId[];
 }
 
 export const StudentSchema = SchemaFactory.createForClass(Student);

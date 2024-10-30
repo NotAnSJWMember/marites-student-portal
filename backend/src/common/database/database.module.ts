@@ -31,6 +31,10 @@ import {
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Admin, AdminSchema } from 'src/modules/user/roles/admin/admin.schema';
+import {
+   Curriculum,
+   CurriculumSchema,
+} from 'src/modules/curriculum/curriculum.schema';
 
 @Module({
    imports: [
@@ -49,6 +53,7 @@ import { Admin, AdminSchema } from 'src/modules/user/roles/admin/admin.schema';
          { name: Assignment.name, schema: AssignmentSchema },
          { name: Notification.name, schema: NotificationSchema },
          { name: Finance.name, schema: FinanceSchema },
+         { name: Curriculum.name, schema: CurriculumSchema },
       ]),
    ],
    exports: [MongooseModule],

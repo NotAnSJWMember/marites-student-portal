@@ -12,6 +12,7 @@ import StudentDashboard from "./pages/Dashboard/Student/StudentDashboard";
 import InstructorDashboard from "./pages/Dashboard/Instructor/InstructorDashboard";
 
 import "./App.scss";
+import AcademicPlanner from "pages/Dashboard/Admin/pages/AcademicPlanner";
 
 function App() {
    return (
@@ -38,6 +39,15 @@ function App() {
                   element={
                      <PrivateRoute
                         element={<UserManagement />}
+                        roles={["admin"]}
+                     />
+                  }
+               />
+               <Route
+                  path="/admin/dashboard/academic-planner"
+                  element={
+                     <PrivateRoute
+                        element={<AcademicPlanner />}
                         roles={["admin"]}
                      />
                   }
