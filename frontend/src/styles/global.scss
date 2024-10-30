@@ -136,3 +136,13 @@
    font-style: italic;
    color: #c92f2f;
 }
+
+.title {
+   margin-bottom: 0.3rem;
+}
+
+.desc {
+   text-wrap: balance;
+   line-height: 1.3rem;
+   color: $light-gray-color-600;
+}

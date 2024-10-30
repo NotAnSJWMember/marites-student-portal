@@ -1,0 +1,69 @@
+@import "../../../../styles/global.scss";
+
+.line {
+   background-color: $light-gray-color;
+}
+
+.selectProgram {
+   display: grid;
+   grid-template-columns: 30% 1fr;
+   grid-template-rows: repeat(3, max-content);
+   gap: 2rem 0;
+
+   .iconLabel {
+      grid-row-start: 1;
+      color: $light-green-color-200;
+   }
+
+   .info {
+      grid-row-start: 2;
+      
+      .title {
+         font-size: 1.8rem;
+      }
+   }
+
+   .programsList {
+      display: grid;
+      grid-row-start: 2;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1rem;
+
+      .programCard {
+         cursor: pointer;
+         display: flex;
+         flex-direction: column;
+         justify-content: space-between;
+         border: 1px solid $light-gray-color;
+         border-radius: $small-radius;
+         padding: 1rem;
+         gap: 1rem;
+         transition: 300ms $trans-fast;
+
+         &:hover {
+            border: 1px solid $light-primary-text;
+         }
+
+         &.active {
+            border: 1px solid $light-primary-text;
+         }
+
+         h3 {
+            font-weight: 500;
+         }
+
+         .badge {
+            font-size: 0.8rem;
+            justify-self: start;
+            align-self: end;
+         }
+      }
+   }
+}
+
+.nextBtn {
+   grid-row-start: 3;
+   grid-column-start: 2;
+   justify-self: end;
+   background-color: $light-green-color-200;
+}

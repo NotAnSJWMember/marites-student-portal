@@ -20,11 +20,6 @@ const AcademicPlanner = () => {
    const { data: programs } = useFetchData("program", token);
    const { data: curriculums } = useFetchData("curriculum", token);
 
-   const semesterInfo = {
-      term: "Fall 2024",
-      registrationDeadline: "Nov 1, 2024",
-      examStart: "Dec 5, 2024",
-   };
    const stats = {
       totalStudents: 1200,
       averageCompletionRate: "85%",
@@ -35,7 +30,10 @@ const AcademicPlanner = () => {
       <Layout role="admin" pageName="Academic Planner">
          <main className={styles.mainContent}>
             <section className={styles.overviewContainer}>
-               <div className={styles.overviewCard}>
+               <a
+                  href="/admin/dashboard/academic-planner/courses"
+                  className={styles.overviewCard}
+               >
                   <div className={styles.flexContainer}>
                      <div className={styles.iconBtn}>
                         <TbSchool size={LARGE_ICON_SIZE} />
@@ -53,8 +51,11 @@ const AcademicPlanner = () => {
                         style={{ justifySelf: "self-end" }}
                      />
                   </div>
-               </div>
-               <div className={styles.overviewCard}>
+               </a>
+               <a
+                  href="/admin/dashboard/academic-planner/programs"
+                  className={styles.overviewCard}
+               >
                   <div className={styles.flexContainer}>
                      <div className={styles.iconBtn}>
                         <TbCertificate2 size={LARGE_ICON_SIZE} />
@@ -72,8 +73,11 @@ const AcademicPlanner = () => {
                         style={{ justifySelf: "self-end" }}
                      />
                   </div>
-               </div>
-               <div className={styles.overviewCard}>
+               </a>
+               <a
+                  href="/admin/dashboard/academic-planner/curriculums"
+                  className={styles.overviewCard}
+               >
                   <div className={styles.flexContainer}>
                      <div className={styles.iconBtn}>
                         <TbNotes size={LARGE_ICON_SIZE} />
@@ -91,7 +95,7 @@ const AcademicPlanner = () => {
                         style={{ justifySelf: "self-end" }}
                      />
                   </div>
-               </div>
+               </a>
             </section>
             <section>
                <SearchBar width="100%" />
