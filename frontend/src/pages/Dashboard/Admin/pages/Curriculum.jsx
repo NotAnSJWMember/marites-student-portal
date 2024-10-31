@@ -3,16 +3,23 @@ import Layout from "components/Layout/Layout";
 import useFetchData from "hooks/useFetchData";
 
 import styles from "./Curriculum.module.scss";
-import { TbArrowNarrowLeft } from "react-icons/tb";
+import {
+   TbArrowNarrowLeft,
+   TbCheck,
+   TbCircleCheck,
+   TbCircleCheckFilled,
+} from "react-icons/tb";
 import { useForm } from "react-hook-form";
 import { MessageWarning } from "components/ui/Message/MessageWarning";
 import usePostData from "hooks/usePostData";
 import { FormSelect } from "components/ui/Form";
 import Switch from "components/ui/Switch/Switch";
+import Loading from "components/Loading/Loading";
 
 const Curriculum = () => {
    const [currentStep, setCurrentStep] = useState(1);
    const [isSwitchOn, setIsSwitchOn] = useState(false);
+   const [showMessage, setShowMessage] = useState(false);
    const [isPopupVisible, setIsPopupVisible] = useState(false);
    const [selectedProgram, setSelectedProgram] = useState(null);
    const [programData, setProgramData] = useState(null);
@@ -45,23 +52,17 @@ const Curriculum = () => {
    const handleNextStep = () => setCurrentStep((prevStep) => prevStep + 1);
    const handlePreviousStep = () => setCurrentStep((prevStep) => prevStep - 1);
 
-   const handleSelectProgram = (event) => {
-      const key = event.currentTarget.getAttribute("data-code");
-
-      if (selectedProgram === key) {
+   const handleSelectProgram = (program) => {
+      if (selectedProgram === program) {
          setSelectedProgram(null);
          setProgramData(null);
          setCurriculumData(null);
       } else {
-         setSelectedProgram(key);
-
-         const programData = programs.find(
-            (program) => program.collegeCode === key
-         );
-         setProgramData(programData);
+         setSelectedProgram(program);
+         setProgramData(program);
 
          const curriculumData = curriculums.find(
-            (curriculum) => curriculum._id === programData._id
+            (curriculum) => curriculum.programId === program.programId
          );
          setCurriculumData(curriculumData);
       }
@@ -94,6 +95,9 @@ const Curriculum = () => {
                course,
             ]);
          } else if (currentCount + 1 === 2) {
+            setSelectedCourses((prevSelectedCourses) =>
+               prevSelectedCourses.filter((c) => c !== course)
+            );
             setSelectedElectiveCourses((prevSelectedCourses) => [
                ...prevSelectedCourses,
                course,
@@ -128,21 +132,41 @@ const Curriculum = () => {
    };
 
    const onCreateSubmit = async (data) => {
-      const endpoint = "curriculum/create";
-      await postData(data, endpoint, token);
-      setShowPopup(true);
+      if (selectedCourses.length === 0) {
+         console.log("No selected courses");
+         return;
+      }
+
+      const courseIds = selectedCourses.map((c) => c.courseId);
+      const electiveCourseIds = selectedElectiveCourses.map((c) => c.courseId);
+
+      console.log("Form data:", data);
+      console.log("Courses:", courseIds);
+      console.log("Elective courses:", electiveCourseIds);
+
+      const payload = {
+         ...data,
+         courses: courseIds,
+         electiveCourses: electiveCourseIds,
+         programId: selectedProgram.programId,
+      };
+      const endpoint = "curriculum";
+      await postData(payload, endpoint, token);
+      handleNextStep();
    };
 
    return (
       <Layout role="admin" pageName="Curriculum">
          <div className={styles.mainContent}>
             <section className={styles.wrapper}>
-               <a href="/admin/dashboard/academic-planner">
-                  <div className={styles.iconLabel}>
-                     <TbArrowNarrowLeft size={24} />
-                     <p>Return to page</p>
-                  </div>
-               </a>
+               {currentStep !== 3 && (
+                  <a href="/admin/dashboard/academic-planner">
+                     <div className={styles.iconLabel}>
+                        <TbArrowNarrowLeft size={24} />
+                        <p>Return to page</p>
+                     </div>
+                  </a>
+               )}
                {currentStep === 1 && (
                   <>
                      <div className={styles.selectProgram}>
@@ -166,12 +190,12 @@ const Curriculum = () => {
                            {programs.map((program) => (
                               <div
                                  className={`${styles.programCard} ${
-                                    selectedProgram === program.collegeCode
+                                    selectedProgram?.collegeCode ===
+                                    program?.collegeCode
                                        ? styles.active
                                        : ""
                                  }`}
-                                 onClick={handleSelectProgram}
-                                 data-code={program.collegeCode}
+                                 onClick={() => handleSelectProgram(program)}
                                  key={program.collegeCode}
                               >
                                  <h3>{program.programDescription}</h3>
@@ -185,7 +209,7 @@ const Curriculum = () => {
                      <button
                         type="button"
                         onClick={handleNextStep}
-                        className={`${styles.submitBtn} ${styles.ctaBtn}`}
+                        className={`${styles.primaryBtn} ${styles.ctaBtn}`}
                      >
                         Next step
                      </button>
@@ -205,7 +229,7 @@ const Curriculum = () => {
                               <h2>Year Level</h2>
                               <FormSelect
                                  register={register}
-                                 name="Year"
+                                 name="yearLevel"
                                  options={Array.from(
                                     { length: programData.duration },
                                     (_, index) => ({
@@ -220,7 +244,7 @@ const Curriculum = () => {
                               <h2>Semester</h2>
                               <FormSelect
                                  register={register}
-                                 name="Semester"
+                                 name="semester"
                                  options={[
                                     { value: "1", label: "1st Semester" },
                                     { value: "2", label: "2nd Semester" },
@@ -312,13 +336,36 @@ const Curriculum = () => {
                               </button>
                               <button
                                  type="button"
-                                 className={styles.submitBtn}
+                                 onClick={handleSubmit(onCreateSubmit)}
+                                 className={styles.primaryBtn}
                               >
-                                 Create curriculum
+                                 Create curriculum {loading && <Loading />}
                               </button>
                            </div>
                         </form>
                      )}
+                  </>
+               )}
+               {currentStep === 3 && (
+                  <>
+                     <div className={styles.success}>
+                        <div className={styles.content}>
+                           <TbCircleCheckFilled color="green" size={100} />
+                           <h2 className={styles.title}>
+                              Curriculum created succesfully!
+                           </h2>
+                           <p className={styles.desc}>
+                              You can head back now to the inital page and
+                              choose another program to create/edit its
+                              curriculum.
+                           </p>
+                        </div>
+                        <a href="/admin/dashboard/academic-planner/curriculums">
+                           <button type="button" className={styles.primaryBtn}>
+                              Back to initial page
+                           </button>
+                        </a>
+                     </div>
                   </>
                )}
             </section>

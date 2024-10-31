@@ -181,7 +181,7 @@ export const FormUser = ({ closePopup, onNext }) => {
                <button
                   type="submit"
                   onClick={onNext}
-                  className={`${styles.submitBtn} ${styles.ctaBtn}`}
+                  className={`${styles.primaryBtn} ${styles.ctaBtn}`}
                >
                   Next step
                </button>

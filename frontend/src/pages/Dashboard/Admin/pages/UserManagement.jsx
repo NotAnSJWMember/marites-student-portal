@@ -326,7 +326,7 @@ const UserManagement = () => {
                               <button
                                  type="submit"
                                  onClick={handleNextStep}
-                                 className={`${styles.submitBtn} ${styles.ctaBtn}`}
+                                 className={`${styles.primaryBtn} ${styles.ctaBtn}`}
                               >
                                  Next step
                               </button>

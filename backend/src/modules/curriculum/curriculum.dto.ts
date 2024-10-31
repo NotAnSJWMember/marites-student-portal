@@ -1,10 +1,4 @@
-import {
-   IsArray,
-   IsMongoId,
-   IsNotEmpty,
-   IsNumber,
-   IsString,
-} from 'class-validator';
+import { IsArray, IsMongoId, IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateCurriculumDto {
    @IsNotEmpty()
@@ -12,7 +6,6 @@ export class CreateCurriculumDto {
    programId: string;
 
    @IsNotEmpty()
-   @IsNumber()
    yearLevel: number;
 
    @IsNotEmpty()

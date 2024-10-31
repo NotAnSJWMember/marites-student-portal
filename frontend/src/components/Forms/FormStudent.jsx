@@ -97,7 +97,7 @@ export const FormStudent = ({ onBack }) => {
                </button>
                <button
                   type="submit"
-                  className={`${styles.submitBtn} ${styles.ctaBtn}`}
+                  className={`${styles.primaryBtn} ${styles.ctaBtn}`}
                >
                   Add user
                </button>

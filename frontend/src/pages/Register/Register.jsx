@@ -242,7 +242,7 @@ const Register = () => {
                </div>
                <button
                   type="submit"
-                  className={styles.submitBtn}
+                  className={styles.primaryBtn}
                   title="Create account with given details"
                >
                   Create account
