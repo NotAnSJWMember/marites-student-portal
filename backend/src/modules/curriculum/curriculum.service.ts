@@ -18,11 +18,13 @@ export class CurriculumService {
    }
 
    async findAll(): Promise<Curriculum[]> {
+      this.logger.log(`Fetching ${this.curriculumModel.length} curriculums..`);
       return this.curriculumModel.find().exec();
    }
 
    async findOne(id: Types.ObjectId): Promise<Curriculum> {
       const curriculum = await this.curriculumModel.findById(id).exec();
+
       if (!curriculum) {
          throw new BadRequestException('Curriculum not found');
       }
@@ -36,6 +38,7 @@ export class CurriculumService {
       const curriculum = await this.curriculumModel
          .findByIdAndUpdate(id, newData, { new: true })
          .exec();
+
       if (!curriculum) {
          throw new BadRequestException('Curriculum not found');
       }

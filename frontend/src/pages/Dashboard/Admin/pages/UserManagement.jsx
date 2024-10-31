@@ -38,11 +38,10 @@ const UserManagement = () => {
    const [isPopupVisible, setIsPopupVisible] = useState(false);
    const [isPopupCenterVisible, setIsPopupCenterVisible] = useState(false);
 
-   const [currentPage, setCurrentPage] = useState(1);
    const [selectedUsers, setSelectedUsers] = useState([]);
-
    const [selectedRole, setSelectedRole] = useState(null);
-
+   
+   const [currentPage, setCurrentPage] = useState(1);
    const [currentStep, setCurrentStep] = useState(1);
 
    const token = localStorage.getItem("token");

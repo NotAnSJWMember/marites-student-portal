@@ -41,11 +41,20 @@
 .badge {
    border: 1px solid $light-gray-color;
    border-radius: $small-radius;
+   height: max-content;
    width: max-content;
    padding: 0.4rem 1rem;
 }
 
+.secondaryBtn {
+   border: 1px solid $light-primary-text;
+   border-radius: $small-radius;
+   color: $light-primary-text;
+}
+
 .submitBtn {
+   border-radius: $small-radius;
+   color: $light-primary-background;
    background-color: $light-green-color-200;
 }
 

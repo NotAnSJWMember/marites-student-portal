@@ -9,6 +9,7 @@ const Popup = ({
    children,
    handleClickOutside = true,
 }) => {
+   const positionClass = styles[position];
    const [shouldRender, setShouldRender] = useState(false);
    const popupRef = useRef(null);
 
@@ -57,7 +58,7 @@ const Popup = ({
    return (
       <div
          ref={popupRef}
-         className={`${styles.popupContent}`}
+         className={`${styles.popupContent} ${positionClass}`}
          style={popupStyles}
          onClick={(e) => e.stopPropagation()}
       >
