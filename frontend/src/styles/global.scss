@@ -55,7 +55,13 @@
 .submitBtn {
    border-radius: $small-radius;
    color: $light-primary-background;
-   background-color: $light-green-color-200;
+   background-color: $light-green-color-300;
+}
+
+.switchButton {
+   display: flex;
+   gap: 0.5rem;
+   font-size: 0.85rem;
 }
 
 .ctaBtn {

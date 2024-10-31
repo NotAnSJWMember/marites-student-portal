@@ -5,17 +5,21 @@ import useFetchData from "hooks/useFetchData";
 import styles from "./Curriculum.module.scss";
 import { TbArrowNarrowLeft } from "react-icons/tb";
 import { useForm } from "react-hook-form";
-import Popup from "components/Popup/Popup";
 import { MessageWarning } from "components/ui/Message/MessageWarning";
 import usePostData from "hooks/usePostData";
-import { FormInput, FormSelect } from "components/ui/Form";
+import { FormSelect } from "components/ui/Form";
+import Switch from "components/ui/Switch/Switch";
 
 const Curriculum = () => {
+   const [currentStep, setCurrentStep] = useState(1);
+   const [isSwitchOn, setIsSwitchOn] = useState(false);
    const [isPopupVisible, setIsPopupVisible] = useState(false);
    const [selectedProgram, setSelectedProgram] = useState(null);
    const [programData, setProgramData] = useState(null);
    const [curriculumData, setCurriculumData] = useState(null);
-   const [currentStep, setCurrentStep] = useState(1);
+   const [selectedCourses, setSelectedCourses] = useState([]);
+   const [selectedElectiveCourses, setSelectedElectiveCourses] = useState([]);
+   const [clickCounts, setClickCounts] = useState({});
 
    const {
       register,
@@ -32,22 +36,89 @@ const Curriculum = () => {
 
    const { postData, loading, setShowPopup } = usePostData();
 
+   const handleSwitch = () => {
+      setIsSwitchOn((prev) => !prev);
+      setClickCounts({});
+      setSelectedCourses([]);
+      setSelectedElectiveCourses([]);
+   };
    const handleNextStep = () => setCurrentStep((prevStep) => prevStep + 1);
    const handlePreviousStep = () => setCurrentStep((prevStep) => prevStep - 1);
 
    const handleSelectProgram = (event) => {
       const key = event.currentTarget.getAttribute("data-code");
-      setSelectedProgram(key);
 
-      const programData = programs.find(
-         (program) => program.collegeCode === key
-      );
-      setProgramData(programData);
-      const curriculumData = curriculums.find(
-         (curriculum) => curriculum._id === programData._id
-      );
+      if (selectedProgram === key) {
+         setSelectedProgram(null);
+         setProgramData(null);
+         setCurriculumData(null);
+      } else {
+         setSelectedProgram(key);
 
-      setCurriculumData(curriculumData);
+         const programData = programs.find(
+            (program) => program.collegeCode === key
+         );
+         setProgramData(programData);
+
+         const curriculumData = curriculums.find(
+            (curriculum) => curriculum._id === programData._id
+         );
+         setCurriculumData(curriculumData);
+      }
+   };
+
+   const handleSelectCourse = (course) => {
+      if (!isSwitchOn) {
+         setSelectedCourses((prevSelectedCourses) => {
+            if (prevSelectedCourses.includes(course)) {
+               return prevSelectedCourses.filter((c) => c !== course);
+            } else {
+               return [...prevSelectedCourses, course];
+            }
+         });
+      } else {
+         setClickCounts((prevCounts) => {
+            const newCount = (prevCounts[course.courseCode] || 0) + 1;
+
+            return {
+               ...prevCounts,
+               [course.courseCode]: newCount,
+            };
+         });
+
+         const currentCount = clickCounts[course.courseCode] || 0;
+
+         if (currentCount + 1 === 1) {
+            setSelectedCourses((prevSelectedCourses) => [
+               ...prevSelectedCourses,
+               course,
+            ]);
+         } else if (currentCount + 1 === 2) {
+            setSelectedElectiveCourses((prevSelectedCourses) => [
+               ...prevSelectedCourses,
+               course,
+            ]);
+         } else if (currentCount + 1 === 3) {
+            setSelectedCourses((prevSelectedCourses) =>
+               prevSelectedCourses.filter((c) => c !== course)
+            );
+            setSelectedElectiveCourses((prevSelectedCourses) =>
+               prevSelectedCourses.filter((c) => c !== course)
+            );
+            setClickCounts((prevCounts) => ({
+               ...prevCounts,
+               [course.courseCode]: 0,
+            }));
+            setClickCounts((prevCounts) => {
+               const newCount = (prevCounts[course.courseCode] || 0) + 1;
+
+               return {
+                  ...prevCounts,
+                  [course.courseCode]: newCount,
+               };
+            });
+         }
+      }
    };
 
    const togglePopup = () => setIsPopupVisible(true);
@@ -66,10 +137,12 @@ const Curriculum = () => {
       <Layout role="admin" pageName="Curriculum">
          <div className={styles.mainContent}>
             <section className={styles.wrapper}>
-               <div className={styles.iconLabel}>
-                  <TbArrowNarrowLeft size={24} />
-                  <p>Return to page</p>
-               </div>
+               <a href="/admin/dashboard/academic-planner">
+                  <div className={styles.iconLabel}>
+                     <TbArrowNarrowLeft size={24} />
+                     <p>Return to page</p>
+                  </div>
+               </a>
                {currentStep === 1 && (
                   <>
                      <div className={styles.selectProgram}>
@@ -112,7 +185,7 @@ const Curriculum = () => {
                      <button
                         type="button"
                         onClick={handleNextStep}
-                        className={`${styles.nextBtn} ${styles.ctaBtn}`}
+                        className={`${styles.submitBtn} ${styles.ctaBtn}`}
                      >
                         Next step
                      </button>
@@ -120,6 +193,9 @@ const Curriculum = () => {
                )}
                {currentStep === 2 && (
                   <>
+                     <div className={styles.programInfo}>
+                        <h1>{programData.programDescription}</h1>
+                     </div>
                      {curriculumData === undefined && (
                         <form
                            onSubmit={handleSubmit(onCreateSubmit)}
@@ -154,8 +230,22 @@ const Curriculum = () => {
                            <div className={styles.line}></div>
                            <div className={styles.coursesContainer}>
                               <div>
-                                 <h2>Course mapping</h2>
-                                 <button></button>
+                                 <h2 className={styles.title}>
+                                    Course mapping
+                                 </h2>
+                                 <p className={styles.desc}>
+                                    If you want to add elective courses, enable
+                                    the switch and just double click the course
+                                    card.
+                                 </p>
+                                 <br />
+                                 <div className={styles.switchButton}>
+                                    <Switch
+                                       checked={isSwitchOn}
+                                       onChange={handleSwitch}
+                                    />
+                                    <p>Add elective course?</p>
+                                 </div>
                               </div>
                               {courses.map((course) => {
                                  const instructor = users.find(
@@ -164,7 +254,21 @@ const Curriculum = () => {
                                  );
                                  return (
                                     <div
-                                       className={styles.courseCard}
+                                       className={`${styles.courseCard} ${
+                                          selectedCourses.includes(course)
+                                             ? styles.selected
+                                             : ""
+                                       } ${
+                                          selectedElectiveCourses.includes(
+                                             course
+                                          )
+                                             ? styles.selectedElective
+                                             : ""
+                                       }
+                                       `}
+                                       onClick={() =>
+                                          handleSelectCourse(course)
+                                       }
                                        key={course.courseCode}
                                     >
                                        <div className={styles.courseTitle}>
@@ -201,6 +305,7 @@ const Curriculum = () => {
                            <div className={styles.buttonContainer}>
                               <button
                                  type="button"
+                                 onClick={handlePreviousStep}
                                  className={styles.secondaryBtn}
                               >
                                  Previous step

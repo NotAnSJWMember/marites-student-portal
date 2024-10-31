@@ -12,11 +12,13 @@ $light-primary-background: #fcfcfc;
 $light-anchor-color: #2e6b3c;
 $light-hovered-color: #257a37;
 
-$light-yellow-color-100: #ffd255;
+$light-yellow-color-100: #ffe77a;
+$light-yellow-color-200: #ffd667;
+$light-yellow-color-300: #dbac2b;
 
-$light-green-color-100: #aeffae;
-$light-green-color-200: #3c853c;
-$light-green-color-300: #79ce79;
+$light-green-color-100: #9ef397;
+$light-green-color-200: #79ce79;
+$light-green-color-300: #3c853c;
 
 $light-gray-color: #dbdbdb;
 $light-gray-color-100: #e9e9e9;
@@ -28,8 +30,8 @@ $light-gray-color-600: #5c5c5c;
 $red-color-100: #ffdddd;
 $red-color-400: #ff7373;
 
-$trans-smooth: cubic-bezier(.26,0,.26,1);
-$trans-fast: cubic-bezier(0,-0.01,.13,1);
+$trans-smooth: cubic-bezier(0.26, 0, 0.26, 1);
+$trans-fast: cubic-bezier(0, -0.01, 0.13, 1);
 
 $box-padding-def: 2rem;
 $box-padding-small: 1.7rem;

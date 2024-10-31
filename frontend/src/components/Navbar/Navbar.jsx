@@ -37,6 +37,7 @@ export const Navbar = ({ role }) => {
          "/admin/dashboard": "dashboard",
          "/admin/dashboard/user-management": "userManagement",
          "/admin/dashboard/academic-planner": "academicPlanner",
+         "/admin/dashboard/academic-planner/curriculums": "academicPlanner",
          "/admin/dashboard/reports": "reports",
          "/admin/dashboard/system-settings": "systemSettings",
          "/admin/dashboard/manage-notifications": "manageNotifications",

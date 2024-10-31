@@ -18,7 +18,7 @@
       flex-wrap: wrap;
       gap: 1rem;
       padding: 1.5rem;
-      border-bottom: 1px solid $light-green-color-200;
+      border-bottom: 1px solid $light-green-color-300;
 
       img {
          display: block;
@@ -35,7 +35,7 @@
    .itemContainer {
       display: flex;
       flex-direction: column;
-      border-bottom: 1px solid $light-green-color-200;
+      border-bottom: 1px solid $light-green-color-300;
       padding: 1.5rem;
       gap: 0.3rem;
       width: 100%;

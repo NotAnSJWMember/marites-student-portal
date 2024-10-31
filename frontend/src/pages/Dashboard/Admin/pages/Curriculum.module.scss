@@ -14,7 +14,7 @@
 
    .iconLabel {
       grid-row-start: 1;
-      color: $light-green-color-200;
+      color: $light-green-color-300;
    }
 }
 
@@ -37,7 +37,7 @@
    .programsList {
       display: grid;
       grid-row-start: 2;
-      grid-template-columns: repeat(5, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 1rem;
 
       .programCard {
@@ -56,7 +56,16 @@
          }
 
          &.active {
-            border: 1px solid $light-primary-text;
+            background-color: $light-green-color-100;
+            border-color: $light-green-color-300;
+   
+            .badge {
+               border-color: $light-green-color-300;
+            }
+   
+            .line {
+               background-color: $light-green-color-300;
+            }
          }
 
          h3 {
@@ -72,8 +81,30 @@
    }
 }
 
+.programInfo {
+      margin-bottom: 2rem;
+
+   h1 {
+      font-size: 2.5rem;
+      max-width: 20ch;
+   }
+}
+
 form {
-   display: grid !important   ;
+   display: grid !important;
+
+   .twoColumn {
+      align-items: center;
+   }
+
+   h2 {
+      font-size: 1.1rem;
+      font-weight: 500;
+   }
+
+   .desc {
+      font-size: 0.9rem;
+   }
 }
 
 .coursesContainer {
@@ -82,13 +113,16 @@ form {
    gap: 1rem;
 
    .courseCard {
+      cursor: pointer;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      background-color: white;
       border: 1px solid $light-gray-color;
       border-radius: $small-radius;
       padding: 1rem;
       gap: 1rem;
+      transition: 300ms $trans-fast;
 
       .courseTitle {
          display: flex;
@@ -116,16 +150,46 @@ form {
             font-size: 0.8rem;
          }
       }
+
+      &:hover {
+         border: 1px solid $light-gray-color-400;
+      }
+
+      &.selected {
+         background-color: $light-green-color-100;
+         border-color: $light-green-color-300;
+
+         .badge {
+            border-color: $light-green-color-300;
+         }
+
+         .line {
+            background-color: $light-green-color-300;
+         }
+      }
+
+      &.selectedElective {
+         background-color: $light-yellow-color-100;
+         border-color: $light-secondary-color;
+
+         .badge {
+            border-color: $light-secondary-color;
+         }
+
+         .line {
+            background-color: $light-secondary-color;
+         }
+      }
    }
 }
 
 .buttonContainer {
    display: flex;
    justify-self: end;
-   gap: 1rem;
+   gap: 0.7rem;
 }
 
-.nextBtn {
+.submitBtn {
    justify-self: end;
-   background-color: $light-green-color-200;
+   background-color: $light-green-color-300;
 }
