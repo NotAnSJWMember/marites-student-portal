@@ -1,4 +1,3 @@
-// FormSelect.jsx
 import React from "react";
 
 const styles = {
@@ -12,19 +11,10 @@ const styles = {
    },
 };
 
-export const FormSelect = ({
-   name,
-   options,
-   register,
-   errorname,
-   errormessage,
-   onChange,
-}) => (
+export const FormSelect = ({ name, value, options, register, onChange }) => (
    <div className={styles.formItem}>
-      {errorname && <span style={styles.errorText}>{errormessage}</span>}
       <select
-         id={name}
-         {...register(name, { required: `${name} is required` })}
+         {...register(value, { required: `${name} is required` })}
          onChange={onChange}
          style={styles.select}
       >

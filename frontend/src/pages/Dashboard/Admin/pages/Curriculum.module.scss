@@ -45,6 +45,7 @@
          display: flex;
          flex-direction: column;
          justify-content: space-between;
+         background-color: white;
          border: 1px solid $light-gray-color;
          border-radius: $small-radius;
          padding: 1rem;
@@ -178,6 +179,26 @@ form {
 
          .line {
             background-color: $light-secondary-color;
+         }
+      }
+   }
+}
+
+.editWrapper {
+   .editContainer {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+
+      .curriculumContainer {
+         display: grid;
+         grid-template-columns: repeat(4, 1fr);
+         gap: 1rem;
+
+         .curriculumCard {
+            border: 1px solid $light-gray-color;
+            border-radius: $small-radius;
+            padding: 1rem;
          }
       }
    }

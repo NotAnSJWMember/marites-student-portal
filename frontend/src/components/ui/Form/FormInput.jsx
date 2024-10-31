@@ -1,4 +1,3 @@
-// FormInput.jsx
 import React from "react";
 
 const styles = {
@@ -16,6 +15,7 @@ const styles = {
 export const FormInput = ({
    type,
    name,
+   value,
    register,
    placeholder,
    ...props
@@ -26,7 +26,7 @@ export const FormInput = ({
          style={styles.input}
          type={type}
          id={name}
-         {...register(name, { required: `${name} is required` })}
+         {...register(value, { required: `${name} is required` })}
          {...props}
       />
    </div>

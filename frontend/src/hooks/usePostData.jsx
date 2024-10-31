@@ -35,7 +35,7 @@ const usePostData = () => {
       }
    };
 
-   return { postData, loading, setShowPopup, ...popupProps };
+   return { ...popupProps, postData, loading, setShowPopup,  };
 };
 
 export default usePostData;

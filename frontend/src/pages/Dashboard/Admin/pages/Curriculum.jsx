@@ -15,6 +15,7 @@ import usePostData from "hooks/usePostData";
 import { FormSelect } from "components/ui/Form";
 import Switch from "components/ui/Switch/Switch";
 import Loading from "components/Loading/Loading";
+import PopupAlert from "components/Popup/PopupAlert";
 
 const Curriculum = () => {
    const [currentStep, setCurrentStep] = useState(1);
@@ -41,7 +42,7 @@ const Curriculum = () => {
    const { data: courses } = useFetchData("course", token);
    const { data: users } = useFetchData("user", token);
 
-   const { postData, loading, setShowPopup } = usePostData();
+   const { postData, loading } = usePostData();
 
    const handleSwitch = () => {
       setIsSwitchOn((prev) => !prev);
@@ -182,7 +183,7 @@ const Curriculum = () => {
                            {curriculumData === undefined && (
                               <MessageWarning
                                  title="This program does not have a curriculum!"
-                                 message="Please create one for it immediately."
+                                 message="Please create one for it immediately by proceeding to the next step."
                               />
                            )}
                         </div>
@@ -220,7 +221,7 @@ const Curriculum = () => {
                      <div className={styles.programInfo}>
                         <h1>{programData.programDescription}</h1>
                      </div>
-                     {curriculumData === undefined && (
+                     {curriculumData === undefined ? (
                         <form
                            onSubmit={handleSubmit(onCreateSubmit)}
                            className={styles.formContainer}
@@ -230,6 +231,7 @@ const Curriculum = () => {
                               <FormSelect
                                  register={register}
                                  name="yearLevel"
+                                 value="year"
                                  options={Array.from(
                                     { length: programData.duration },
                                     (_, index) => ({
@@ -245,6 +247,7 @@ const Curriculum = () => {
                               <FormSelect
                                  register={register}
                                  name="semester"
+                                 value="semester"
                                  options={[
                                     { value: "1", label: "1st Semester" },
                                     { value: "2", label: "2nd Semester" },
@@ -343,6 +346,169 @@ const Curriculum = () => {
                               </button>
                            </div>
                         </form>
+                     ) : (
+                        <div className={styles.editWrapper}>
+                           <div className={styles.editContainer}>
+                              {curriculumData.courses.map((course) => {
+                                 <div className={styles.twoColumn}>
+                                    <div>
+                                       <h2>Core courses</h2>
+                                       <p>{course.collegeCode}</p>
+                                    </div>
+                                    <div>
+                                       <h2>Elective courses</h2>
+                                    </div>
+                                 </div>;
+                              })}
+                              <div className={styles.curriculumContainer}>
+                                 {Array.from(
+                                    { length: programData.duration },
+                                    (_, index) => {
+                                       const yearLevelString = {
+                                          1: "First Year",
+                                          2: "Second Year",
+                                          3: "Third Year",
+                                          4: "Fourth Year",
+                                          5: "Fifth Year",
+                                       };
+                                       return (
+                                          <div
+                                             className={`${styles.curriculumCard}`}
+                                          >
+                                             <h3 className={styles.badge}>
+                                                {yearLevelString[index + 1]}
+                                             </h3>
+                                          </div>
+                                       );
+                                    }
+                                 )}
+                              </div>
+                           </div>
+                        </div>
+                        //    <form
+                        //       onSubmit={handleSubmit(onEditSubmit)}
+                        //       className={styles.formContainer}
+                        //    >
+                        //       <div className={styles.twoColumn}>
+                        //          <h2>Year Level</h2>
+                        //          <FormSelect
+                        //             register={register}
+                        //             name="yearLevel"
+                        //             value="year"
+                        //             options={Array.from(
+                        //                { length: programData.duration },
+                        //                (_, index) => ({
+                        //                   value: index + 1,
+                        //                   label: `Year ${index + 1}`,
+                        //                })
+                        //             )}
+                        //          />
+                        //       </div>
+                        //       <div className={styles.line}></div>
+                        //       <div className={styles.twoColumn}>
+                        //          <h2>Semester</h2>
+                        //          <FormSelect
+                        //             register={register}
+                        //             name="semester"
+                        //             value="semester"
+                        //             options={[
+                        //                { value: "1", label: "1st Semester" },
+                        //                { value: "2", label: "2nd Semester" },
+                        //             ]}
+                        //          />
+                        //       </div>
+                        //       <div className={styles.line}></div>
+                        //       <div className={styles.coursesContainer}>
+                        //          <div>
+                        //             <h2 className={styles.title}>
+                        //                Course mapping
+                        //             </h2>
+                        //             <p className={styles.desc}>
+                        //                If you want to add elective courses, enable
+                        //                the switch and just double click the course
+                        //                card.
+                        //             </p>
+                        //             <br />
+                        //             <div className={styles.switchButton}>
+                        //                <Switch
+                        //                   checked={isSwitchOn}
+                        //                   onChange={handleSwitch}
+                        //                />
+                        //                <p>Add elective course?</p>
+                        //             </div>
+                        //          </div>
+                        //          {courses.map((course) => {
+                        //             const instructor = users.find(
+                        //                (user) =>
+                        //                   user.userId === course.instructorId
+                        //             );
+                        //             return (
+                        //                <div
+                        //                   className={`${styles.courseCard} ${
+                        //                      selectedCourses.includes(course)
+                        //                         ? styles.selected
+                        //                         : ""
+                        //                   } ${
+                        //                      selectedElectiveCourses.includes(
+                        //                         course
+                        //                      )
+                        //                         ? styles.selectedElective
+                        //                         : ""
+                        //                   }
+                        //                   `}
+                        //                   onClick={() =>
+                        //                      handleSelectCourse(course)
+                        //                   }
+                        //                   key={course.courseCode}
+                        //                >
+                        //                   <div className={styles.courseTitle}>
+                        //                      <div>
+                        //                         <h3 className={styles.title}>
+                        //                            {course.courseDescription}
+                        //                         </h3>
+                        //                      </div>
+                        //                      <p className={styles.badge}>
+                        //                         {course.courseCode}
+                        //                      </p>
+                        //                   </div>
+                        //                   <div className={styles.courseInfo}>
+                        //                      <div className={styles.line}></div>
+                        //                      <p className={styles.instructor}>
+                        //                         {instructor
+                        //                            ? `${instructor.firstName} ${instructor.lastName}`
+                        //                            : "No instructor found"}
+                        //                      </p>
+                        //                      <div className={styles.courseDetails}>
+                        //                         <p>Lab hour: {course.labHour}</p>
+                        //                         <p>
+                        //                            Lecture hour: {course.lecHour}
+                        //                         </p>
+                        //                         <p>
+                        //                            Total unit: {course.totalUnit}
+                        //                         </p>
+                        //                      </div>
+                        //                   </div>
+                        //                </div>
+                        //             );
+                        //          })}
+                        //       </div>
+                        //       <div className={styles.buttonContainer}>
+                        //          <button
+                        //             type="button"
+                        //             onClick={handlePreviousStep}
+                        //             className={styles.secondaryBtn}
+                        //          >
+                        //             Previous step
+                        //          </button>
+                        //          <button
+                        //             type="button"
+                        //             onClick={handleSubmit(onCreateSubmit)}
+                        //             className={styles.primaryBtn}
+                        //          >
+                        //             Create curriculum {loading && <Loading />}
+                        //          </button>
+                        //       </div>
+                        //    </form>
                      )}
                   </>
                )}
