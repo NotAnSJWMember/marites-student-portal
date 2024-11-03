@@ -83,10 +83,10 @@
 }
 
 .programInfo {
-   margin-bottom: 2rem;
+   margin-bottom: 1.5rem;
 
    h1 {
-      font-size: 2.5rem;
+      font-size: 2rem;
       max-width: 20ch;
    }
 }
@@ -185,21 +185,33 @@ form {
 }
 
 .editWrapper {
+   display: flex;
+   flex-direction: column;
+   gap: 2rem;
+
+   .twoColumn {
+      grid-template-columns: 60% 1fr;
+   }
+
    .editContainer {
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
+      gap: 2rem;
+      
+      .title {
+         margin-bottom: 1rem;
+      }
+   }
 
-      .curriculumContainer {
-         display: grid;
-         grid-template-columns: repeat(4, 1fr);
-         gap: 1rem;
+   .curriculumContainer {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
 
-         .curriculumCard {
-            border: 1px solid $light-gray-color;
-            border-radius: $small-radius;
-            padding: 1rem;
-         }
+      .curriculumCard {
+         border: 1px solid $light-gray-color;
+         border-radius: $small-radius;
+         padding: 1rem;
       }
    }
 }
@@ -238,3 +250,5 @@ form {
       max-width: 50ch;
    }
 }
+
+
