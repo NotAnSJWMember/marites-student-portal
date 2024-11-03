@@ -19,14 +19,22 @@ const CourseTable = ({ courses }) => {
             <h2 className={styles.headerLabel}>Lab Hour</h2>
          </div>
          <div className={styles.content}>
-            {courses.map((courseId) => {
+            {courses.map((courseId, index) => {
                const course = courseApi.find((c) => c.courseId === courseId);
                const instructor = usersApi.find(
                   (u) => u.userId === course.instructorId
                );
-
+               const isLastItem = index === courses.length - 1;
                return course && instructor ? (
-                  <div key={course.courseCode} className={styles.contentItem}>
+                  <div
+                     key={course.courseCode}
+                     className={styles.contentItem}
+                     style={
+                        isLastItem
+                           ? { border: "none" }
+                           : { border: "1px solid $light-gray-color" }
+                     }
+                  >
                      <p>{course.courseCode}</p>
                      <p>{course.totalUnit}</p>
                      <p>{course.courseDescription}</p>

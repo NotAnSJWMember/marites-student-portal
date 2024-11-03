@@ -9,7 +9,12 @@ import useFetchData from "hooks/useFetchData";
 import usePostData from "hooks/usePostData";
 
 import styles from "./Curriculum.module.scss";
-import { TbArrowNarrowLeft, TbCircleCheckFilled } from "react-icons/tb";
+import {
+   TbArrowNarrowLeft,
+   TbCircleCheckFilled,
+   TbEdit,
+   TbPlus,
+} from "react-icons/tb";
 import CourseTable from "./components/CourseTable/CourseTable";
 
 const Curriculum = () => {
@@ -176,7 +181,10 @@ const Curriculum = () => {
                {currentStep === 2 && (
                   <>
                      <div className={styles.programInfo}>
-                        <h1>{programData.programDescription}</h1>
+                        <h1>
+                           {programData.programDescription}{" "}
+                           ({programData.collegeCode})
+                        </h1>
                      </div>
                      {curriculumData === undefined ? (
                         <form
@@ -305,33 +313,73 @@ const Curriculum = () => {
                         </form>
                      ) : (
                         <div className={styles.editWrapper}>
-                           <h2>Curriculum Summary</h2>
-                           <div className={styles.curriculumContainer}>
-                              {Array.from(
-                                 { length: programData.duration },
-                                 (_, index) => {
-                                    const yearLevelString = {
-                                       1: "First Year",
-                                       2: "Second Year",
-                                       3: "Third Year",
-                                       4: "Fourth Year",
-                                       5: "Fifth Year",
-                                    };
-                                    return (
-                                       <div
-                                          className={`${styles.curriculumCard}`}
-                                       >
-                                          <p className={styles.badge}>
-                                             {yearLevelString[index + 1]}
-                                          </p>
-                                       </div>
-                                    );
-                                 }
-                              )}
+                           <div className={styles.buttonContainer}>
+                              <button
+                                 type="button"
+                                 className={`${styles.iconBtn} ${styles.primaryBtn}`}
+                              >
+                                 <TbPlus size={20} />
+                                 Create curriculum
+                              </button>
+                              <button
+                                 type="button"
+                                 className={`${styles.iconBtn} ${styles.secondaryBtn}`}
+                              >
+                                 <TbEdit size={20} />
+                                 Edit curriculum
+                              </button>
+                           </div>
+                           <div>
+                              <h2 className={styles.title}>Overview</h2>
+                              <div className={styles.summaryContainer}>
+                                 {Array.from(
+                                    { length: programData.duration },
+                                    (_, index) => {
+                                       const yearLevelString = {
+                                          1: "First Year",
+                                          2: "Second Year",
+                                          3: "Third Year",
+                                          4: "Fourth Year",
+                                          5: "Fifth Year",
+                                       };
+                                       const yearDescription = {
+                                          1: "Introduction to foundational subjects and core principles.",
+                                          2: "Building on fundamentals with intermediate coursework.",
+                                          3: "Advanced topics and specialized courses.",
+                                          4: "Practical experience, research, and capstone projects.",
+                                          5: "Finalizing expertise and preparing for graduation.",
+                                       };
+                                       return (
+                                          <div
+                                             className={styles.curriculumCard}
+                                             key={index}
+                                          >
+                                             <div className={styles.yearInfo}>
+                                                <p className={styles.badge}>
+                                                   {yearLevelString[index + 1]}
+                                                </p>
+                                                <p
+                                                   className={
+                                                      styles.yearDescription
+                                                   }
+                                                >
+                                                   {yearDescription[index + 1]}
+                                                </p>
+                                             </div>
+                                          </div>
+                                       );
+                                    }
+                                 )}
+                              </div>
                            </div>
                            <div className={styles.editContainer}>
                               <div>
                                  <h2 className={styles.title}>Core courses</h2>
+                                 <p className={styles.desc}>
+                                    These courses are mandatory and provide
+                                    essential knowledge in the field.
+                                 </p>
+                                 <br />
                                  <CourseTable
                                     courses={curriculumData.courses}
                                  />
@@ -340,6 +388,12 @@ const Curriculum = () => {
                                  <h2 className={styles.title}>
                                     Elective courses
                                  </h2>
+                                 <p className={styles.desc}>
+                                    Elective courses allow students to explore
+                                    additional areas of interest or
+                                    specialization.
+                                 </p>
+                                 <br />
                                  <CourseTable
                                     courses={curriculumData.electiveCourses}
                                  />

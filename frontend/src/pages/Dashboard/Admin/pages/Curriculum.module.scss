@@ -83,11 +83,11 @@
 }
 
 .programInfo {
-   margin-bottom: 1.5rem;
-
    h1 {
-      font-size: 2rem;
-      max-width: 20ch;
+      text-wrap: balance;
+      font-size: 2.3rem;
+      max-width: 30ch;
+      margin-bottom: 1rem;
    }
 }
 
@@ -185,25 +185,14 @@ form {
 }
 
 .editWrapper {
-   display: flex;
-   flex-direction: column;
+   display: grid;
    gap: 2rem;
 
-   .twoColumn {
-      grid-template-columns: 60% 1fr;
+   .buttonContainer {
+      justify-self: flex-end;
    }
 
-   .editContainer {
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-      
-      .title {
-         margin-bottom: 1rem;
-      }
-   }
-
-   .curriculumContainer {
+   .summaryContainer {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 1rem;
@@ -212,7 +201,19 @@ form {
          border: 1px solid $light-gray-color;
          border-radius: $small-radius;
          padding: 1rem;
+
+         .yearInfo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+         }
       }
+   }
+
+   .editContainer {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
    }
 }
 
@@ -250,5 +251,3 @@ form {
       max-width: 50ch;
    }
 }
-
-
