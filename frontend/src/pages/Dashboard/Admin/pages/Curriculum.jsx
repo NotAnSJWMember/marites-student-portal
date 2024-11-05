@@ -244,13 +244,17 @@ const Curriculum = () => {
                                        {section.desc}
                                     </p>
                                     <br />
-                                    <CourseTable courses={curriculumData} />
+                                    <CourseTable
+                                       curriculumData={curriculumData}
+                                       courses={courses}
+                                       users={users}
+                                    />
                                  </div>
                               ))}
                            </div>
                         </div>
                      )}
-                     {/* {currentPage === "create" && (
+                     {currentPage === "create" && (
                         <CreateCurriculum
                            token={token}
                            users={users}
@@ -276,7 +280,7 @@ const Curriculum = () => {
                            currentPage={currentPage}
                            setCurrentPage={setCurrentPage}
                         />
-                     )} */}
+                     )}
                   </>
                )}
                {currentStep === 3 && (
