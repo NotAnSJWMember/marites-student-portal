@@ -7,7 +7,7 @@
    height: 100%;
    padding: 3rem;
    background-color: #f0f0f0;
-
+   
    .container {
       display: flex;
       flex-direction: column;
@@ -18,6 +18,7 @@
       width: 40rem;
       background-color: $light-primary-background;
       box-shadow: #d3d3d3 0 0 5px;
+      border-radius: $default-radius;
 
       .sealContainer {
          display: flex;

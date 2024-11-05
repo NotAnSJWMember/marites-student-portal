@@ -1,14 +1,9 @@
-import { useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "hooks";
 
 const PrivateRoute = ({ element, roles }) => {
-   const { user, isAuthenticated } = useAuth();
-
-   useEffect(() => {
-      console.log("User Status:", user, "Authenticated:", isAuthenticated);
-   }, [user, isAuthenticated]); 
-
+   const { user } = useAuth();
+   
    if (!user) {
       return <Navigate to="/login" />;
    }

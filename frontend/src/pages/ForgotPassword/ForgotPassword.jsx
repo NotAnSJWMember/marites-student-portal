@@ -53,7 +53,7 @@ const ForgotPassword = () => {
                   {isEmailSent ? "Recover Your Account" : "Reset Your Password"}
                </h1>
                <p className={styles.desc}>
-                  {isEmailSent
+                  {isEmailSent   
                      ? "A password reset link has been sent to your email. Please check your inbox and follow the instructions to reset your password."
                      : "Don't worry, we got you. We'll email you instructions to reset your password. If you don't have access to the email anymore, you can try and contact IT support."}
                </p>
@@ -79,11 +79,11 @@ const ForgotPassword = () => {
                         required: "This field is required",
                      })}
                   />
-                  <div className={styles.buttons}>
-                     <button type="submit" disabled={loading}>
+                  <div className={styles.buttonContainer}>
+                     <button type="submit" className={styles.primaryBtn}  disabled={loading}>
                         Reset Password {loading && <Loading />}
                      </button>
-                     <a href="login">Return to Login</a>
+                     <a href="login" className={styles.ctaAnchor}>Return to Login</a>
                   </div>
                </form>
             )}

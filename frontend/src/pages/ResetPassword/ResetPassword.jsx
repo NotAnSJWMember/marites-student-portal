@@ -71,7 +71,9 @@ const ResetPassword = () => {
                   continue.
                </p>
                <a href="forgot-password">
-                  <button type="button">Reset password again</button>
+                  <button type="button" className={styles.primaryBtn}>
+                     Reset password again
+                  </button>
                </a>
             </div>
          </div>

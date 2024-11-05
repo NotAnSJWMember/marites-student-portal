@@ -8,7 +8,7 @@ const styles = {
       backgroundColor: "#ffdddd",
       borderRadius: "0.4rem",
       gap: "0.7rem",
-      maxWidth: "20rem",
+      // maxWidth: "20rem",
       padding: "1rem",
       textWrap: "balance",
    },

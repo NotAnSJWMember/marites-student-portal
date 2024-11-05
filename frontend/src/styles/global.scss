@@ -46,22 +46,34 @@
    padding: 0.4rem 1rem;
 }
 
-.secondaryBtn {
-   border: 1px solid $light-primary-text;
-   border-radius: $small-radius;
-   color: $light-primary-text;
-}
-
 .primaryBtn {
    border-radius: $small-radius;
    color: $light-primary-background;
    background-color: $light-green-color-300;
 }
 
+.secondaryBtn {
+   border: 1px solid $light-primary-text;
+   border-radius: $small-radius;
+   color: $light-primary-text;
+}
+
+.redBtn {
+   color: $light-primary-background;
+   background-color: $light-tertiary-color;
+   border-radius: $small-radius;
+}
+
 .switchButton {
    display: flex;
    gap: 0.5rem;
    font-size: 0.85rem;
+}
+
+.ctaAnchor {
+   color: $light-green-color-300;
+   text-decoration: underline;
+   text-underline-offset: 5px;
 }
 
 .ctaBtn {
@@ -108,7 +120,7 @@
 .line {
    height: 1px;
    width: 100%;
-   background-color: $light-primary-text;
+   background-color: $light-gray-color;
 }
 
 .verticalLine {

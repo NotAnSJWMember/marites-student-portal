@@ -1,12 +1,8 @@
 import React, { useState } from "react";
 import Layout from "components/Layout/Layout";
 import Loading from "components/Loading/Loading";
-import Switch from "components/ui/Switch/Switch";
-import { FormSelect } from "components/ui/Form";
 import { MessageWarning } from "components/ui/Message/MessageWarning";
-import { useForm } from "react-hook-form";
 import useFetchData from "hooks/useFetchData";
-import usePostData from "hooks/usePostData";
 
 import styles from "./Curriculum.module.scss";
 import {
@@ -16,33 +12,36 @@ import {
    TbPlus,
 } from "react-icons/tb";
 import CourseTable from "./components/CourseTable/CourseTable";
+import CreateCurriculum from "./components/CreateCurriculum/CreateCurriculum";
+import EditCurriculum from "./components/EditCurriculum/EditCurriculum";
+import { useNavigate } from "react-router-dom";
 
 const Curriculum = () => {
    const [currentStep, setCurrentStep] = useState(1);
-   const [isSwitchOn, setIsSwitchOn] = useState(false);
+   const [currentPage, setCurrentPage] = useState("base");
    const [selectedProgram, setSelectedProgram] = useState(null);
    const [programData, setProgramData] = useState(null);
    const [curriculumData, setCurriculumData] = useState(null);
-   const [selectedCourses, setSelectedCourses] = useState([]);
-   const [selectedElectiveCourses, setSelectedElectiveCourses] = useState([]);
-   const setClickCounts = useState({});
 
+   const navigate = useNavigate();
    const token = localStorage.getItem("token");
-   const { data: programs } = useFetchData("program", token);
-   const { data: curriculums } = useFetchData("curriculum", token);
-   const { data: courses } = useFetchData("course", token);
-   const { data: users } = useFetchData("user", token);
-   const { postData, loading } = usePostData();
-   const { register, handleSubmit } = useForm();
+   const { data: programs, loading: loadingPrograms } = useFetchData(
+      "program",
+      token
+   );
+   const { data: curriculums, loading: loadingCurriculums } = useFetchData(
+      "curriculum",
+      token
+   );
+   const { data: courses, loading: loadingCourses } = useFetchData(
+      "course",
+      token
+   );
+   const { data: users, loading: loadingUsers } = useFetchData("user", token);
 
-   const handleNextStep = () => setCurrentStep((prevStep) => prevStep + 1);
-   const handlePreviousStep = () => setCurrentStep((prevStep) => prevStep - 1);
-
-   const handleSwitch = () => {
-      setIsSwitchOn((prev) => !prev);
-      setClickCounts({});
-      setSelectedCourses([]);
-      setSelectedElectiveCourses([]);
+   const pageLabels = {
+      create: "Create Curriculum",
+      edit: "Edit Curriculum",
    };
 
    const handleSelectProgram = (program) => {
@@ -57,78 +56,47 @@ const Curriculum = () => {
          const curriculumData = curriculums.find(
             (curriculum) => curriculum.programId === program.programId
          );
-         setCurriculumData(curriculumData);
+
          console.log(curriculumData);
+         curriculumData === undefined
+            ? setCurrentPage("create")
+            : setCurrentPage("base");
+
+         setCurriculumData(curriculumData);
       }
    };
 
-   const handleSelectCourse = (course) => {
-      if (!isSwitchOn) {
-         setSelectedCourses((prevSelectedCourses) =>
-            prevSelectedCourses.includes(course)
-               ? prevSelectedCourses.filter((c) => c !== course)
-               : [...prevSelectedCourses, course]
-         );
+   const handleNextStep = () => {
+      console.log(currentPage);
+      setCurrentStep((prevStep) => prevStep + 1);
+   };
+   const handlePreviousStep = () => {
+      if (curriculumData !== undefined) setCurrentPage("base");
+
+      if (currentStep <= 1) {
+         navigate("/admin/dashboard/academic-planner");
          return;
       }
 
-      setClickCounts((prevCounts) => {
-         const newCount = (prevCounts[course.courseCode] || 0) + 1;
-         const updatedCounts = {
-            ...prevCounts,
-            [course.courseCode]: newCount % 3,
-         };
-
-         if (newCount % 3 === 1) {
-            setSelectedCourses((prev) => [...prev, course]);
-            setSelectedElectiveCourses((prev) =>
-               prev.filter((c) => c !== course)
-            );
-         } else if (newCount % 3 === 2) {
-            setSelectedCourses((prev) => prev.filter((c) => c !== course));
-            setSelectedElectiveCourses((prev) => [...prev, course]);
-         } else {
-            setSelectedCourses((prev) => prev.filter((c) => c !== course));
-            setSelectedElectiveCourses((prev) =>
-               prev.filter((c) => c !== course)
-            );
-         }
-
-         return updatedCounts;
-      });
-   };
-
-   const onCreateSubmit = async (data) => {
-      if (selectedCourses.length === 0) {
-         return;
+      if (currentPage === "base" || curriculumData === undefined) {
+         setCurrentStep((prevStep) => prevStep - 1);
       }
-
-      const courseIds = selectedCourses.map((c) => c.courseId);
-      const electiveCourseIds = selectedElectiveCourses.map((c) => c.courseId);
-
-      const payload = {
-         ...data,
-         courses: courseIds,
-         electiveCourses: electiveCourseIds,
-         programId: selectedProgram.programId,
-      };
-      const endpoint = "curriculum";
-      await postData(payload, endpoint, token);
-
-      handleNextStep();
    };
+
+   const isLoading =
+      loadingPrograms || loadingCurriculums || loadingUsers || loadingCourses;
+
+   if (isLoading) return <Loading />;
 
    return (
       <Layout role="admin" pageName="Curriculum">
          <div className={styles.mainContent}>
             <section className={styles.wrapper}>
                {currentStep !== 3 && (
-                  <a href="/admin/dashboard/academic-planner">
-                     <div className={styles.iconLabel}>
-                        <TbArrowNarrowLeft size={24} />
-                        <p>Return to page</p>
-                     </div>
-                  </a>
+                  <p className={styles.iconLabel} onClick={handlePreviousStep}>
+                     <TbArrowNarrowLeft size={24} />
+                     Return to page
+                  </p>
                )}
                {currentStep === 1 && (
                   <>
@@ -182,141 +150,26 @@ const Curriculum = () => {
                   <>
                      <div className={styles.programInfo}>
                         <h1>
-                           {programData.programDescription}{" "}
-                           ({programData.collegeCode})
+                           {programData?.programDescription} (
+                           {programData?.collegeCode})
                         </h1>
+                        <div className={styles.breadcrumbContainer}>
+                           <p>Overview</p>
+                           {currentPage !== "base" && (
+                              <>
+                                 <p>/</p>
+                                 <p>{pageLabels[currentPage]}</p>
+                              </>
+                           )}
+                        </div>
                      </div>
-                     {curriculumData === undefined ? (
-                        <form
-                           onSubmit={handleSubmit(onCreateSubmit)}
-                           className={styles.formContainer}
-                        >
-                           <div className={styles.twoColumn}>
-                              <h2>Year Level</h2>
-                              <FormSelect
-                                 register={register}
-                                 name="year"
-                                 value="yearLevel"
-                                 options={Array.from(
-                                    { length: programData.duration },
-                                    (_, index) => ({
-                                       value: index + 1,
-                                       label: `Year ${index + 1}`,
-                                    })
-                                 )}
-                              />
-                           </div>
-                           <div className={styles.line}></div>
-                           <div className={styles.twoColumn}>
-                              <h2>Semester</h2>
-                              <FormSelect
-                                 register={register}
-                                 name="semester"
-                                 value="semester"
-                                 options={[
-                                    { value: "1", label: "1st Semester" },
-                                    { value: "2", label: "2nd Semester" },
-                                 ]}
-                              />
-                           </div>
-                           <div className={styles.line}></div>
-                           <div className={styles.coursesContainer}>
-                              <div>
-                                 <h2 className={styles.title}>
-                                    Course mapping
-                                 </h2>
-                                 <p className={styles.desc}>
-                                    If you want to add elective courses, enable
-                                    the switch and just double click the course
-                                    card.
-                                 </p>
-                                 <br />
-                                 <div className={styles.switchButton}>
-                                    <Switch
-                                       checked={isSwitchOn}
-                                       onChange={handleSwitch}
-                                    />
-                                    <p>Add elective course?</p>
-                                 </div>
-                              </div>
-                              {courses.map((course) => {
-                                 const instructor = users.find(
-                                    (user) =>
-                                       user.userId === course.instructorId
-                                 );
-                                 return (
-                                    <div
-                                       className={`${styles.courseCard} ${
-                                          selectedCourses.includes(course)
-                                             ? styles.selected
-                                             : ""
-                                       } ${
-                                          selectedElectiveCourses.includes(
-                                             course
-                                          )
-                                             ? styles.selectedElective
-                                             : ""
-                                       }
-                                       `}
-                                       onClick={() =>
-                                          handleSelectCourse(course)
-                                       }
-                                       key={course.courseCode}
-                                    >
-                                       <div className={styles.courseTitle}>
-                                          <div>
-                                             <h3 className={styles.title}>
-                                                {course.courseDescription}
-                                             </h3>
-                                          </div>
-                                          <p className={styles.badge}>
-                                             {course.courseCode}
-                                          </p>
-                                       </div>
-                                       <div className={styles.courseInfo}>
-                                          <div className={styles.line}></div>
-                                          <p className={styles.instructor}>
-                                             {instructor
-                                                ? `${instructor.firstName} ${instructor.lastName}`
-                                                : "No instructor found"}
-                                          </p>
-                                          <div className={styles.courseDetails}>
-                                             <p>Lab hour: {course.labHour}</p>
-                                             <p>
-                                                Lecture hour: {course.lecHour}
-                                             </p>
-                                             <p>
-                                                Total unit: {course.totalUnit}
-                                             </p>
-                                          </div>
-                                       </div>
-                                    </div>
-                                 );
-                              })}
-                           </div>
-                           <div className={styles.buttonContainer}>
-                              <button
-                                 type="button"
-                                 onClick={handlePreviousStep}
-                                 className={styles.secondaryBtn}
-                              >
-                                 Previous step
-                              </button>
-                              <button
-                                 type="button"
-                                 onClick={handleSubmit(onCreateSubmit)}
-                                 className={styles.primaryBtn}
-                              >
-                                 Create curriculum {loading && <Loading />}
-                              </button>
-                           </div>
-                        </form>
-                     ) : (
+                     {currentPage === "base" && (
                         <div className={styles.editWrapper}>
                            <div className={styles.buttonContainer}>
                               <button
                                  type="button"
                                  className={`${styles.iconBtn} ${styles.primaryBtn}`}
+                                 onClick={() => setCurrentPage("create")}
                               >
                                  <TbPlus size={20} />
                                  Create curriculum
@@ -324,82 +177,107 @@ const Curriculum = () => {
                               <button
                                  type="button"
                                  className={`${styles.iconBtn} ${styles.secondaryBtn}`}
+                                 onClick={() => setCurrentPage("edit")}
                               >
                                  <TbEdit size={20} />
                                  Edit curriculum
                               </button>
                            </div>
                            <div>
-                              <h2 className={styles.title}>Overview</h2>
+                              <h2 className={styles.title}>Summary</h2>
                               <div className={styles.summaryContainer}>
                                  {Array.from(
                                     { length: programData.duration },
-                                    (_, index) => {
-                                       const yearLevelString = {
-                                          1: "First Year",
-                                          2: "Second Year",
-                                          3: "Third Year",
-                                          4: "Fourth Year",
-                                          5: "Fifth Year",
-                                       };
-                                       const yearDescription = {
-                                          1: "Introduction to foundational subjects and core principles.",
-                                          2: "Building on fundamentals with intermediate coursework.",
-                                          3: "Advanced topics and specialized courses.",
-                                          4: "Practical experience, research, and capstone projects.",
-                                          5: "Finalizing expertise and preparing for graduation.",
-                                       };
-                                       return (
-                                          <div
-                                             className={styles.curriculumCard}
-                                             key={index}
-                                          >
-                                             <div className={styles.yearInfo}>
-                                                <p className={styles.badge}>
-                                                   {yearLevelString[index + 1]}
-                                                </p>
-                                                <p
-                                                   className={
-                                                      styles.yearDescription
-                                                   }
-                                                >
-                                                   {yearDescription[index + 1]}
-                                                </p>
-                                             </div>
+                                    (_, index) => (
+                                       <div
+                                          className={styles.curriculumCard}
+                                          key={index}
+                                       >
+                                          <div className={styles.yearInfo}>
+                                             <p className={styles.badge}>
+                                                {
+                                                   [
+                                                      "First Year",
+                                                      "Second Year",
+                                                      "Third Year",
+                                                      "Fourth Year",
+                                                      "Fifth Year",
+                                                   ][index]
+                                                }
+                                             </p>
+                                             <p
+                                                className={
+                                                   styles.yearDescription
+                                                }
+                                             >
+                                                {
+                                                   [
+                                                      "Introduction to foundational subjects and core principles.",
+                                                      "Building on fundamentals with intermediate coursework.",
+                                                      "Advanced topics and specialized courses.",
+                                                      "Practical experience, research, and capstone projects.",
+                                                      "Finalizing expertise and preparing for graduation.",
+                                                   ][index]
+                                                }
+                                             </p>
                                           </div>
-                                       );
-                                    }
+                                       </div>
+                                    )
                                  )}
                               </div>
                            </div>
                            <div className={styles.editContainer}>
-                              <div>
-                                 <h2 className={styles.title}>Core courses</h2>
-                                 <p className={styles.desc}>
-                                    These courses are mandatory and provide
-                                    essential knowledge in the field.
-                                 </p>
-                                 <br />
-                                 <CourseTable
-                                    courses={curriculumData.courses}
-                                 />
-                              </div>
-                              <div>
-                                 <h2 className={styles.title}>
-                                    Elective courses
-                                 </h2>
-                                 <p className={styles.desc}>
-                                    Elective courses allow students to explore
-                                    additional areas of interest or
-                                    specialization.
-                                 </p>
-                                 <br />
-                                 <CourseTable
-                                    courses={curriculumData.electiveCourses}
-                                 />
-                              </div>
+                              {[
+                                 {
+                                    title: "Core courses",
+                                    desc: "These courses are mandatory and provide essential knowledge in the field.",
+                                    courses: curriculumData.courses,
+                                 },
+                                 {
+                                    title: "Elective courses",
+                                    desc: "Elective courses allow students to explore additional areas of interest or specialization.",
+                                    courses: curriculumData.electiveCourses,
+                                 },
+                              ].map((section, index) => (
+                                 <div key={index}>
+                                    <h2 className={styles.title}>
+                                       {section.title}
+                                    </h2>
+                                    <p className={styles.desc}>
+                                       {section.desc}
+                                    </p>
+                                    <br />
+                                    <CourseTable courses={section.courses} />
+                                 </div>
+                              ))}
                            </div>
                         </div>
+                     )}
+                     {currentPage === "create" && (
+                        <CreateCurriculum
+                           token={token}
+                           users={users}
+                           courses={courses}
+                           selectedProgram={selectedProgram}
+                           programData={programData}
+                           handleNextStep={handleNextStep}
+                           handlePreviousStep={handlePreviousStep}
+                           currentPage={currentPage}
+                           setCurrentPage={setCurrentPage}
+                        />
+                     )}
+                     {currentPage === "edit" && (
+                        <EditCurriculum
+                           token={token}
+                           users={users}
+                           courses={courses}
+                           selectedProgram={selectedProgram}
+                           programData={programData}
+                           handleNextStep={handleNextStep}
+                           handlePreviousStep={handlePreviousStep}
+                           currentPage={currentPage}
+                           setCurrentPage={setCurrentPage}
+                        />
                      )}
                   </>
                )}

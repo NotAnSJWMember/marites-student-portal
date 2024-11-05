@@ -160,17 +160,17 @@ const Register = () => {
                <div className={styles.twoColumn}>
                   <div className={styles.course}>
                      <label>
-                        Programme{" "}
-                        {errors.programme && (
+                        Program{" "}
+                        {errors.program && (
                            <span className={styles.errorMsg}>
-                              ({errors.programme.message})
+                              ({errors.program.message})
                            </span>
                         )}
                      </label>
                      <input
                         type="text"
-                        {...register("programme", {
-                           required: "Programme is required",
+                        {...register("program", {
+                           required: "Program is required",
                         })}
                      />
                   </div>
@@ -247,7 +247,7 @@ const Register = () => {
                >
                   Create account
                </button>
-               <a href="login">Already have an account? Sign In</a>
+               <a href="login" className={styles.ctaAnchor}>Already have an account? Sign In</a>
             </form>
 
             <PopupAlert

@@ -34,7 +34,7 @@ const Login = () => {
       await withLoading(async () => {
          try {
             const responseData = await login(data.userId, data.password);
-            
+
             const { role } = responseData;
 
             if (role === "admin") {
@@ -119,19 +119,25 @@ const Login = () => {
                      </span>
                   </div>
 
-                  <a href="forgot-password" className={styles.ctaForgot}>
+                  <a href="forgot-password" className={styles.ctaAnchor}>
                      Forgot your password?
                   </a>
 
-                  <button type="submit" disabled={isLoading}>
+                  <button
+                     type="submit"
+                     className={styles.primaryBtn}
+                     disabled={isLoading}
+                  >
                      Sign In {isLoading && <Loading />}
                   </button>
                   <div className={styles.textDivider}>
                      <span>OR</span>
                      <div className={styles.line}></div>
                   </div>
-                  <a href="register" className={styles.createBtn}>
-                     <button type="button">Create an account</button>
+                  <a href="register">
+                     <button type="button" className={styles.redBtn}>
+                        Create an account
+                     </button>
                   </a>
                </form>
             </div>

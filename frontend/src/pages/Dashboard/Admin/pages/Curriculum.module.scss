@@ -1,119 +1,60 @@
 @import "../../../../styles/global.scss";
 
 .mainContent {
-   overflow: scroll;
-}
-
-.line {
-   background-color: $light-gray-color;
+  overflow: scroll;
 }
 
 .wrapper {
-   display: grid;
-   gap: 1rem;
+  display: grid;
+  gap: 1rem;
 
-   .iconLabel {
-      grid-row-start: 1;
-      color: $light-green-color-300;
-   }
+  .iconLabel {
+    grid-row-start: 1;
+    cursor: pointer;
+    color: $light-green-color-300;
+  }
+
+  form {
+    display: grid !important;
+
+    .twoColumn {
+      align-items: center;
+    }
+
+    h2 {
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+
+    .desc {
+      font-size: 0.9rem;
+    }
+  }
 }
 
 .selectProgram {
-   display: grid;
-   gap: 0 3rem;
-   grid-template-columns: 30% 1fr;
+  display: grid;
+  gap: 0 3rem;
+  grid-template-columns: 30% 1fr;
 
-   .info {
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-      grid-row-start: 2;
+  .info {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    grid-row-start: 2;
 
-      .title {
-         font-size: 1.8rem;
-      }
-   }
+    .title {
+      font-size: 1.8rem;
+    }
+  }
 
-   .programsList {
-      display: grid;
-      grid-row-start: 2;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1rem;
+  .programsList {
+    display: grid;
+    grid-row-start: 2;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
 
-      .programCard {
-         cursor: pointer;
-         display: flex;
-         flex-direction: column;
-         justify-content: space-between;
-         background-color: white;
-         border: 1px solid $light-gray-color;
-         border-radius: $small-radius;
-         padding: 1rem;
-         gap: 1rem;
-         transition: 300ms $trans-fast;
-
-         &:hover {
-            border: 1px solid $light-primary-text;
-         }
-
-         &.active {
-            background-color: $light-green-color-100;
-            border-color: $light-green-color-300;
-
-            .badge {
-               border-color: $light-green-color-300;
-            }
-
-            .line {
-               background-color: $light-green-color-300;
-            }
-         }
-
-         h3 {
-            font-weight: 500;
-         }
-
-         .badge {
-            font-size: 0.8rem;
-            justify-self: start;
-            align-self: end;
-         }
-      }
-   }
-}
-
-.programInfo {
-   h1 {
-      text-wrap: balance;
-      font-size: 2.3rem;
-      max-width: 30ch;
-      margin-bottom: 1rem;
-   }
-}
-
-form {
-   display: grid !important;
-
-   .twoColumn {
-      align-items: center;
-   }
-
-   h2 {
-      font-size: 1.1rem;
-      font-weight: 500;
-   }
-
-   .desc {
-      font-size: 0.9rem;
-   }
-}
-
-.coursesContainer {
-   display: grid;
-   grid-template-columns: repeat(5, 1fr);
-   gap: 1rem;
-
-   .courseCard {
+    .programCard {
       cursor: pointer;
       display: flex;
       flex-direction: column;
@@ -125,129 +66,117 @@ form {
       gap: 1rem;
       transition: 300ms $trans-fast;
 
-      .courseTitle {
-         display: flex;
-         justify-content: space-between;
-         gap: 1rem;
-
-         .badge {
-            font-size: 0.8rem;
-         }
-      }
-
-      .courseInfo {
-         display: grid;
-         grid-template-rows: repeat(2, max-content);
-         grid-template-columns: repeat(2, 1fr);
-
-         .line {
-            grid-row-start: 1;
-            grid-column-start: span 2;
-            margin-bottom: 1rem;
-         }
-
-         .courseDetails {
-            opacity: 0.5;
-            font-size: 0.8rem;
-         }
-      }
-
       &:hover {
-         border: 1px solid $light-gray-color-400;
+        border: 1px solid $light-primary-text;
       }
 
-      &.selected {
-         background-color: $light-green-color-100;
-         border-color: $light-green-color-300;
+      &.active {
+        background-color: $light-green-color-100;
+        border-color: $light-green-color-300;
 
-         .badge {
-            border-color: $light-green-color-300;
-         }
+        .badge {
+          border-color: $light-green-color-300;
+        }
 
-         .line {
-            background-color: $light-green-color-300;
-         }
+        .line {
+          background-color: $light-green-color-300;
+        }
       }
 
-      &.selectedElective {
-         background-color: $light-yellow-color-100;
-         border-color: $light-secondary-color;
-
-         .badge {
-            border-color: $light-secondary-color;
-         }
-
-         .line {
-            background-color: $light-secondary-color;
-         }
+      h3 {
+        font-weight: 500;
       }
-   }
+
+      .badge {
+        font-size: 0.8rem;
+        justify-self: start;
+        align-self: end;
+      }
+    }
+  }
+}
+
+.programInfo {
+  h1 {
+    text-wrap: balance;
+    font-size: 2.3rem;
+    max-width: 30ch;
+    margin-bottom: 0.7rem;
+  }
+
+  .breadcrumbContainer {
+    display: flex;
+    gap: 0.5rem;
+    opacity: 0.6;
+    font-size: small;
+    margin-bottom: 2rem;
+  }
 }
 
 .editWrapper {
-   display: grid;
-   gap: 2rem;
+  display: grid;
+  gap: 2rem;
 
-   .buttonContainer {
-      justify-self: flex-end;
-   }
+  .buttonContainer {
+    justify-self: flex-end;
+  }
 
-   .summaryContainer {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1rem;
+  .summaryContainer {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
 
-      .curriculumCard {
-         border: 1px solid $light-gray-color;
-         border-radius: $small-radius;
-         padding: 1rem;
+    .curriculumCard {
+      border: 1px solid $light-gray-color;
+      border-radius: $small-radius;
+      padding: 1rem;
 
-         .yearInfo {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-         }
+      .yearInfo {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
       }
-   }
+    }
+  }
 
-   .editContainer {
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-   }
+  .editContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
 }
 
 .buttonContainer {
-   display: flex;
-   justify-self: end;
-   gap: 0.7rem;
+  display: flex;
+  justify-self: end;
+  gap: 0.7rem;
 }
 
 .primaryBtn {
-   justify-self: end;
-   background-color: $light-green-color-300;
+  justify-self: end;
+  background-color: $light-green-color-300;
 }
 
 .success {
-   display: flex;
-   flex-direction: column;
-   align-items: center;
-   justify-content: center;
-   gap: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
 
-   .content {
-      text-align: center;
-   }
+  .content {
+    text-align: center;
+  }
 
-   .title {
-      font-size: 2rem;
-      margin-bottom: 0.6rem;
-   }
+  .title {
+    font-size: 2rem;
+    margin-bottom: 0.6rem;
+  }
 
-   .desc {
-      font-size: 1rem;
-      color: $light-gray-color-400;
-      text-align: center;
-      max-width: 50ch;
-   }
+  .desc {
+    font-size: 1rem;
+    color: $light-gray-color-400;
+    text-align: center;
+    max-width: 50ch;
+  }
 }

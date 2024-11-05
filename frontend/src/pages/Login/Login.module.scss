@@ -12,12 +12,13 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;   
+      justify-content: center;
       padding: 2rem;
       gap: 1.5rem;
       width: 30rem;
       background-color: $light-primary-background;
       box-shadow: #d3d3d3 0 0 5px;
+      border-radius: $default-radius;
 
       .sealContainer {
          img {
@@ -70,18 +71,10 @@
             }
          }
 
-         .ctaForgot {
+         .ctaAnchor {
             text-align: center;
             margin-top: 0.2rem;
             margin-bottom: 2.5rem;
-         }
-
-         .createBtn {
-            width: 100%;
-
-            button {
-               background-color: $light-tertiary-color;
-            }
          }
       }
    }

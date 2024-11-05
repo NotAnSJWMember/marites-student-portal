@@ -21,9 +21,13 @@ const CourseTable = ({ courses }) => {
          <div className={styles.content}>
             {courses.map((courseId, index) => {
                const course = courseApi.find((c) => c.courseId === courseId);
-               const instructor = usersApi.find(
-                  (u) => u.userId === course.instructorId
-               );
+               
+               let instructor;
+               if (course) {
+                  instructor = usersApi.find(
+                     (u) => u.userId === course.instructorId
+                  );
+               }
                const isLastItem = index === courses.length - 1;
                return course && instructor ? (
                   <div
@@ -38,7 +42,7 @@ const CourseTable = ({ courses }) => {
                      <p>{course.courseCode}</p>
                      <p>{course.totalUnit}</p>
                      <p>{course.courseDescription}</p>
-                     <p>{`${instructor?.firstName} ${instructor?.lastName}`}</p>
+                     <p>{`${instructor.firstName} ${instructor.lastName}`}</p>
                      <p>{course.lecHour}</p>
                      <p>{course.labHour}</p>
                   </div>
