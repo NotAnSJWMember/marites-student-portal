@@ -12,6 +12,7 @@ const EditCurriculum = ({
    token,
    users,
    courses,
+   curriculums,
    selectedProgram,
    programData,
    handleNextStep,
@@ -24,6 +25,7 @@ const EditCurriculum = ({
 
    const { register, handleSubmit, watch } = useForm();
    const { postData, loading } = usePostData();
+   
 
    const handleSwitch = () => {
       setIsSwitchOn((prev) => !prev);

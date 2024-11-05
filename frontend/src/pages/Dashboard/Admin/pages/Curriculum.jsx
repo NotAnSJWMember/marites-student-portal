@@ -21,7 +21,7 @@ const Curriculum = () => {
    const [currentPage, setCurrentPage] = useState("base");
    const [selectedProgram, setSelectedProgram] = useState(null);
    const [programData, setProgramData] = useState(null);
-   const [curriculumData, setCurriculumData] = useState(null);
+   const [curriculumData, setCurriculumData] = useState(0);
 
    const navigate = useNavigate();
    const token = localStorage.getItem("token");
@@ -53,12 +53,12 @@ const Curriculum = () => {
          setSelectedProgram(program);
          setProgramData(program);
 
-         const curriculumData = curriculums.find(
+         const curriculumData = curriculums.filter(
             (curriculum) => curriculum.programId === program.programId
          );
 
          console.log(curriculumData);
-         curriculumData === undefined
+         curriculumData.length === 0
             ? setCurrentPage("create")
             : setCurrentPage("base");
 
@@ -71,14 +71,14 @@ const Curriculum = () => {
       setCurrentStep((prevStep) => prevStep + 1);
    };
    const handlePreviousStep = () => {
-      if (curriculumData !== undefined) setCurrentPage("base");
+      if (curriculumData.length !== 0) setCurrentPage("base");
 
       if (currentStep <= 1) {
          navigate("/admin/dashboard/academic-planner");
          return;
       }
 
-      if (currentPage === "base" || curriculumData === undefined) {
+      if (currentPage === "base" || curriculumData.length === 0) {
          setCurrentStep((prevStep) => prevStep - 1);
       }
    };
@@ -110,7 +110,7 @@ const Curriculum = () => {
                                  view/edit its curriculum.
                               </p>
                            </div>
-                           {curriculumData === undefined && (
+                           {curriculumData.length === 0 && (
                               <MessageWarning
                                  title="This program does not have a curriculum!"
                                  message="Please create one for it immediately by proceeding to the next step."
@@ -157,8 +157,7 @@ const Curriculum = () => {
                            <p>Overview</p>
                            {currentPage !== "base" && (
                               <>
-                                 <p>/</p>
-                                 <p>{pageLabels[currentPage]}</p>
+                                 <p>/ {pageLabels[currentPage]}</p>
                               </>
                            )}
                         </div>
@@ -231,12 +230,10 @@ const Curriculum = () => {
                                  {
                                     title: "Core courses",
                                     desc: "These courses are mandatory and provide essential knowledge in the field.",
-                                    courses: curriculumData.courses,
                                  },
                                  {
                                     title: "Elective courses",
                                     desc: "Elective courses allow students to explore additional areas of interest or specialization.",
-                                    courses: curriculumData.electiveCourses,
                                  },
                               ].map((section, index) => (
                                  <div key={index}>
@@ -247,13 +244,13 @@ const Curriculum = () => {
                                        {section.desc}
                                     </p>
                                     <br />
-                                    <CourseTable courses={section.courses} />
+                                    <CourseTable courses={curriculumData} />
                                  </div>
                               ))}
                            </div>
                         </div>
                      )}
-                     {currentPage === "create" && (
+                     {/* {currentPage === "create" && (
                         <CreateCurriculum
                            token={token}
                            users={users}
@@ -269,6 +266,7 @@ const Curriculum = () => {
                      {currentPage === "edit" && (
                         <EditCurriculum
                            token={token}
+                           curriculums={curriculums}
                            users={users}
                            courses={courses}
                            selectedProgram={selectedProgram}
@@ -278,7 +276,7 @@ const Curriculum = () => {
                            currentPage={currentPage}
                            setCurrentPage={setCurrentPage}
                         />
-                     )}
+                     )} */}
                   </>
                )}
                {currentStep === 3 && (
