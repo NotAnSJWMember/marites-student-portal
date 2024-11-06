@@ -11,11 +11,10 @@ const styles = {
    },
 };
 
-export const FormSelect = ({ name, value, options, register, onChange }) => (
+export const FormSelect = ({ name, value, options, register }) => (
    <div className={styles.formItem}>
       <select
          {...register(value, { required: `${name} is required` })}
-         onChange={onChange}
          style={styles.select}
       >
          <option value="">Select {name}</option>

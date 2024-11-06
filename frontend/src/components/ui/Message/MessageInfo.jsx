@@ -1,11 +1,11 @@
 import React from "react";
-import { TbAlertTriangle } from "react-icons/tb";
+import { TbInfoCircle } from "react-icons/tb";
 
 const styles = {
    messageContainer: {
       display: "flex",
-      border: "1px solid #ffb433",
-      backgroundColor: "#fff0d6",
+      border: "1px solid #7195c9",
+      backgroundColor: "#e6ebf0",
       borderRadius: "0.4rem",
       gap: "0.7rem",
       padding: "1rem",
@@ -22,10 +22,10 @@ const styles = {
    },
 };
 
-export const MessageWarning = ({ title, message }) => {
+export const MessageInfo = ({ title, message }) => {
    return (
       <div style={styles.messageContainer}>
-         <TbAlertTriangle size={24} color="#ffb433" />
+         <TbInfoCircle size={24} color="#7195c9" />
          <div>
             <h2 style={styles.title}>{title}</h2>
             <p style={styles.message}>{message}</p>
