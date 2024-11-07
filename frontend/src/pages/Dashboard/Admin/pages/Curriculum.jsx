@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "components/Layout/Layout";
 import Loading from "components/Loading/Loading";
 import { MessageWarning } from "components/ui/Message/MessageWarning";
@@ -13,10 +13,11 @@ import {
 } from "react-icons/tb";
 import CourseTable from "./components/CourseTable/CourseTable";
 import CreateCurriculum from "./components/CreateCurriculum/CreateCurriculum";
-import EditCurriculum from "./components/EditCurriculum/EditCurriculum";
+import EditCurriculum from "./components/ManageCurriculum/ManageCurriculum";
 import { useNavigate } from "react-router-dom";
 
 const Curriculum = () => {
+   const [successType, setSuccessType] = useState(null);
    const [currentStep, setCurrentStep] = useState(1);
    const [currentPage, setCurrentPage] = useState("base");
    const [selectedProgram, setSelectedProgram] = useState(null);
@@ -56,8 +57,6 @@ const Curriculum = () => {
          const curriculumData = curriculums.filter(
             (curriculum) => curriculum.programId === program.programId
          );
-
-         console.log(curriculumData);
          curriculumData.length === 0
             ? setCurrentPage("create")
             : setCurrentPage("base");
@@ -67,7 +66,6 @@ const Curriculum = () => {
    };
 
    const handleNextStep = () => {
-      console.log(currentPage);
       setCurrentStep((prevStep) => prevStep + 1);
    };
    const handlePreviousStep = () => {
@@ -81,6 +79,11 @@ const Curriculum = () => {
       if (currentPage === "base" || curriculumData.length === 0) {
          setCurrentStep((prevStep) => prevStep - 1);
       }
+   };
+
+   const handleSuccess = (type) => {
+      setSuccessType(type);
+      handleNextStep();
    };
 
    const isLoading =
@@ -265,6 +268,7 @@ const Curriculum = () => {
                            handlePreviousStep={handlePreviousStep}
                            currentPage={currentPage}
                            setCurrentPage={setCurrentPage}
+                           onSuccess={() => handleSuccess("create")}
                         />
                      )}
                      {currentPage === "edit" && (
@@ -278,32 +282,33 @@ const Curriculum = () => {
                            handleNextStep={handleNextStep}
                            handlePreviousStep={handlePreviousStep}
                            currentPage={currentPage}
+                           onSuccess={() => handleSuccess("edit")}
                            setCurrentPage={setCurrentPage}
                         />
                      )}
                   </>
                )}
                {currentStep === 3 && (
-                  <>
-                     <div className={styles.success}>
-                        <div className={styles.content}>
-                           <TbCircleCheckFilled color="green" size={100} />
-                           <h2 className={styles.title}>
-                              Curriculum created succesfully!
-                           </h2>
-                           <p className={styles.desc}>
-                              You can head back now to the inital page and
-                              choose another program to create/edit its
-                              curriculum.
-                           </p>
-                        </div>
-                        <a href="/admin/dashboard/academic-planner/curriculums">
-                           <button type="button" className={styles.primaryBtn}>
-                              Back to initial page
-                           </button>
-                        </a>
+                  <div className={styles.success}>
+                     <div className={styles.content}>
+                        <TbCircleCheckFilled color="green" size={100} />
+                        <h2 className={styles.title}>
+                           {successType === "create"
+                              ? "Curriculum created successfully!"
+                              : "Curriculum edited successfully!"}
+                        </h2>
+                        <p className={styles.desc}>
+                           {successType === "create"
+                              ? "You can head back to the initial page and choose another program to create or edit its curriculum."
+                              : "You can head back to the initial page and choose another program to make further edits or create a new curriculum."}
+                        </p>
                      </div>
-                  </>
+                     <a href="/admin/dashboard/academic-planner/curriculums">
+                        <button type="button" className={styles.primaryBtn}>
+                           Back to initial page
+                        </button>
+                     </a>
+                  </div>
                )}
             </section>
          </div>

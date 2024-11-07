@@ -1,35 +1,103 @@
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-
+import React, { useEffect, useState } from "react";
 import Loading from "components/Loading/Loading";
 import CourseMapping from "../CourseMapping/CourseMapping";
+import useUpdateData from "hooks/useUpdateData";
 import { FormSelect } from "components/ui/Form";
-import usePostData from "hooks/usePostData";
+import { MessageInfo } from "components/ui/Message/MessageInfo";
+import { MessageWarning } from "components/ui/Message/MessageWarning";
+import { useForm } from "react-hook-form";
 
-import styles from "./CreateCurriculum.module.scss";
+import styles from "./EditCurriculum.module.scss";
 
-const CreateCurriculum = ({
+const EditCurriculum = ({
    token,
    users,
    courses,
+   curriculums,
    selectedProgram,
    programData,
-   handleNextStep,
    handlePreviousStep,
    onSuccess,
 }) => {
-   const [isSwitchOn, setIsSwitchOn] = useState(false);
    const [selectedCourses, setSelectedCourses] = useState([]);
    const [selectedElectiveCourses, setSelectedElectiveCourses] = useState([]);
+   const [selectedCurriculum, setSelectedCurriculum] = useState(null);
+   const [curriculumExists, setCurriculumExists] = useState(false);
+   const [isFieldsNotEmpty, setIsFieldsNotEmpty] = useState(true);
+   const [isSwitchOn, setIsSwitchOn] = useState(false);
    const [, setClickCounts] = useState({});
 
-   const { register, handleSubmit } = useForm();
-   const { postData, loading } = usePostData();
+   const { register, handleSubmit, watch } = useForm({
+      defaultValues: {
+         yearLevel: "",
+         semester: "",
+      },
+   });
+
+   const { updateData, loading } = useUpdateData();
+
+   const yearLevel = watch("yearLevel");
+   const semester = watch("semester");
+
+   const hasElectiveCourses = (curriculum) =>
+      curriculum?.electiveCourses?.length > 0;
+
+   useEffect(() => {
+      if (selectedCurriculum) {
+         setIsSwitchOn(hasElectiveCourses(selectedCurriculum));
+
+         const initialClickCounts = {};
+
+         selectedCurriculum.courses.forEach((courseId) => {
+            initialClickCounts[courseId] = 1;
+         });
+
+         selectedCurriculum.electiveCourses.forEach((courseId) => {
+            initialClickCounts[courseId] = 2;
+         });
+
+         setClickCounts(initialClickCounts);
+      }
+   }, [selectedCurriculum]);
+
+   useEffect(() => {
+      if (yearLevel === "" || semester === "") {
+         setIsFieldsNotEmpty(false);
+      }
+
+      console.log(isFieldsNotEmpty);
+
+      const exists = curriculums.some(
+         (curriculum) =>
+            curriculum.yearLevel === parseInt(yearLevel) &&
+            curriculum.semester === semester
+      );
+
+      setCurriculumExists(exists);
+
+      if (exists) {
+         setIsFieldsNotEmpty(true);
+
+         const curriculum = curriculums.find(
+            (curriculum) =>
+               curriculum.yearLevel === parseInt(yearLevel) &&
+               curriculum.semester === semester
+         );
+
+         if (curriculum) {
+            setSelectedCurriculum(curriculum);
+            setSelectedCourses(curriculum.courses);
+            setSelectedElectiveCourses(curriculum.electiveCourses);
+         }
+      } else {
+         setIsSwitchOn(false);
+         setSelectedCourses([]);
+         setSelectedElectiveCourses([]);
+      }
+   }, [yearLevel, semester, curriculums, isFieldsNotEmpty]);
 
    const handleSwitch = () => {
       setIsSwitchOn((prev) => !prev);
-      setClickCounts({});
-      setSelectedCourses([]);
       setSelectedElectiveCourses([]);
    };
 
@@ -80,7 +148,7 @@ const CreateCurriculum = ({
          programId: selectedProgram.programId,
       };
 
-      await postData(payload, "curriculum", token);
+      await updateData(payload, "curriculum", selectedCurriculum._id, token);
       onSuccess();
    };
 
@@ -93,8 +161,7 @@ const CreateCurriculum = ({
             <div className={styles.twoColumn}>
                <h2>Year Level</h2>
                <FormSelect
-                  register={register}
-                  name="year"
+                  name="yearLevel"
                   value="yearLevel"
                   options={Array.from(
                      { length: programData.duration },
@@ -103,21 +170,35 @@ const CreateCurriculum = ({
                         label: `Year ${index + 1}`,
                      })
                   )}
+                  register={register}
                />
             </div>
             <div className={styles.line}></div>
             <div className={styles.twoColumn}>
                <h2>Semester</h2>
                <FormSelect
-                  register={register}
                   name="semester"
                   value="semester"
                   options={[
                      { value: "1", label: "1st Semester" },
                      { value: "2", label: "2nd Semester" },
                   ]}
+                  register={register}
                />
             </div>
+            {!isFieldsNotEmpty ? (
+               <MessageInfo
+                  title="There are empty fields"
+                  message="Please choose a valid option for each field."
+               />
+            ) : (
+               !curriculumExists && (
+                  <MessageWarning
+                     title="This year/semester does not have a curriculum!"
+                     message="Please create one for it immediately."
+                  />
+               )
+            )}
             <div className={styles.line}></div>
             <CourseMapping
                courses={courses}
@@ -127,6 +208,7 @@ const CreateCurriculum = ({
                handleSwitch={handleSwitch}
                isSwitchOn={isSwitchOn}
                handleSelectCourse={handleSelectCourse}
+               isFieldsNotEmpty={isFieldsNotEmpty}
             />
             <div className={styles.buttonContainer}>
                <button
@@ -134,19 +216,22 @@ const CreateCurriculum = ({
                   onClick={handlePreviousStep}
                   className={styles.secondaryBtn}
                >
-                  Previous step
+                  Cancel
                </button>
-               <button
-                  type="button"
-                  onClick={handleSubmit(onSubmit)}
-                  className={styles.primaryBtn}
-               >
-                  Create curriculum {loading && <Loading />}
-               </button>
+               {isFieldsNotEmpty && (
+                  <button
+                     type="button"
+                     onClick={handleSubmit(onSubmit)}
+                     className={styles.primaryBtn}
+                  >
+                     {curriculumExists ? "Save changes" : "Create curriculum"}
+                     {loading && <Loading />}
+                  </button>
+               )}
             </div>
          </form>
       </>
    );
 };
 
-export default CreateCurriculum;
+export default EditCurriculum;

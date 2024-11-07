@@ -13,45 +13,96 @@ export class CurriculumService {
    ) {}
 
    async create(createCurriculumDto: CreateCurriculumDto): Promise<Curriculum> {
-      const newCurriculum = new this.curriculumModel(createCurriculumDto);
-      return newCurriculum.save();
+      this.logger.log('Creating a new curriculum...');
+      try {
+         const newCurriculum = new this.curriculumModel(createCurriculumDto);
+         const savedCurriculum = await newCurriculum.save();
+         this.logger.log(
+            `Curriculum created successfully with ID: ${savedCurriculum._id}`,
+         );
+         return savedCurriculum;
+      } catch (error) {
+         this.logger.error('Error creating curriculum', error.stack);
+         throw new BadRequestException('Failed to create curriculum');
+      }
    }
 
    async findAll(): Promise<Curriculum[]> {
-      this.logger.log(`Fetching ${this.curriculumModel.length} curriculums..`);
-      return this.curriculumModel.find().exec();
+      this.logger.log('Fetching all curriculums...');
+      try {
+         const curriculums = await this.curriculumModel.find().exec();
+         this.logger.log(`Found ${curriculums.length} curriculums`);
+         return curriculums;
+      } catch (error) {
+         this.logger.error('Error fetching curriculums', error.stack);
+         throw new BadRequestException('Failed to fetch curriculums');
+      }
    }
 
    async findOne(id: Types.ObjectId): Promise<Curriculum> {
-      const curriculum = await this.curriculumModel.findById(id).exec();
-
-      if (!curriculum) {
-         throw new BadRequestException('Curriculum not found');
+      this.logger.log(`Fetching curriculum with ID: ${id}`);
+      try {
+         const curriculum = await this.curriculumModel.findById(id).exec();
+         if (!curriculum) {
+            this.logger.warn(`Curriculum with ID: ${id} not found`);
+            throw new BadRequestException('Curriculum not found');
+         }
+         this.logger.log(`Found curriculum with ID: ${id}`);
+         return curriculum;
+      } catch (error) {
+         this.logger.error(
+            `Error fetching curriculum with ID: ${id}`,
+            error.stack,
+         );
+         throw new BadRequestException('Failed to fetch curriculum');
       }
-      return curriculum;
    }
 
    async update(
       id: Types.ObjectId,
       newData: Partial<CreateCurriculumDto>,
    ): Promise<Curriculum> {
-      const curriculum = await this.curriculumModel
-         .findByIdAndUpdate(id, newData, { new: true })
-         .exec();
+      this.logger.log(`Updating curriculum with ID: ${id}`);
+      try {
+         const curriculum = await this.curriculumModel
+            .findByIdAndUpdate(id, newData, { new: true })
+            .exec();
 
-      if (!curriculum) {
-         throw new BadRequestException('Curriculum not found');
+         if (!curriculum) {
+            this.logger.warn(`Curriculum with ID: ${id} not found for update`);
+            throw new BadRequestException('Curriculum not found');
+         }
+         this.logger.log(`Curriculum with ID: ${id} updated successfully`);
+         return curriculum;
+      } catch (error) {
+         this.logger.error(
+            `Error updating curriculum with ID: ${id}`,
+            error.stack,
+         );
+         throw new BadRequestException('Failed to update curriculum');
       }
-      return curriculum;
    }
 
    async delete(id: Types.ObjectId): Promise<Curriculum> {
-      const curriculum = await this.curriculumModel
-         .findByIdAndDelete(id)
-         .exec();
-      if (!curriculum) {
-         throw new BadRequestException('Curriculum not found');
+      this.logger.log(`Deleting curriculum with ID: ${id}`);
+      try {
+         const curriculum = await this.curriculumModel
+            .findByIdAndDelete(id)
+            .exec();
+         if (!curriculum) {
+            this.logger.warn(
+               `Curriculum with ID: ${id} not found for deletion`,
+            );
+            throw new BadRequestException('Curriculum not found');
+         }
+         this.logger.log(`Curriculum with ID: ${id} deleted successfully`);
+         return curriculum;
+      } catch (error) {
+         this.logger.error(
+            `Error deleting curriculum with ID: ${id}`,
+            error.stack,
+         );
+         throw new BadRequestException('Failed to delete curriculum');
       }
-      return curriculum;
    }
 }
