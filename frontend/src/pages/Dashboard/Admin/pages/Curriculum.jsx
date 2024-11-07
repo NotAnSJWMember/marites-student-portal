@@ -1,8 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Layout from "components/Layout/Layout";
 import Loading from "components/Loading/Loading";
+import CourseTable from "./components/CourseTable/CourseTable";
+import ManageCurriculum from "./components/ManageCurriculum/ManageCurriculum";
 import { MessageWarning } from "components/ui/Message/MessageWarning";
+
 import useFetchData from "hooks/useFetchData";
+import { useNavigate } from "react-router-dom";
 
 import styles from "./Curriculum.module.scss";
 import {
@@ -11,15 +15,11 @@ import {
    TbEdit,
    TbPlus,
 } from "react-icons/tb";
-import CourseTable from "./components/CourseTable/CourseTable";
-import CreateCurriculum from "./components/CreateCurriculum/CreateCurriculum";
-import EditCurriculum from "./components/ManageCurriculum/ManageCurriculum";
-import { useNavigate } from "react-router-dom";
 
 const Curriculum = () => {
    const [successType, setSuccessType] = useState(null);
    const [currentStep, setCurrentStep] = useState(1);
-   const [currentPage, setCurrentPage] = useState("base");
+   const [currentMode, setCurrentMode] = useState("base");
    const [selectedProgram, setSelectedProgram] = useState(null);
    const [programData, setProgramData] = useState(null);
    const [curriculumData, setCurriculumData] = useState(0);
@@ -58,8 +58,8 @@ const Curriculum = () => {
             (curriculum) => curriculum.programId === program.programId
          );
          curriculumData.length === 0
-            ? setCurrentPage("create")
-            : setCurrentPage("base");
+            ? setCurrentMode("create")
+            : setCurrentMode("base");
 
          setCurriculumData(curriculumData);
       }
@@ -69,14 +69,14 @@ const Curriculum = () => {
       setCurrentStep((prevStep) => prevStep + 1);
    };
    const handlePreviousStep = () => {
-      if (curriculumData.length !== 0) setCurrentPage("base");
+      if (curriculumData.length !== 0) setCurrentMode("base");
 
       if (currentStep <= 1) {
          navigate("/admin/dashboard/academic-planner");
          return;
       }
 
-      if (currentPage === "base" || curriculumData.length === 0) {
+      if (currentMode === "base" || curriculumData.length === 0) {
          setCurrentStep((prevStep) => prevStep - 1);
       }
    };
@@ -158,20 +158,20 @@ const Curriculum = () => {
                         </h1>
                         <div className={styles.breadcrumbContainer}>
                            <p>Overview</p>
-                           {currentPage !== "base" && (
+                           {currentMode !== "base" && (
                               <>
-                                 <p>/ {pageLabels[currentPage]}</p>
+                                 <p>/ {pageLabels[currentMode]}</p>
                               </>
                            )}
                         </div>
                      </div>
-                     {currentPage === "base" && (
+                     {currentMode === "base" && (
                         <div className={styles.editWrapper}>
                            <div className={styles.buttonContainer}>
                               <button
                                  type="button"
                                  className={`${styles.iconBtn} ${styles.primaryBtn}`}
-                                 onClick={() => setCurrentPage("create")}
+                                 onClick={() => setCurrentMode("create")}
                               >
                                  <TbPlus size={20} />
                                  Create curriculum
@@ -179,7 +179,7 @@ const Curriculum = () => {
                               <button
                                  type="button"
                                  className={`${styles.iconBtn} ${styles.secondaryBtn}`}
-                                 onClick={() => setCurrentPage("edit")}
+                                 onClick={() => setCurrentMode("edit")}
                               >
                                  <TbEdit size={20} />
                                  Edit curriculum
@@ -257,33 +257,17 @@ const Curriculum = () => {
                            </div>
                         </div>
                      )}
-                     {currentPage === "create" && (
-                        <CreateCurriculum
+                     {(currentMode === "edit" || currentMode === "create") && (
+                        <ManageCurriculum
                            token={token}
                            users={users}
                            courses={courses}
-                           selectedProgram={selectedProgram}
                            programData={programData}
-                           handleNextStep={handleNextStep}
-                           handlePreviousStep={handlePreviousStep}
-                           currentPage={currentPage}
-                           setCurrentPage={setCurrentPage}
-                           onSuccess={() => handleSuccess("create")}
-                        />
-                     )}
-                     {currentPage === "edit" && (
-                        <EditCurriculum
-                           token={token}
-                           curriculums={curriculums}
-                           users={users}
-                           courses={courses}
+                           curriculumData={curriculumData}
                            selectedProgram={selectedProgram}
-                           programData={programData}
-                           handleNextStep={handleNextStep}
                            handlePreviousStep={handlePreviousStep}
-                           currentPage={currentPage}
-                           onSuccess={() => handleSuccess("edit")}
-                           setCurrentPage={setCurrentPage}
+                           handleSuccess={handleSuccess}
+                           currentMode={currentMode}
                         />
                      )}
                   </>

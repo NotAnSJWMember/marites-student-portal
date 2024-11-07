@@ -1,31 +1,38 @@
 import React, { useEffect, useState } from "react";
-import Loading from "components/Loading/Loading";
 import CourseMapping from "../CourseMapping/CourseMapping";
-import useUpdateData from "hooks/useUpdateData";
 import { FormSelect } from "components/ui/Form";
+import Loading from "components/Loading/Loading";
 import { MessageInfo } from "components/ui/Message/MessageInfo";
 import { MessageWarning } from "components/ui/Message/MessageWarning";
+
 import { useForm } from "react-hook-form";
+import useUpdateData from "hooks/useUpdateData";
+import usePostData from "hooks/usePostData";
 
-import styles from "./EditCurriculum.module.scss";
+import styles from "./ManageCurriculum.module.scss";
 
-const EditCurriculum = ({
+const ManageCurriculum = ({
    token,
    users,
    courses,
-   curriculums,
-   selectedProgram,
    programData,
+   curriculumData,
+   selectedProgram,
    handlePreviousStep,
-   onSuccess,
+   handleSuccess,
+   currentMode,
 }) => {
    const [selectedCourses, setSelectedCourses] = useState([]);
    const [selectedElectiveCourses, setSelectedElectiveCourses] = useState([]);
    const [selectedCurriculum, setSelectedCurriculum] = useState(null);
-   const [curriculumExists, setCurriculumExists] = useState(false);
    const [isFieldsNotEmpty, setIsFieldsNotEmpty] = useState(true);
+   const [curriculumExists, setCurriculumExists] = useState(false);
    const [isSwitchOn, setIsSwitchOn] = useState(false);
    const [, setClickCounts] = useState({});
+
+   const { postData, loading: postLoading } = usePostData();
+   const { updateData, loading: updateLoading } = useUpdateData();
+   const loading = curriculumExists ? updateLoading : postLoading;
 
    const { register, handleSubmit, watch } = useForm({
       defaultValues: {
@@ -34,7 +41,6 @@ const EditCurriculum = ({
       },
    });
 
-   const { updateData, loading } = useUpdateData();
 
    const yearLevel = watch("yearLevel");
    const semester = watch("semester");
@@ -45,7 +51,6 @@ const EditCurriculum = ({
    useEffect(() => {
       if (selectedCurriculum) {
          setIsSwitchOn(hasElectiveCourses(selectedCurriculum));
-
          const initialClickCounts = {};
 
          selectedCurriculum.courses.forEach((courseId) => {
@@ -63,59 +68,76 @@ const EditCurriculum = ({
    useEffect(() => {
       if (yearLevel === "" || semester === "") {
          setIsFieldsNotEmpty(false);
-      }
-
-      console.log(isFieldsNotEmpty);
-
-      const exists = curriculums.some(
-         (curriculum) =>
-            curriculum.yearLevel === parseInt(yearLevel) &&
-            curriculum.semester === semester
-      );
-
-      setCurriculumExists(exists);
-
-      if (exists) {
+         setSelectedCurriculum(null);
+      } else {
          setIsFieldsNotEmpty(true);
 
-         const curriculum = curriculums.find(
+         const exists = curriculumData.some(
             (curriculum) =>
                curriculum.yearLevel === parseInt(yearLevel) &&
                curriculum.semester === semester
          );
 
-         if (curriculum) {
-            setSelectedCurriculum(curriculum);
-            setSelectedCourses(curriculum.courses);
-            setSelectedElectiveCourses(curriculum.electiveCourses);
-         }
-      } else {
-         setIsSwitchOn(false);
-         setSelectedCourses([]);
-         setSelectedElectiveCourses([]);
-      }
-   }, [yearLevel, semester, curriculums, isFieldsNotEmpty]);
+         setCurriculumExists(exists);
 
-   const handleSwitch = () => {
-      setIsSwitchOn((prev) => !prev);
+         if (exists) {
+            const curriculum = curriculumData.find(
+               (curriculum) =>
+                  curriculum.yearLevel === parseInt(yearLevel) &&
+                  curriculum.semester === semester
+            );
+
+            if (curriculum) {
+               setSelectedCurriculum(curriculum);
+               setSelectedCourses(curriculum.courses);
+               setSelectedElectiveCourses(curriculum.electiveCourses);
+            }
+         } else {
+            setClickCounts({});
+            setSelectedCurriculum(null);
+            setSelectedCourses([]);
+            setSelectedElectiveCourses([]);
+         }
+      }
+   }, [
+      yearLevel,
+      semester,
+      curriculumData,
+      isFieldsNotEmpty,
+      curriculumExists,
+   ]);
+
+   const resetElectiveCourses = () => {
+      setClickCounts((prevCounts) => {
+         const updatedCounts = { ...prevCounts };
+         selectedElectiveCourses.forEach((courseId) => {
+            delete updatedCounts[courseId];
+         });
+         return updatedCounts;
+      });
       setSelectedElectiveCourses([]);
    };
 
-   const handleSelectCourse = (courseId) => {
-      if (!isSwitchOn) {
-         setSelectedCourses((prevSelectedCourses) =>
-            prevSelectedCourses.includes(courseId)
-               ? prevSelectedCourses.filter((c) => c !== courseId)
-               : [...prevSelectedCourses, courseId]
-         );
-      } else {
-         setClickCounts((prevCounts) => {
-            const newCount = (prevCounts[courseId] || 0) + 1;
-            const updatedCounts = {
-               ...prevCounts,
-               [courseId]: newCount % 3,
-            };
+   const handleSwitch = () => {
+      if (isSwitchOn) resetElectiveCourses();
+      setIsSwitchOn(!isSwitchOn);
+   };
 
+   const handleSelectCourse = (courseId) => {
+      setClickCounts((prevCounts) => {
+         const newCount = (prevCounts[courseId] || 0) + 1;
+         const updatedCounts = {
+            ...prevCounts,
+            [courseId]: isSwitchOn ? newCount % 3 : 1,
+         };
+
+         if (!isSwitchOn) {
+            setSelectedCourses((prevSelectedCourses) =>
+               prevSelectedCourses.includes(courseId)
+                  ? prevSelectedCourses.filter((c) => c !== courseId)
+                  : [...prevSelectedCourses, courseId]
+            );
+         } else {
             if (newCount % 3 === 1) {
                setSelectedCourses((prev) => [...prev, courseId]);
                setSelectedElectiveCourses((prev) =>
@@ -130,10 +152,10 @@ const EditCurriculum = ({
                   prev.filter((c) => c !== courseId)
                );
             }
+         }
 
-            return updatedCounts;
-         });
-      }
+         return updatedCounts;
+      });
    };
 
    const onSubmit = async (data) => {
@@ -148,8 +170,12 @@ const EditCurriculum = ({
          programId: selectedProgram.programId,
       };
 
-      await updateData(payload, "curriculum", selectedCurriculum._id, token);
-      onSuccess();
+      if (currentMode === "edit") {
+         await updateData(payload, "curriculum", selectedCurriculum._id, token);
+      } else {
+         await postData(payload, "curriculum", token);
+      }
+      handleSuccess(currentMode);
    };
 
    return (
@@ -161,7 +187,7 @@ const EditCurriculum = ({
             <div className={styles.twoColumn}>
                <h2>Year Level</h2>
                <FormSelect
-                  name="yearLevel"
+                  name="year"
                   value="yearLevel"
                   options={Array.from(
                      { length: programData.duration },
@@ -234,4 +260,4 @@ const EditCurriculum = ({
    );
 };
 
-export default EditCurriculum;
+export default ManageCurriculum;
