@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { BlockSectionController } from './block-section.controller';
+import { BlockSectionController } from './section.controller';
 
 describe('BlockSectionController', () => {
   let controller: BlockSectionController;

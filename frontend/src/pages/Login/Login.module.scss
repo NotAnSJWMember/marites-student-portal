@@ -1,81 +1,60 @@
 @import "../../styles/global.scss";
 
-.formContainer {
+.contentWrapper {
    display: flex;
    align-items: center;
    justify-content: center;
-   height: 100%;
-   padding: 3rem;
+   height: 100vh;
    background-color: #f0f0f0;
 
-   .container {
+   .contentContainer {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       padding: 2rem;
-      gap: 1.5rem;
-      width: 30rem;
+      gap: 2rem;
       background-color: $light-primary-background;
       box-shadow: #d3d3d3 0 0 5px;
       border-radius: $default-radius;
-
-      .sealContainer {
-         img {
-            width: 100px;
-         }
-      }
-
-      .head {
-         text-align: center;
-
-         .title {
-            text-transform: uppercase;
-            margin-bottom: 5px;
-         }
-      }
-
-      form {
-         display: flex;
-         flex-direction: column;
-         gap: 0.7rem;
-         width: 100%;
-
-         input {
-            border: 1px solid $light-gray-color;
-         }
-
-         button {
-            border: none;
-         }
-
-         input,
-         button {
-            outline: none;
-            padding: 1rem;
-            width: 100%;
-         }
-
-         .inputMerge {
-            border: 1px solid $light-gray-color;
-
-            input {
-               border: none;
-            }
-
-            span {
-               user-select: none;
-               height: 50px;
-               width: 60px;
-               cursor: pointer;
-            }
-         }
-
-         .ctaAnchor {
-            text-align: center;
-            margin-top: 0.2rem;
-            margin-bottom: 2.5rem;
-         }
-      }
    }
+
+   button {
+      width: 100%;
+   }
+}
+
+.sealContainer {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   justify-content: center;
+   gap: 0.7rem;
+
+   .title {
+      margin: 0;
+      font-size: 1.7rem;
+   }
+
+   img {
+      width: 120px;
+   }
+
+   .head {
+      text-align: center;
+   }
+}
+
+.formContainer {
+   width: 25rem;
+
+   .buttonContainer {
+      display: grid;
+      gap: 0.5rem;
+   }
+}
+
+.ctaAnchor {
+   text-align: center;
+   margin-bottom: 2.5rem;
 }

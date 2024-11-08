@@ -1,14 +1,14 @@
 import { IsNotEmpty, IsString, IsBoolean } from 'class-validator';
 import { Types } from 'mongoose';
 
-export class CreateBlockSectionDto {
+export class CreateSectionDto {
    @IsNotEmpty()
-   blockId: Types.ObjectId;
+   sectionId: Types.ObjectId;
 
    @IsNotEmpty()
    @IsString()
-   blockDescription: string;
+   sectionDescription: string;
 
    @IsBoolean()
-   blockActive?: boolean;
+   sectionActive?: boolean;
 }

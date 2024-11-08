@@ -2,10 +2,7 @@ import {
    Assignment,
    AssignmentSchema,
 } from 'src/modules/assignment/assignment.schema';
-import {
-   BlockSection,
-   BlockSectionSchema,
-} from 'src/modules/block-section/block-section.schema';
+import { Section, SectionSchema } from 'src/modules/section/section.schema';
 import { Course, CourseSchema } from 'src/modules/course/course.schema';
 import {
    Enrollment,
@@ -45,7 +42,7 @@ import {
          { name: Student.name, schema: StudentSchema },
          { name: Admin.name, schema: AdminSchema },
          { name: Instructor.name, schema: InstructorSchema },
-         { name: BlockSection.name, schema: BlockSectionSchema },
+         { name: Section.name, schema: SectionSchema },
          { name: Course.name, schema: CourseSchema },
          { name: Program.name, schema: ProgramSchema },
          { name: Enrollment.name, schema: EnrollmentSchema },

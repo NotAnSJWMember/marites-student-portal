@@ -15,6 +15,7 @@ import {
 import PopupAlert from "../../components/Popup/PopupAlert";
 import logo from "assets/images/logo.png";
 import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
+import { FormInput } from "components/ui/Form";
 
 const Login = () => {
    const [showPassword, togglePasswordVisibility] = useTogglePassword();
@@ -63,86 +64,91 @@ const Login = () => {
    };
 
    return (
-      <div>
-         <div className={styles.formContainer}>
-            <Helmet>
-               <title>Login | Dr. AMMC</title>
-            </Helmet>
-            <div className={styles.container}>
+      <>
+         <Helmet>
+            <title>Login | Dr. AMMC</title>
+         </Helmet>
+         <div className={styles.contentWrapper}>
+            <div className={styles.contentContainer}>
                <div className={styles.sealContainer}>
                   <img src={logo} alt="Dr. AMMC Seal" />
+                  <div className={styles.head}>
+                     <h1 className={styles.title}>Student Portal</h1>
+                     <p className={styles.desc}>
+                        Sign in to start your session
+                     </p>
+                  </div>
                </div>
-               <div className={styles.head}>
-                  <h1 className={styles.title}>Student Portal</h1>
-                  <p>Sign in to start your session</p>
-               </div>
-               <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
-                  <label htmlFor="username">
-                     Username/School Id{" "}
-                     {errors.userId && (
-                        <span className={styles.errorMsg}>
-                           ({errors.userId.message})
-                        </span>
-                     )}
-                  </label>
-                  <input
-                     type="text"
-                     {...register("userId", {
-                        required: "This field is required",
-                     })}
-                  />
-
-                  <label htmlFor="password">
-                     Password{" "}
-                     {errors.password && (
-                        <span className={styles.errorMsg}>
-                           ({errors.password.message})
-                        </span>
-                     )}
-                  </label>
-                  <div className={styles.inputMerge}>
-                     <input
-                        type={showPassword ? "text" : "password"}
-                        {...register("password", {
-                           required: "Password is required",
-                        })}
-                     />
-                     <span
-                        className={styles.inputIcon}
-                        onClick={togglePasswordVisibility}
-                     >
-                        {showPassword ? (
-                           <IoEyeOffOutline color="gray" size={20} />
-                        ) : (
-                           <IoEyeOutline color="gray" size={20} />
+               <form
+                  className={styles.formContainer}
+                  onSubmit={handleSubmit(onSubmit)}
+                  autoComplete="off"
+               >
+                  <div className={styles.formItem}>
+                     <label htmlFor="username">
+                        Username/School Id{" "}
+                        {errors.userId && (
+                           <span className={styles.errorMsg}>
+                              (This field is required)
+                           </span>
                         )}
-                     </span>
+                     </label>
+                     <FormInput type="text" name="userId" register={register} />
+                  </div>
+                  <div className={styles.formItem}>
+                     <label htmlFor="password">
+                        Password{" "}
+                        {errors.password && (
+                           <span className={styles.errorMsg}>
+                              ({errors.password.message})
+                           </span>
+                        )}
+                     </label>
+                     <div className={styles.inputMerge}>
+                        <input
+                           type={showPassword ? "text" : "password"}
+                           {...register("password", {
+                              required: "Password is required",
+                           })}
+                        />
+                        <span
+                           className={styles.inputIcon}
+                           onClick={togglePasswordVisibility}
+                        >
+                           {showPassword ? (
+                              <IoEyeOffOutline color="gray" size={20} />
+                           ) : (
+                              <IoEyeOutline color="gray" size={20} />
+                           )}
+                        </span>
+                     </div>
                   </div>
 
                   <a href="forgot-password" className={styles.ctaAnchor}>
                      Forgot your password?
                   </a>
 
-                  <button
-                     type="submit"
-                     className={styles.primaryBtn}
-                     disabled={isLoading}
-                  >
-                     Sign In {isLoading && <Loading />}
-                  </button>
-                  <div className={styles.textDivider}>
-                     <span>OR</span>
-                     <div className={styles.line}></div>
-                  </div>
-                  <a href="register">
-                     <button type="button" className={styles.redBtn}>
-                        Create an account
+                  <div className={styles.buttonContainer}>
+                     <button
+                        type="submit"
+                        className={styles.primaryBtn}
+                        disabled={isLoading}
+                     >
+                        Sign In {isLoading && <Loading />}
                      </button>
-                  </a>
+                     <div className={styles.textDivider}>
+                        <span>OR</span>
+                        <div className={styles.line}></div>
+                     </div>
+                     <a href="register">
+                        <button type="button" className={styles.redBtn}>
+                           Create an account
+                        </button>
+                     </a>
+                  </div>
                </form>
             </div>
          </div>
-
          <PopupAlert
             icon={popupState.icon}
             border={popupState.border}
@@ -152,7 +158,7 @@ const Login = () => {
             onClose={handleClosePopup}
             show={showPopup}
          />
-      </div>
+      </>
    );
 };
 

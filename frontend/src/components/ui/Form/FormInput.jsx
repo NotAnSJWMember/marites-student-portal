@@ -13,21 +13,13 @@ const styles = {
    },
 };
 
-export const FormInput = ({
-   type,
-   name,
-   placeholder,
-   register,
-   ...props
-}) => (
-   <>
-      <input
-         placeholder={placeholder}
-         style={styles.input}
-         type={type}
-         id={name}
-         {...register(name, { required: `${name} is required` })}
-         {...props}
-      />
-   </>
+export const FormInput = ({ type, name, placeholder, register, ...props }) => (
+   <input
+      placeholder={placeholder}
+      style={styles.input}
+      type={type}
+      id={name}
+      {...register(name, { required: `${name} is required` })}
+      {...props}
+   />
 );

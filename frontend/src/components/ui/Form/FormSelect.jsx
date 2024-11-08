@@ -9,17 +9,15 @@ const styles = {
 };
 
 export const FormSelect = ({ name, value, options, register }) => (
-   <>
-      <select
-         {...register(value, { required: `${name} is required` })}
-         style={styles.select}
-      >
-         <option value="">Select {name}</option>
-         {options.map((option) => (
-            <option key={option.value} value={option.value}>
-               {option.label}
-            </option>
-         ))}
-      </select>
-   </>
+   <select
+      {...register(value, { required: `${name} is required` })}
+      style={styles.select}
+   >
+      <option value="">Select {name}</option>
+      {options.map((option) => (
+         <option key={option.value} value={option.value}>
+            {option.label}
+         </option>
+      ))}
+   </select>
 );

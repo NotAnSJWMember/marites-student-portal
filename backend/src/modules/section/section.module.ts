@@ -1,6 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
-import { BlockSectionService } from './block-section.service';
-import { BlockSectionController } from './block-section.controller';
+import { SectionService } from './section.service';
+import { SectionController } from './section.controller';
 import { DatabaseModule } from 'src/common/database/database.module';
 import { AuthModule } from '../auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
@@ -16,8 +16,8 @@ import { JwtModule } from '@nestjs/jwt';
          }),
       }),
    ],
-   providers: [BlockSectionService],
-   controllers: [BlockSectionController],
-   exports: [BlockSectionService],
+   providers: [SectionService],
+   controllers: [SectionController],
+   exports: [SectionService],
 })
-export class BlockSectionModule {}
+export class SectionModule {}

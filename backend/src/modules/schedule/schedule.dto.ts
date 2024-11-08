@@ -15,7 +15,7 @@ export class CreateScheduleDto {
 
    @IsNotEmpty()
    @IsObject()
-   blockId: string;
+   sectionId: string;
 
    @IsNotEmpty()
    @IsString()

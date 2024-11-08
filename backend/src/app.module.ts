@@ -10,7 +10,7 @@ import { AppService } from './app.service';
 import { DatabaseModule } from './common/database/database.module';
 import { AssignmentModule } from './modules/assignment/assignment.module';
 import { AuthModule } from './modules/auth/auth.module';
-import { BlockSectionModule } from './modules/block-section/block-section.module';
+import { SectionModule } from './modules/section/section.module';
 import { CourseModule } from './modules/course/course.module';
 import { EnrollmentModule } from './modules/enrollment/enrollment.module';
 import { FinanceModule } from './modules/finance/finance.module';
@@ -43,7 +43,7 @@ import { CurriculumModule } from './modules/curriculum/curriculum.module';
       ScheduleModule,
       NotificationModule,
       EnrollmentModule,
-      BlockSectionModule,
+      SectionModule,
       ProgramModule,
       InstructorModule,
       CurriculumModule,

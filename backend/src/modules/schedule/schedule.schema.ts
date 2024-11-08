@@ -17,10 +17,7 @@ export class Schedule extends Document {
    programId: Types.ObjectId;
 
    @Prop({ required: true, type: Types.ObjectId, ref: 'BlockSection' })
-   blockId: Types.ObjectId;
-
-   @Prop({ required: true })
-   syNo: string;
+   sectionId: Types.ObjectId;
 
    @Prop({ required: true })
    time: string;

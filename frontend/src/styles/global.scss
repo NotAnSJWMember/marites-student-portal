@@ -71,7 +71,7 @@
 }
 
 .ctaAnchor {
-   font-size: 0.8rem;
+   font-size: 0.85rem;
    color: $light-green-color-300;
    text-decoration: underline;
    text-underline-offset: 5px;
@@ -108,9 +108,10 @@
    align-items: center;
    width: 100%;
    margin: 0.5rem 0 0.5rem 0;
-   opacity: 0.4;
+   opacity: 0.5;
 
    span {
+      font-size: 0.8rem;
       display: block;
       position: absolute;
       background-color: $light-primary-background;
@@ -125,7 +126,7 @@
 }
 
 .verticalLine {
-   width: 1px;
+   width: 2px;
    background-color: $light-gray-color-100;
 }
 
@@ -172,4 +173,47 @@
    text-wrap: balance;
    line-height: 1.3rem;
    color: $light-gray-color-600;
+}
+
+.formContainer {
+   display: flex;
+   flex-direction: column;
+   gap: 1rem;
+
+   h4 {
+      font-weight: 500;
+   }
+
+   input,
+   select {
+      outline: none;
+      border: 1px solid $light-gray-color;
+      border-radius: $small-radius;
+      padding: 0.7rem;
+   }
+
+   .inputMerge {
+      border: 1px solid $light-gray-color;
+      height: 100%;
+
+      input {
+         border: none;
+      }
+   }
+
+   .twoColumn {
+      grid-template-columns: 150px 1fr;
+
+      .twoColumn {
+         grid-template-columns: repeat(2, 1fr);
+         align-items: center;
+         gap: 0.5rem;
+      }
+   }
+
+   .formItem {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+   }
 }
