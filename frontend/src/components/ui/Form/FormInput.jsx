@@ -3,8 +3,9 @@ import React from "react";
 const styles = {
    input: {
       width: "100%",
+      borderRadius: "0.5rem",
+      border: "1px solid #ccc",
    },
-
    errorMsg: {
       fontSize: "smaller",
       fontStyle: "italic",
@@ -15,19 +16,18 @@ const styles = {
 export const FormInput = ({
    type,
    name,
-   value,
-   register,
    placeholder,
+   register,
    ...props
 }) => (
-   <div className={styles.formItem}>
+   <>
       <input
          placeholder={placeholder}
          style={styles.input}
          type={type}
          id={name}
-         {...register(value, { required: `${name} is required` })}
+         {...register(name, { required: `${name} is required` })}
          {...props}
       />
-   </div>
+   </>
 );

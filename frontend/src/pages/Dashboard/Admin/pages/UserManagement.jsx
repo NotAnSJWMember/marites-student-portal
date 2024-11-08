@@ -40,7 +40,7 @@ const UserManagement = () => {
 
    const [selectedUsers, setSelectedUsers] = useState([]);
    const [selectedRole, setSelectedRole] = useState(null);
-   
+
    const [currentPage, setCurrentPage] = useState(1);
    const [currentStep, setCurrentStep] = useState(1);
 

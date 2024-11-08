@@ -1,9 +1,6 @@
 import React from "react";
 
 const styles = {
-   formItem: {
-      marginBottom: "15px",
-   },
    select: {
       width: "100%",
       borderRadius: "0.5rem",
@@ -12,7 +9,7 @@ const styles = {
 };
 
 export const FormSelect = ({ name, value, options, register }) => (
-   <div className={styles.formItem}>
+   <>
       <select
          {...register(value, { required: `${name} is required` })}
          style={styles.select}
@@ -24,5 +21,5 @@ export const FormSelect = ({ name, value, options, register }) => (
             </option>
          ))}
       </select>
-   </div>
+   </>
 );

@@ -71,6 +71,7 @@
 }
 
 .ctaAnchor {
+   font-size: 0.8rem;
    color: $light-green-color-300;
    text-decoration: underline;
    text-underline-offset: 5px;
@@ -124,9 +125,8 @@
 }
 
 .verticalLine {
-   height: 100%;
-   width: 2px;
-   background-color: $light-primary-text;
+   width: 1px;
+   background-color: $light-gray-color-100;
 }
 
 .inputMerge {

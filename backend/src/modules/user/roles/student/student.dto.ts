@@ -41,6 +41,7 @@ export class CreateStudentDto extends CreateUserDto {
    enrollmentDate?: Date;
 
    @IsNumber()
+   @IsOptional()
    currentSemester: number;
 
    @IsArray()
@@ -50,5 +51,6 @@ export class CreateStudentDto extends CreateUserDto {
    courseRecords?: CourseRecordDto[];
 
    @IsArray()
+   @IsOptional()
    courses: Types.ObjectId[];
 }

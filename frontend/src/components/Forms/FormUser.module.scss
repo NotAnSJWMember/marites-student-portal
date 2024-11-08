@@ -4,7 +4,7 @@
    background-color: $light-gray-color;
 }
 
-form {
+.formContainer {
    display: flex;
    flex-direction: column;
    gap: 1rem;
@@ -92,6 +92,7 @@ form {
    .buttonContainer {
       display: flex;
       justify-content: flex-end;
+      align-items: center;
       width: 100%;
       gap: 0.7rem;
    }

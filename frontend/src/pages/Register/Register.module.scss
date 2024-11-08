@@ -1,92 +1,53 @@
 @import "../../styles/global.scss";
 
-.content {
+.contentWrapper {
    display: flex;
    align-items: center;
    justify-content: center;
-   height: 100%;
-   padding: 3rem;
+   height: 100vh;
    background-color: #f0f0f0;
-   
-   .container {
+
+   .contentContainer {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       padding: 2rem;
-      gap: 1.3rem;
-      width: 40rem;
+      gap: 1.5rem;
       background-color: $light-primary-background;
       box-shadow: #d3d3d3 0 0 5px;
       border-radius: $default-radius;
+   }
+}
 
-      .sealContainer {
-         display: flex;
-         align-items: center;
-         justify-content: center;
-         gap: 1rem;
+.sealContainer {
+   display: flex;
+   align-items: center;
+   gap: 1rem;
 
-         img {
-            width: 70px;
-         }
+   img {
+      width: 70px;
+   }
 
-         .head {
-            .title {
-               text-transform: uppercase;
-            }
-         }
-      }
+   .title {
+      font-size: 1.7rem;
+      text-transform: uppercase;
+      margin: 0;
+   }
+}
 
-      .formContainer {
-         display: flex;
-         flex-direction: column;
-         gap: 0.7rem;
-         width: 100%;
+.formWrapper {
+   display: grid;
+   gap: 1rem;
 
-         label {
-            display: inline-block;
-            margin-bottom: 0.5rem;
-         }
+   .title {
+      margin-bottom: 1rem;
+   }
 
-         input {
-            border: 1px solid $light-gray-color;
-         }
-
-         button {
-            border: none;
-         }
-
-         select {
-            border: 1px solid $light-gray-color;
-         }
-
-         input,
-         button,
-         select {
-            flex: 1;
-            outline: none;
-            padding: 1rem;
-            width: 100%;
-         }
-
-         .inputMerge {
-            border: 1px solid $light-gray-color;
-            height: 100%;
-
-            input {
-               border: none;
-            }
-         }
-
-         .sex,
-         .year {
-            display: flex;
-            flex-direction: column;
-         }
-
-         a {
-            margin: 1rem auto 0 auto;
-         }
-      }
+   .buttonContainer {
+      display: flex;
+      align-items: center;
+      justify-self: end;
+      gap: 1rem;
    }
 }

@@ -3,9 +3,9 @@ import { usePopupAlert } from "./usePopupAlert";
 export const useRegister = () => {
    const { setShowPopup, showError, showSuccess, ...popupProps } = usePopupAlert();
 
-   const createAccount = async (data, resetForm) => {
+   const createAccount = async (data, role, resetForm) => {
       try {
-         const url = "http://localhost:8080/user";
+         const url = `http://localhost:8080/${role}`;
          const response = await fetch(url, {
             method: "POST",
             headers: {
