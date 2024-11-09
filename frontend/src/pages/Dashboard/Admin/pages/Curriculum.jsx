@@ -13,14 +13,19 @@ import {
    TbEdit,
    TbPlus,
 } from "react-icons/tb";
+import PopupAlert from "components/Popup/PopupAlert";
+import { usePopupAlert } from "hooks";
 
 const Curriculum = () => {
    const [successType, setSuccessType] = useState(null);
    const [currentStep, setCurrentStep] = useState(1);
    const [currentMode, setCurrentMode] = useState("base");
    const [selectedProgram, setSelectedProgram] = useState(null);
-   const [curriculumData, setCurriculumData] = useState([]);
+   const [curriculumData, setCurriculumData] = useState(null);
    const [programData, setProgramData] = useState(null);
+
+   const { popupState, showPopup, setShowPopup, showError, showSuccess } =
+      usePopupAlert();
 
    const navigate = useNavigate();
    const token = localStorage.getItem("token");
@@ -44,21 +49,32 @@ const Curriculum = () => {
    };
 
    const handleSelectProgram = (program) => {
-      const selectedCurriculum = curriculums.filter(
+      const selectedCurriculum = curriculums.find(
          (curr) => curr.programId === program._id
       );
+
       setSelectedProgram(selectedProgram === program ? null : program);
       setProgramData(selectedProgram === program ? null : program);
       setCurriculumData(selectedProgram === program ? [] : selectedCurriculum);
-      setCurrentMode(selectedCurriculum.length === 0 ? "create" : "base");
+      setCurrentMode(selectedCurriculum === undefined ? "create" : "base");
    };
 
-   const handleNextStep = () => setCurrentStep((prev) => prev + 1);
+   const handleNextStep = () => {
+      if (selectedProgram === null) {
+         setShowPopup(true);
+         showError(
+            "No program selected",
+            "Please select a program from the list"
+         );
+         return;
+      }
+      setCurrentStep((prev) => prev + 1);
+   };
    const handlePreviousStep = () => {
       if (currentStep <= 1)
          return navigate("/admin/dashboard/academic-planner");
       setCurrentStep((prev) => prev - 1);
-      if (curriculumData.length !== 0) setCurrentMode("base");
+      if (curriculumData !== null) setCurrentMode("base");
    };
 
    const handleSuccess = (type) => {
@@ -100,11 +116,13 @@ const Curriculum = () => {
    );
 
    const CurriculumSection = ({ title, desc, data }) => (
-      <div>
-         <h2 className={styles.title}>{title}</h2>
-         <p className={styles.desc}>{desc}</p>
+      <>
+         <div>
+            <h2 className={styles.title}>{title}</h2>
+            <p className={styles.desc}>{desc}</p>
+         </div>
          <CourseTable curriculumData={data} courses={courses} users={users} />
-      </div>
+      </>
    );
 
    return (
@@ -121,11 +139,13 @@ const Curriculum = () => {
                   <>
                      <div className={styles.selectProgram}>
                         <div className={styles.info}>
-                           <h2 className={styles.title}>Choose a program</h2>
-                           <p className={styles.desc}>
-                              Select a program to view/edit its curriculum.
-                           </p>
-                           {curriculumData.length === 0 && (
+                           <div>
+                              <h2 className={styles.title}>Choose a program</h2>
+                              <p className={styles.desc}>
+                                 Select a program to view/edit its curriculum.
+                              </p>
+                           </div>
+                           {curriculumData === undefined && (
                               <MessageWarning
                                  title="This program does not have a curriculum!"
                                  message="Create one by proceeding to the next step."
@@ -177,13 +197,13 @@ const Curriculum = () => {
                            <div className={styles.buttonContainer}>
                               <button
                                  onClick={() => setCurrentMode("create")}
-                                 className={styles.primaryBtn}
+                                 className={`${styles.iconBtn} ${styles.primaryBtn}`}
                               >
                                  <TbPlus size={20} /> Create curriculum
                               </button>
                               <button
                                  onClick={() => setCurrentMode("edit")}
-                                 className={styles.secondaryBtn}
+                                 className={`${styles.iconBtn} ${styles.secondaryBtn}`}
                               >
                                  <TbEdit size={20} /> Edit curriculum
                               </button>
@@ -204,12 +224,12 @@ const Curriculum = () => {
                                  {
                                     title: "Core courses",
                                     desc: "Mandatory courses essential to the field.",
-                                    data: curriculumData[0].courses,
+                                    data: curriculumData.courses,
                                  },
                                  {
                                     title: "Elective courses",
                                     desc: "Courses for exploring additional interests.",
-                                    data: curriculumData[0].electiveCourses,
+                                    data: curriculumData.electiveCourses,
                                  },
                               ].map((section, index) => (
                                  <CurriculumSection key={index} {...section} />
@@ -256,6 +276,14 @@ const Curriculum = () => {
                )}
             </section>
          </div>
+         <PopupAlert
+            icon={popupState.icon}
+            border={popupState.border}
+            color={popupState.color}
+            title={popupState.title}
+            message={popupState.message}
+            show={showPopup}
+         />
       </Layout>
    );
 };
