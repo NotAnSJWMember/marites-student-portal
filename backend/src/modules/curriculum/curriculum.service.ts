@@ -106,6 +106,15 @@ export class CurriculumService {
       }
    }
 
+   async findCurriculum(
+      programId: string,
+      yearLevel: number,
+   ): Promise<Curriculum> {
+      return await this.curriculumModel
+         .findOne({ programId, yearLevel })
+         .exec();
+   }
+
    async getProgramCourses(
       programId: Types.ObjectId,
       yearLevel: number,

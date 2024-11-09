@@ -7,7 +7,7 @@ export class Student extends User {
    @Prop({ required: true, type: Types.ObjectId, ref: 'Program' })
    programId: Types.ObjectId;
 
-   @Prop({ required: true, type: Types.ObjectId, ref: 'Curriculum' })
+   @Prop({ type: Types.ObjectId, ref: 'Curriculum' })
    curriculumId: Types.ObjectId;
 
    @Prop({ default: 1, required: true, min: 1, max: 5 })

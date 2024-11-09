@@ -5,6 +5,7 @@ import { AuthModule } from 'src/modules/auth/auth.module';
 import { StudentService } from './student.service';
 import { StudentController } from './student.controller';
 import { UserService } from '../../user.service';
+import { CurriculumService } from 'src/modules/curriculum/curriculum.service';
 import { IdGenerator } from 'src/common/utils/generate-id.helper';
 
 @Module({
@@ -18,7 +19,7 @@ import { IdGenerator } from 'src/common/utils/generate-id.helper';
          }),
       }),
    ],
-   providers: [StudentService, UserService, IdGenerator],
+   providers: [StudentService, UserService, CurriculumService, IdGenerator],
    controllers: [StudentController],
    exports: [StudentService],
 })

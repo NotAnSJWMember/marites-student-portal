@@ -42,7 +42,7 @@ export const FormStudent = ({ register, onBack }) => {
                value="programId"
                options={programs.map((program) => ({
                   value: program._id,
-                  label: program.programDescription,
+                  label: program.description,
                }))}
                register={register}
                onChange={handleProgramChange}

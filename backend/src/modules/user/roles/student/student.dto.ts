@@ -1,18 +1,19 @@
 import {
    IsBoolean,
    IsDateString,
-   IsMongoId,
    IsNumber,
    IsOptional,
+   IsString,
 } from 'class-validator';
 import { CreateUserDto } from '../../user.dto';
 
 export class CreateStudentDto extends CreateUserDto {
-   @IsMongoId()
+   @IsString()
    programId: string;
 
-   @IsMongoId()
-   curriculumId: string;
+   @IsOptional()
+   @IsString()
+   curriculumId?: string;
 
    @IsNumber()
    yearLevel: number;

@@ -41,7 +41,6 @@ const ManageCurriculum = ({
       },
    });
 
-
    const yearLevel = watch("yearLevel");
    const semester = watch("semester");
 
@@ -167,7 +166,8 @@ const ManageCurriculum = ({
          ...data,
          courses: selectedCourses,
          electiveCourses: selectedElectiveCourses,
-         programId: selectedProgram.programId,
+         yearLevel: parseInt(data.yearLevel),
+         programId: selectedProgram._id,
       };
 
       if (currentMode === "edit") {

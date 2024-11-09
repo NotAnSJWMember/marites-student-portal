@@ -3,16 +3,15 @@ import {
    IsString,
    IsNumber,
    IsBoolean,
-   IsMongoId,
    IsEnum,
 } from 'class-validator';
 import { Types } from 'mongoose';
 
 export class CreateEnrollmentDto {
-   @IsMongoId()
+   @IsString()
    programId: Types.ObjectId;
 
-   @IsMongoId()
+   @IsString()
    courseId: Types.ObjectId;
 
    @IsNotEmpty()

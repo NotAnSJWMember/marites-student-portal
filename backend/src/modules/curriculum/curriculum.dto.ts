@@ -4,10 +4,11 @@ import {
    IsNotEmpty,
    IsNumber,
    IsOptional,
+   IsString,
 } from 'class-validator';
 
 export class CreateCurriculumDto {
-   @IsMongoId()
+   @IsString()
    programId: string;
 
    @IsNotEmpty()
@@ -24,7 +25,7 @@ export class CreateCurriculumDto {
    @IsMongoId({ each: true })
    electiveCourses?: string[];
 
-   @IsNumber()
+   @IsString()
    @IsNotEmpty()
-   semester: number;
+   semester: string;
 }

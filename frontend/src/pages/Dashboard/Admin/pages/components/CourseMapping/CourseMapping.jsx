@@ -54,15 +54,15 @@ const CourseMapping = ({
             return (
                <div
                   className={`${styles.courseCard} ${
-                     selectedCourses.includes(course.courseId)
+                     selectedCourses.includes(course._id)
                         ? styles.selected
                         : ""
                   } ${
-                     selectedElectiveCourses.includes(course.courseId)
+                     selectedElectiveCourses.includes(course._id)
                         ? styles.selectedElective
                         : ""
                   }`}
-                  onClick={() => handleCourseClick(course.courseId)}
+                  onClick={() => handleCourseClick(course._id)}
                   key={course.courseCode}
                   style={{
                      cursor: isFieldsNotEmpty ? "pointer" : "not-allowed",
@@ -71,9 +71,9 @@ const CourseMapping = ({
                >
                   <div className={styles.courseTitle}>
                      <h3 className={styles.title}>
-                        {course.courseDescription}
+                        {course.description}
                      </h3>
-                     <p className={styles.badge}>{course.courseCode}</p>
+                     <p className={styles.badge}>{course.code}</p>
                   </div>
                   <div className={styles.courseInfo}>
                      <div className={styles.line}></div>

@@ -13,33 +13,33 @@ const CourseTable = ({ curriculumData, courses, users }) => {
             <h2 className={styles.headerLabel}>Lab Hour</h2>
          </div>
          <div className={styles.content}>
-            {curriculumData.map((curriculum, curriculumIndex) => {
-               return curriculum.courses.map((courseId, index) => {
-                  const course = courses.find((c) => c.courseId === courseId);
-                  const instructor = course
-                     ? users.find((u) => u.userId === course.instructorId)
-                     : null;
+            {curriculumData.map((courseId, index) => {
+               const course = courses.find((c) => c._id === courseId);
 
-                  return course && instructor ? (
-                     <div
-                        key={course.courseCode}
-                        className={styles.contentItem}
-                        style={{
-                           border:
-                              index === curriculum.courses.length - 1
-                                 ? "none"
-                                 : "1px solid var(--light-gray-color)",
-                        }}
-                     >
-                        <p>{course.courseCode}</p>
-                        <p>{course.totalUnit}</p>
-                        <p>{course.courseDescription}</p>
-                        <p>{`${instructor.firstName} ${instructor.lastName}`}</p>
-                        <p>{course.lecHour}</p>
-                        <p>{course.labHour}</p>
-                     </div>
-                  ) : null;
-               });
+               const instructor = course
+                  ? users.find((u) => u.userId === course.instructorId)
+                  : null;
+
+               return course ? (
+                  <div
+                     key={course.code}
+                     className={styles.contentItem}
+                     style={{
+                        border:
+                           index === course.length - 1   
+                              ? "none"
+                              : "1px solid var(--light-gray-color)",
+                     }}
+                  >
+                     <p>{course.code}</p>
+                     <p>{course.totalUnit}</p>
+                     <p>{course.description}</p>
+                     <p>Instructor</p>
+                     {/* <p>{`${instructor.firstName} ${instructor.lastName}`}</p> */}
+                     <p>{course.lecHour}</p>
+                     <p>{course.labHour}</p>
+                  </div>
+               ) : null;
             })}
          </div>
       </div>

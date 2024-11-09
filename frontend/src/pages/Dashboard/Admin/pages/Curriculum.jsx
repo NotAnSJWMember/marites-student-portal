@@ -4,10 +4,8 @@ import Loading from "components/Loading/Loading";
 import CourseTable from "./components/CourseTable/CourseTable";
 import ManageCurriculum from "./components/ManageCurriculum/ManageCurriculum";
 import { MessageWarning } from "components/ui/Message/MessageWarning";
-
 import useFetchData from "hooks/useFetchData";
 import { useNavigate } from "react-router-dom";
-
 import styles from "./Curriculum.module.scss";
 import {
    TbArrowNarrowLeft,
@@ -21,8 +19,8 @@ const Curriculum = () => {
    const [currentStep, setCurrentStep] = useState(1);
    const [currentMode, setCurrentMode] = useState("base");
    const [selectedProgram, setSelectedProgram] = useState(null);
+   const [curriculumData, setCurriculumData] = useState([]);
    const [programData, setProgramData] = useState(null);
-   const [curriculumData, setCurriculumData] = useState(0);
 
    const navigate = useNavigate();
    const token = localStorage.getItem("token");
@@ -46,39 +44,21 @@ const Curriculum = () => {
    };
 
    const handleSelectProgram = (program) => {
-      if (selectedProgram === program) {
-         setSelectedProgram(null);
-         setProgramData(null);
-         setCurriculumData(null);
-      } else {
-         setSelectedProgram(program);
-         setProgramData(program);
-
-         const curriculumData = curriculums.filter(
-            (curriculum) => curriculum.programId === program.programId
-         );
-         curriculumData.length === 0
-            ? setCurrentMode("create")
-            : setCurrentMode("base");
-
-         setCurriculumData(curriculumData);
-      }
+      const selectedCurriculum = curriculums.filter(
+         (curr) => curr.programId === program._id
+      );
+      setSelectedProgram(selectedProgram === program ? null : program);
+      setProgramData(selectedProgram === program ? null : program);
+      setCurriculumData(selectedProgram === program ? [] : selectedCurriculum);
+      setCurrentMode(selectedCurriculum.length === 0 ? "create" : "base");
    };
 
-   const handleNextStep = () => {
-      setCurrentStep((prevStep) => prevStep + 1);
-   };
+   const handleNextStep = () => setCurrentStep((prev) => prev + 1);
    const handlePreviousStep = () => {
+      if (currentStep <= 1)
+         return navigate("/admin/dashboard/academic-planner");
+      setCurrentStep((prev) => prev - 1);
       if (curriculumData.length !== 0) setCurrentMode("base");
-
-      if (currentStep <= 1) {
-         navigate("/admin/dashboard/academic-planner");
-         return;
-      }
-
-      if (currentMode === "base" || curriculumData.length === 0) {
-         setCurrentStep((prevStep) => prevStep - 1);
-      }
    };
 
    const handleSuccess = (type) => {
@@ -88,8 +68,44 @@ const Curriculum = () => {
 
    const isLoading =
       loadingPrograms || loadingCurriculums || loadingUsers || loadingCourses;
-
    if (isLoading) return <Loading />;
+
+   const YearCard = ({ yearIndex }) => (
+      <div className={styles.curriculumCard}>
+         <div className={styles.yearInfo}>
+            <p className={styles.badge}>
+               {
+                  [
+                     "First Year",
+                     "Second Year",
+                     "Third Year",
+                     "Fourth Year",
+                     "Fifth Year",
+                  ][yearIndex]
+               }
+            </p>
+            <p className={styles.yearDescription}>
+               {
+                  [
+                     "Introduction to foundational subjects and core principles.",
+                     "Building on fundamentals with intermediate coursework.",
+                     "Advanced topics and specialized courses.",
+                     "Practical experience, research, and capstone projects.",
+                     "Finalizing expertise and preparing for graduation.",
+                  ][yearIndex]
+               }
+            </p>
+         </div>
+      </div>
+   );
+
+   const CurriculumSection = ({ title, desc, data }) => (
+      <div>
+         <h2 className={styles.title}>{title}</h2>
+         <p className={styles.desc}>{desc}</p>
+         <CourseTable curriculumData={data} courses={courses} users={users} />
+      </div>
+   );
 
    return (
       <Layout role="admin" pageName="Curriculum">
@@ -97,26 +113,22 @@ const Curriculum = () => {
             <section className={styles.wrapper}>
                {currentStep !== 3 && (
                   <p className={styles.iconLabel} onClick={handlePreviousStep}>
-                     <TbArrowNarrowLeft size={24} />
-                     Return to page
+                     <TbArrowNarrowLeft size={24} /> Return to page
                   </p>
                )}
+
                {currentStep === 1 && (
                   <>
                      <div className={styles.selectProgram}>
                         <div className={styles.info}>
-                           <div>
-                              <h2 className={styles.title}>Choose a program</h2>
-                              <p className={styles.desc}>
-                                 Since curriculums are predefined to each
-                                 program, you'll need to select a program to
-                                 view/edit its curriculum.
-                              </p>
-                           </div>
+                           <h2 className={styles.title}>Choose a program</h2>
+                           <p className={styles.desc}>
+                              Select a program to view/edit its curriculum.
+                           </p>
                            {curriculumData.length === 0 && (
                               <MessageWarning
                                  title="This program does not have a curriculum!"
-                                 message="Please create one for it immediately by proceeding to the next step."
+                                 message="Create one by proceeding to the next step."
                               />
                            )}
                         </div>
@@ -124,24 +136,20 @@ const Curriculum = () => {
                            {programs.map((program) => (
                               <div
                                  className={`${styles.programCard} ${
-                                    selectedProgram?.collegeCode ===
-                                    program?.collegeCode
+                                    selectedProgram?.code === program?.code
                                        ? styles.active
                                        : ""
                                  }`}
                                  onClick={() => handleSelectProgram(program)}
-                                 key={program.collegeCode}
+                                 key={program.code}
                               >
-                                 <h3>{program.programDescription}</h3>
-                                 <p className={styles.badge}>
-                                    {program.collegeCode}
-                                 </p>
+                                 <h3>{program.description}</h3>
+                                 <p className={styles.badge}>{program.code}</p>
                               </div>
                            ))}
                         </div>
                      </div>
                      <button
-                        type="button"
                         onClick={handleNextStep}
                         className={`${styles.primaryBtn} ${styles.ctaBtn}`}
                      >
@@ -149,115 +157,66 @@ const Curriculum = () => {
                      </button>
                   </>
                )}
+
                {currentStep === 2 && (
                   <>
                      <div className={styles.programInfo}>
                         <h1>
-                           {programData?.programDescription} (
-                           {programData?.collegeCode})
+                           {programData?.description} ({programData?.code})
                         </h1>
                         <div className={styles.breadcrumbContainer}>
                            <p>Overview</p>
                            {currentMode !== "base" && (
-                              <>
-                                 <p>/ {pageLabels[currentMode]}</p>
-                              </>
+                              <p>/ {pageLabels[currentMode]}</p>
                            )}
                         </div>
                      </div>
-                     {currentMode === "base" && (
+
+                     {currentMode === "base" ? (
                         <div className={styles.editWrapper}>
                            <div className={styles.buttonContainer}>
                               <button
-                                 type="button"
-                                 className={`${styles.iconBtn} ${styles.primaryBtn}`}
                                  onClick={() => setCurrentMode("create")}
+                                 className={styles.primaryBtn}
                               >
-                                 <TbPlus size={20} />
-                                 Create curriculum
+                                 <TbPlus size={20} /> Create curriculum
                               </button>
                               <button
-                                 type="button"
-                                 className={`${styles.iconBtn} ${styles.secondaryBtn}`}
                                  onClick={() => setCurrentMode("edit")}
+                                 className={styles.secondaryBtn}
                               >
-                                 <TbEdit size={20} />
-                                 Edit curriculum
+                                 <TbEdit size={20} /> Edit curriculum
                               </button>
                            </div>
-                           <div>
-                              <h2 className={styles.title}>Summary</h2>
-                              <div className={styles.summaryContainer}>
-                                 {Array.from(
-                                    { length: programData.duration },
-                                    (_, index) => (
-                                       <div
-                                          className={styles.curriculumCard}
-                                          key={index}
-                                       >
-                                          <div className={styles.yearInfo}>
-                                             <p className={styles.badge}>
-                                                {
-                                                   [
-                                                      "First Year",
-                                                      "Second Year",
-                                                      "Third Year",
-                                                      "Fourth Year",
-                                                      "Fifth Year",
-                                                   ][index]
-                                                }
-                                             </p>
-                                             <p
-                                                className={
-                                                   styles.yearDescription
-                                                }
-                                             >
-                                                {
-                                                   [
-                                                      "Introduction to foundational subjects and core principles.",
-                                                      "Building on fundamentals with intermediate coursework.",
-                                                      "Advanced topics and specialized courses.",
-                                                      "Practical experience, research, and capstone projects.",
-                                                      "Finalizing expertise and preparing for graduation.",
-                                                   ][index]
-                                                }
-                                             </p>
-                                          </div>
-                                       </div>
-                                    )
-                                 )}
-                              </div>
+
+                           <h2 className={styles.title}>Summary</h2>
+                           <div className={styles.summaryContainer}>
+                              {Array.from(
+                                 { length: programData.duration },
+                                 (_, index) => (
+                                    <YearCard key={index} yearIndex={index} />
+                                 )
+                              )}
                            </div>
+
                            <div className={styles.editContainer}>
                               {[
                                  {
                                     title: "Core courses",
-                                    desc: "These courses are mandatory and provide essential knowledge in the field.",
+                                    desc: "Mandatory courses essential to the field.",
+                                    data: curriculumData[0].courses,
                                  },
                                  {
                                     title: "Elective courses",
-                                    desc: "Elective courses allow students to explore additional areas of interest or specialization.",
+                                    desc: "Courses for exploring additional interests.",
+                                    data: curriculumData[0].electiveCourses,
                                  },
                               ].map((section, index) => (
-                                 <div key={index}>
-                                    <h2 className={styles.title}>
-                                       {section.title}
-                                    </h2>
-                                    <p className={styles.desc}>
-                                       {section.desc}
-                                    </p>
-                                    <br />
-                                    <CourseTable
-                                       curriculumData={curriculumData}
-                                       courses={courses}
-                                       users={users}
-                                    />
-                                 </div>
+                                 <CurriculumSection key={index} {...section} />
                               ))}
                            </div>
                         </div>
-                     )}
-                     {(currentMode === "edit" || currentMode === "create") && (
+                     ) : (
                         <ManageCurriculum
                            token={token}
                            users={users}
@@ -272,6 +231,7 @@ const Curriculum = () => {
                      )}
                   </>
                )}
+
                {currentStep === 3 && (
                   <div className={styles.success}>
                      <div className={styles.content}>
@@ -283,8 +243,8 @@ const Curriculum = () => {
                         </h2>
                         <p className={styles.desc}>
                            {successType === "create"
-                              ? "You can head back to the initial page and choose another program to create or edit its curriculum."
-                              : "You can head back to the initial page and choose another program to make further edits or create a new curriculum."}
+                              ? "Head back to the initial page to create or edit another program’s curriculum."
+                              : "Head back to the initial page to make further edits or create new curriculums."}
                         </p>
                      </div>
                      <a href="/admin/dashboard/academic-planner/curriculums">

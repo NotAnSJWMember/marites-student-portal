@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import { Student } from './student.schema';
 import { UserService } from '../../user.service';
 import { CreateStudentDto } from './student.dto';
+import { CurriculumService } from 'src/modules/curriculum/curriculum.service';
 
 @Injectable()
 export class StudentService {
@@ -12,15 +13,29 @@ export class StudentService {
    constructor(
       @InjectModel(Student.name) private studentModel: Model<Student>,
       private userService: UserService,
+      private curriculumService: CurriculumService,
    ) {}
 
    async create(createStudentDto: CreateStudentDto): Promise<Student> {
       this.logger.log('Creating new student...');
+
       const user = await this.userService.create(createStudentDto);
+
+      const curriculum = await this.curriculumService.findCurriculum(
+         createStudentDto.programId,
+         createStudentDto.yearLevel,
+      );
+
+      if (!curriculum) {
+         throw new Error(
+            'Curriculum not found for this program and year level',
+         );
+      }
 
       const newStudent = new this.studentModel({
          ...createStudentDto,
          userId: user.userId,
+         curriculumId: curriculum._id,
       });
 
       return newStudent.save();
