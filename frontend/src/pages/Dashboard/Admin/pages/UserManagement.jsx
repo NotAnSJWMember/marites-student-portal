@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import Layout from "components/Layout/Layout";
 import SearchBar from "components/SearchBar/SearchBar";
 import Popup from "components/Popup/Popup";
@@ -8,6 +8,8 @@ import { format } from "date-fns";
 import styles from "./UserManagement.module.scss";
 import userIcon from "assets/images/profile.jpg";
 import {
+   TbArrowLeft,
+   TbArrowRight,
    TbDotsVertical,
    TbEdit,
    TbFileArrowRight,
@@ -18,13 +20,13 @@ import {
 import { usePopupAlert } from "hooks";
 import useFetchData from "hooks/useFetchData";
 import UserIcon from "components/ui/UserIcon/UserIcon";
+import { formatDistanceToNow } from "date-fns";
 
 const POPUP_ICON_SIZE = 25;
 const MEDIUM_ICON_SIZE = 22;
 const SMALL_ICON_SIZE = 19;
 
 const UserManagement = () => {
-   const timeoutId = useRef(null);
    const [activePopup, setActivePopup] = useState(null);
    const [popupPosition, setPopupPosition] = useState({ top: 0, right: 0 });
    const [isPopupVisible, setIsPopupVisible] = useState(false);
@@ -43,23 +45,37 @@ const UserManagement = () => {
       return users.slice(indexOfFirstUser, indexOfLastUser);
    }, [users, indexOfFirstUser, indexOfLastUser]);
 
+   useEffect(() => {
+      console.log(currentPage);
+   });
+
+   const handlePreviousPage = () => {
+      if (currentPage !== 1) setCurrentPage(currentPage - 1);
+   };
+
+   const handleNextPage = () => {
+      if (currentPage !== totalPages) setCurrentPage(currentPage + 1);
+   };
+
    const togglePopupAction = (userId, event) => {
       const rect = event.currentTarget.getBoundingClientRect();
-      setPopupPosition({ top: rect.bottom + 10, left: rect.left - 210 });
-      if (activePopup === userId) {
-         closePopupAction();
-      } else {
-         setActivePopup(userId);
-         setIsPopupVisible(true);
-      }
-   };
-   const closePopupAction = () => {
-      clearTimeout(timeoutId.current);
-      setIsPopupVisible(false);
 
-      timeoutId.current = setTimeout(() => {
+      setTimeout(() => {
+         if (activePopup === userId) {
+            closePopupAction();
+         } else {
+            setActivePopup(userId);
+            setIsPopupVisible(true);
+            setPopupPosition({ top: rect.bottom - 40, left: rect.left - 150 });
+         }
+      }, 100);
+   };
+
+   const closePopupAction = () => {
+      setIsPopupVisible(false);
+      setTimeout(() => {
          setActivePopup(null);
-      }, 300);
+      }, 100);
    };
 
    const handleCheckboxChange = (userId) => {
@@ -88,51 +104,47 @@ const UserManagement = () => {
    return (
       <Layout role="admin" pageName="User Management">
          <main className={styles.mainContent}>
-            {loading ? (
-               <Loading />
-            ) : (
-               <section className={styles.table}>
-                  <div className={styles.content}>
-                     <div className={styles.toolHeader}>
-                        <div className={styles.labelContainer}>
-                           <h3>
-                              All users <span>{users.length}</span>
-                           </h3>
-                        </div>
-                        <div className={styles.toolContainer}>
-                           <SearchBar width="30rem" />
-                           <button
-                              type="button"
-                              className={`${styles.secondaryBtn} ${styles.iconBtn}`}
-                           >
-                              <TbFilter size={SMALL_ICON_SIZE} />
-                              Filters
-                           </button>
-                           <button
-                              type="button"
-                              className={`${styles.primaryBtn} ${styles.iconBtn}`}
-                           >
-                              <TbPlus size={SMALL_ICON_SIZE} />
-                              Add user
-                           </button>
-                        </div>
+            <section className={styles.tableWrapper}>
+               <div className={styles.tableContainer}>
+                  <div className={styles.header}>
+                     <h3 className={styles.label}>
+                        All users <span>{users.length}</span>
+                     </h3>
+                     <div className={styles.tools}>
+                        <SearchBar width="30rem" />
+                        <button
+                           type="button"
+                           className={`${styles.secondaryBtn} ${styles.iconBtn}`}
+                        >
+                           <TbFilter size={SMALL_ICON_SIZE} />
+                           Filters
+                        </button>
+                        <button
+                           type="button"
+                           className={`${styles.primaryBtn} ${styles.iconBtn}`}
+                        >
+                           <TbPlus size={SMALL_ICON_SIZE} />
+                           Add user
+                        </button>
                      </div>
-                     <div className={styles.tableContent}>
-                        <div className={styles.tableHeader}>
-                           <Checkbox
-                              id="select-all"
-                              isChecked={
-                                 selectedUsers.length === currentUsers.length
-                              }
-                              onChange={handleSelectAll}
-                           />
-                           <h4>Name</h4>
-                           <h4>Role</h4>
-                           <h4>Last Active</h4>
-                           <h4>Date Added</h4>
-                        </div>
-                        {currentUsers.map((user) => (
-                           <div className={styles.tableItem} key={user.userId}>
+                  </div>
+                  <div className={styles.table}>
+                     <div className={styles.tableHeader}>
+                        <Checkbox
+                           id="select-all"
+                           isChecked={
+                              selectedUsers.length === currentUsers.length
+                           }
+                           onChange={handleSelectAll}
+                        />
+                        <h4>Name</h4>
+                        <h4>Role</h4>
+                        <h4>Last Seen</h4>
+                        <h4>Date added</h4>
+                     </div>
+                     {currentUsers.map((user, index) => (
+                        <div key={user.userId}>
+                           <div className={styles.tableItem}>
                               <Checkbox
                                  id={`checkbox-${user.userId}`}
                                  isChecked={selectedUsers.includes(user.userId)}
@@ -143,13 +155,18 @@ const UserManagement = () => {
                               <div className={styles.userContainer}>
                                  <UserIcon image={userIcon} size={48} />
                                  <div className={styles.userInfo}>
-                                    <h4>{`${user.firstName} ${user.lastName}`}</h4>
-                                    <p>{user.email}</p>
+                                    <h4
+                                       className={styles.title}
+                                    >{`${user.firstName} ${user.lastName}`}</h4>
+                                    <p className={styles.desc}>{user.email}</p>
                                  </div>
                               </div>
                               <p className={styles.role}>{user.role}</p>
                               <p className={styles.lastActive}>
-                                 {formatDate(user.lastActive)}
+                                 {formatDistanceToNow(
+                                    new Date(user.lastActive),
+                                    { addSuffix: true }
+                                 )}
                               </p>
                               <p className={styles.createdAt}>
                                  {formatDate(user.createdAt)}
@@ -199,25 +216,38 @@ const UserManagement = () => {
                                  </Popup>
                               )}
                            </div>
-                        ))}
-                     </div>
-                  </div>
-                  <div className={styles.pagination}>
-                     {[...Array(totalPages)].map((_, index) => (
-                        <button
-                           key={index}
-                           type="button"
-                           className={
-                              currentPage === index + 1 ? styles.active : ""
-                           }
-                           onClick={() => handlePageChange(index + 1)}
-                        >
-                           {index + 1}
-                        </button>
+                           {index !== currentUsers.length - 1 && (
+                              <div className={styles.line}></div>
+                           )}
+                        </div>
                      ))}
                   </div>
-               </section>
-            )}
+               </div>
+               <div className={styles.pagination}>
+                  <TbArrowLeft
+                     className={styles.iconBtn}
+                     onClick={handlePreviousPage}
+                     size={16}
+                  />
+                  {[...Array(totalPages)].map((_, index) => (
+                     <button
+                        key={index}
+                        type="button"
+                        className={
+                           currentPage === index + 1 ? styles.active : ""
+                        }
+                        onClick={() => handlePageChange(index + 1)}
+                     >
+                        {index + 1}
+                     </button>
+                  ))}
+                  <TbArrowRight
+                     className={styles.iconBtn}
+                     onClick={handleNextPage}
+                     size={16}
+                  />
+               </div>
+            </section>
          </main>
       </Layout>
    );
