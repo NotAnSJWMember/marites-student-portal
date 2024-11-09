@@ -5,6 +5,7 @@ import { Student } from './student.schema';
 import { UserService } from '../../user.service';
 import { CreateStudentDto } from './student.dto';
 import { CurriculumService } from 'src/modules/curriculum/curriculum.service';
+import { User } from '../../user.schema';
 
 @Injectable()
 export class StudentService {
@@ -12,14 +13,15 @@ export class StudentService {
 
    constructor(
       @InjectModel(Student.name) private studentModel: Model<Student>,
+      @InjectModel(User.name) private userModel: Model<User>,
       private userService: UserService,
       private curriculumService: CurriculumService,
    ) {}
 
-   async create(createStudentDto: CreateStudentDto): Promise<Student> {
+   async create(createStudentDto: CreateStudentDto): Promise<void> {
       this.logger.log('Creating new student...');
 
-      const user = await this.userService.create(createStudentDto);
+      const student = await this.userService.create(createStudentDto);
 
       const curriculum = await this.curriculumService.findCurriculum(
          createStudentDto.programId,
@@ -34,11 +36,19 @@ export class StudentService {
 
       const newStudent = new this.studentModel({
          ...createStudentDto,
-         userId: user.userId,
+         userId: student.userId,
          curriculumId: curriculum._id,
+         password: student.password,
       });
 
-      return newStudent.save();
+      await newStudent.save();
+
+      await this.userModel.updateOne(
+         { userId: student.userId },
+         { $set: { role: 'student' } },
+      );
+
+      this.logger.log('Student created successfully!');
    }
 
    async findAll(): Promise<Student[]> {

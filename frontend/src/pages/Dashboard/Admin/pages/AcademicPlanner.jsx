@@ -98,7 +98,7 @@ const AcademicPlanner = () => {
                </a>
             </section>
             <section>
-               <SearchBar width="100%" />
+               <SearchBar width="100%" height="3rem"/>
             </section>
             <div className={styles.twoColumn}>
                <section className={styles.semesterSummary}>

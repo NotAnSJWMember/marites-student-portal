@@ -24,6 +24,7 @@ export class InstructorService {
       const newInstructor = new this.InstructorModel({
          ...createInstructorDto,
          userId: instructor.userId,
+         password: instructor.password,
       });
 
       await newInstructor.save();

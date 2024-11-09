@@ -9,20 +9,26 @@ import { TbBell, TbLogout, TbSettings, TbUser } from "react-icons/tb";
 
 export const Header = () => {
    const [isPopupVisibleUser, setPopupVisibleUser] = useState(false);
-   const [popupUserPosition, setPopupUserPosition] = useState({ top: 0, right: 0 });
+   const [popupUserPosition, setPopupUserPosition] = useState({
+      top: 0,
+      right: 0,
+   });
 
    const [isPopupVisibleNotif, setPopupVisibleNotif] = useState(false);
-   const [popupNotifPosition, setPopupNotifPosition] = useState({ top: 0, right: 0 });
+   const [popupNotifPosition, setPopupNotifPosition] = useState({
+      top: 0,
+      right: 0,
+   });
 
    const togglePopupUser = (event) => {
       const rect = event.currentTarget.getBoundingClientRect();
       setPopupUserPosition({ top: rect.bottom + 10, left: rect.left - 200 });
       setPopupVisibleUser((prev) => !prev);
    };
-   
+
    const togglePopupNotif = (event) => {
       const rect = event.currentTarget.getBoundingClientRect();
-      setPopupNotifPosition({ top: rect.bottom + 10, left: rect.left - 360});
+      setPopupNotifPosition({ top: rect.bottom + 10, left: rect.left - 360 });
       setPopupVisibleNotif((prev) => !prev);
    };
 
@@ -43,7 +49,6 @@ export const Header = () => {
             <div className={styles.notif} onClick={togglePopupNotif}>
                <TbBell size={24} />
             </div>
-            <div className={styles.verticalLine}></div>
             <div className={styles.userIcon} onClick={togglePopupUser}>
                <img src={userIcon} alt="Your Profile Icon" />
             </div>

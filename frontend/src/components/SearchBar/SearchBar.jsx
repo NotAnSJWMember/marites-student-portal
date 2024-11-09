@@ -3,7 +3,7 @@ import styles from "./SearchBar.module.scss";
 
 import { TbSearch } from "react-icons/tb";
 
-const SearchBar = ({width}) => {
+const SearchBar = ({ width, height }) => {
    const [searchTerm, setSearchTerm] = useState("");
 
    const handleSearch = () => {
@@ -11,7 +11,10 @@ const SearchBar = ({width}) => {
    };
 
    return (
-      <div className={styles.searchBar} style={{width: width}}>
+      <div
+         className={styles.searchBar}
+         style={{ height: height, width: width }}
+      >
          <TbSearch size={20} />
          <input
             type="text"

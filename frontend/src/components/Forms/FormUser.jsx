@@ -26,14 +26,7 @@ export const FormUser = ({
       handleSubmit,
       reset,
       formState: { errors },
-      watch,
    } = useForm();
-
-   const formData = watch();
-
-   useEffect(() => {
-      console.log(formData);
-   });
 
    const onCreateSubmit = async (data) => {
       const yearLevel = parseInt(data.yearLevel);
