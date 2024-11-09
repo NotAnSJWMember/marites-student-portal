@@ -1,11 +1,17 @@
-import { IsArray, IsMongoId, IsNotEmpty, IsString } from 'class-validator';
+import {
+   IsArray,
+   IsMongoId,
+   IsNotEmpty,
+   IsNumber,
+   IsOptional,
+} from 'class-validator';
 
 export class CreateCurriculumDto {
-   @IsNotEmpty()
    @IsMongoId()
    programId: string;
 
    @IsNotEmpty()
+   @IsNumber()
    yearLevel: number;
 
    @IsNotEmpty()
@@ -13,11 +19,12 @@ export class CreateCurriculumDto {
    @IsMongoId({ each: true })
    courses: string[];
 
+   @IsOptional()
    @IsArray()
    @IsMongoId({ each: true })
    electiveCourses?: string[];
 
-   @IsString()
+   @IsNumber()
    @IsNotEmpty()
-   semester: string;
+   semester: number;
 }

@@ -1,33 +1,34 @@
-import { IsNotEmpty, IsString, IsNumber, IsBoolean } from 'class-validator';
+import {
+   IsNotEmpty,
+   IsString,
+   IsNumber,
+   IsBoolean,
+   IsMongoId,
+   IsEnum,
+} from 'class-validator';
 import { Types } from 'mongoose';
 
 export class CreateEnrollmentDto {
-   @IsNotEmpty()
-   enrollmentId: Types.ObjectId;
+   @IsMongoId()
+   programId: Types.ObjectId;
+
+   @IsMongoId()
+   courseId: Types.ObjectId;
 
    @IsNotEmpty()
-   @IsString()
-   scheduleId: string;
-
-   @IsNotEmpty()
-   @IsString()
-   programId: string;
-
-   @IsNotEmpty()
-   @IsString()
-   userId: string;
-
-   @IsNotEmpty()
-   @IsString()
-   major: string;
+   studentId: string;
 
    @IsNotEmpty()
    @IsNumber()
-   yearLevel: number;
+   prelim: number;
 
    @IsNotEmpty()
    @IsNumber()
    midterm: number;
+
+   @IsNotEmpty()
+   @IsNumber()
+   prefinal: number;
 
    @IsNotEmpty()
    @IsNumber()
@@ -38,9 +39,11 @@ export class CreateEnrollmentDto {
    remarks: string;
 
    @IsNotEmpty()
-   @IsBoolean()
-   dropped: boolean;
+   @IsString()
+   @IsEnum(['Enrolled', 'Completed', 'NC', 'INC'])
+   status: string[];
 
    @IsNotEmpty()
-   dateEnrolled: Date;
+   @IsBoolean()
+   dropped: boolean;
 }

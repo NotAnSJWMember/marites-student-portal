@@ -7,125 +7,127 @@ import { CreateProgramDto } from './program.dto';
 @Injectable()
 export class ProgramService {
    constructor(
-      @InjectModel(Program.name) private ProgramModel: Model<Program>,
+      @InjectModel(Program.name) private programModel: Model<Program>,
    ) {}
 
    async create(createProgramDto: CreateProgramDto): Promise<Program> {
-      const newProgram = new this.ProgramModel(createProgramDto);
+      const newProgram = new this.programModel(createProgramDto);
       return newProgram.save();
    }
 
    async findAll(): Promise<Program[]> {
-      return this.ProgramModel.find().exec();
+      return this.programModel.find().exec();
    }
 
    async findOne(id: Types.ObjectId): Promise<Program> {
-      return this.ProgramModel.findById(id).exec();
+      return this.programModel.findById(id).exec();
    }
 
    async update(
       id: Types.ObjectId,
       newData: Partial<CreateProgramDto>,
    ): Promise<Program> {
-      return this.ProgramModel.findByIdAndUpdate(id, newData, {
-         new: true,
-      }).exec();
+      return this.programModel
+         .findByIdAndUpdate(id, newData, {
+            new: true,
+         })
+         .exec();
    }
 
    async delete(id: Types.ObjectId): Promise<Program> {
-      return this.ProgramModel.findByIdAndDelete(id).exec();
+      return this.programModel.findByIdAndDelete(id).exec();
+   }
+
+   async getCourses(programId: Types.ObjectId): Promise<any> {
+      const program = await this.programModel
+         .findById(programId)
+         .populate('coreCourses electiveCourses')
+         .exec();
+      return program;
    }
 
    async createDummyPrograms(): Promise<void> {
       const programs = [
          {
-            programId: new Types.ObjectId(),
-            programDescription: 'Bachelor of Science in Information Systems',
-            collegeCode: 'BSIS',
+            description: 'Bachelor of Science in Information Systems',
+            code: 'BSIS',
             duration: 4,
+            department: 'Engineering',
          },
          {
-            programId: new Types.ObjectId(),
-            programDescription: 'Bachelor of Science in Accountancy',
-            collegeCode: 'BSA',
+            description: 'Bachelor of Science in Accountancy',
+            code: 'BSA',
             duration: 5,
+            department: 'Business',
          },
          {
-            programId: new Types.ObjectId(),
-            programDescription:
-               'Bachelor of Science in Business Administration',
-            collegeCode: 'BSBA',
+            description: 'Bachelor of Science in Business Administration',
+            code: 'BSBA',
             duration: 4,
+            department: 'Business',
          },
          {
-            programId: new Types.ObjectId(),
-            programDescription: 'Bachelor of Science in Civil Engineering',
-            collegeCode: 'BSCE',
+            description: 'Bachelor of Science in Civil Engineering',
+            code: 'BSCE',
             duration: 5,
+            department: 'Engineering',
          },
          {
-            programId: new Types.ObjectId(),
-            programDescription: 'Bachelor of Science in Mechanical Engineering',
-            collegeCode: 'BSME',
+            description: 'Bachelor of Science in Mechanical Engineering',
+            code: 'BSME',
             duration: 5,
+            department: 'Engineering',
          },
          {
-            programId: new Types.ObjectId(),
-            programDescription: 'Bachelor of Science in Nursing',
-            collegeCode: 'BSN',
+            description: 'Bachelor of Science in Nursing',
+            code: 'BSN',
             duration: 4,
+            department: 'Health',
          },
          {
-            programId: new Types.ObjectId(),
-            programDescription: 'Bachelor of Science in Psychology',
-            collegeCode: 'BSPsych',
+            description: 'Bachelor of Science in Psychology',
+            code: 'BSPsych',
             duration: 4,
+            department: 'Health',
          },
          {
-            programId: new Types.ObjectId(),
-            programDescription: 'Bachelor of Science in Biology',
-            collegeCode: 'BSBio',
+            description: 'Bachelor of Science in Biology',
+            code: 'BSBio',
             duration: 4,
+            department: 'Science',
          },
          {
-            programId: new Types.ObjectId(),
-            programDescription: 'Bachelor of Science in Architecture',
-            collegeCode: 'BSArch',
+            description: 'Bachelor of Science in Architecture',
+            code: 'BSArch',
             duration: 5,
+            department: 'Engineering',
          },
          {
-            programId: new Types.ObjectId(),
-            programDescription: 'Bachelor of Science in Education',
-            collegeCode: 'BSEd',
+            description: 'Bachelor of Science in Education',
+            code: 'BSEd',
             duration: 4,
+            department: 'Education',
          },
          {
-            programId: new Types.ObjectId(),
-            programDescription: 'Bachelor of Arts in Communication',
-            collegeCode: 'BACOMM',
+            description: 'Bachelor of Arts in Communication',
+            code: 'BACOMM',
             duration: 4,
+            department: 'Arts',
          },
          {
-            programId: new Types.ObjectId(),
-            programDescription: 'Bachelor of Science in Hospitality Management',
-            collegeCode: 'BSHM',
+            description: 'Bachelor of Science in Hospitality Management',
+            code: 'BSHM',
             duration: 4,
+            department: 'Business',
          },
          {
-            programId: new Types.ObjectId(),
-            programDescription: 'Bachelor of Science in Tourism Management',
-            collegeCode: 'BSTM',
+            description: 'Bachelor of Science in Tourism Management',
+            code: 'BSTM',
             duration: 4,
-         },
-         {
-            programId: new Types.ObjectId(),
-            programDescription: 'Bachelor of Science in Criminology',
-            collegeCode: 'BSCrim',
-            duration: 4,
+            department: 'Business',
          },
       ];
 
-      await this.ProgramModel.insertMany(programs);
-      console.log('Dummy programs created successfully');
+      await this.programModel.insertMany(programs);
    }
 }

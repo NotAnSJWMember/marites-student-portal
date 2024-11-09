@@ -1,16 +1,16 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
+import { Document } from 'mongoose';
 
 @Schema({ timestamps: true })
 export class Section extends Document {
-   @Prop({ required: true, type: Types.ObjectId })
-   sectionId: Types.ObjectId;
-
    @Prop({ required: true })
-   sectionDescription: string;
+   description: string;
+
+   @Prop({ default: 40 })
+   availableSlots: number;
 
    @Prop({ default: true })
-   sectionActive: boolean;
+   isActive: boolean;
 }
 
 export const SectionSchema = SchemaFactory.createForClass(Section);

@@ -1,12 +1,9 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { Enrollment } from './enrollment.schema';
+import { Enrollment, Status } from './enrollment.schema';
 import { CreateEnrollmentDto } from './enrollment.dto';
-import { ProgramService } from '../program/program.service';
-import { StudentService } from '../user/roles/student/student.service';
-import { Student } from '../user/roles/student/student.schema';
-import { Program } from '../program/program.schema';
+import { Course } from '../course/course.schema';
 
 @Injectable()
 export class EnrollmentService {
@@ -14,42 +11,32 @@ export class EnrollmentService {
 
    constructor(
       @InjectModel(Enrollment.name) private enrollmentModel: Model<Enrollment>,
-      private readonly studentService: StudentService,
-      private readonly programService: ProgramService,
+      @InjectModel(Course.name) private courseModel: Model<Course>,
    ) {}
 
-   async enrollStudent(userId: string) {
-      let student = await this.studentService.findByUserId(userId);
-
-      if (!student) {
-         student = await this.studentService.findByUsername(userId);
-      }
-
-      if (!student) {
-         throw new BadRequestException('Student not found');
-      }
-
-      const program = await this.programService.findOne(student.programId);
-      if (!program) throw new BadRequestException('Program not found');
-
-      return this.updateEnrollmentStatus(student, program);
-   }
-
-   async updateEnrollmentStatus(student: Student, program: Program) {
-      if (!student.enrollmentStatus) {
-         student.enrollmentStatus = true;
-         student.enrollmentDate = new Date();
-         student.yearLevel = 1; // default, but can be updated
-
-         this.logger.log(
-            `Enrolling student ${student.userId} in program ${program.programDescription}`,
+   async enroll(
+      courseId: Types.ObjectId,
+      studentId: string,
+   ): Promise<Enrollment> {
+      const hasPrerequisites = await this.checkPrerequisites(
+         courseId,
+         studentId,
+      );
+      if (!hasPrerequisites) {
+         throw new Error(
+            'Student has not completed the prerequisites for this course.',
          );
-      } else {
-         student.yearLevel += 1;
       }
 
-      await student.save();
-      return student;
+      const enrollment = new this.enrollmentModel({
+         courseId,
+         studentId,
+         status: Status.ENROLLED,
+         remarks: 'Enrolled in course',
+         dropped: false,
+      });
+
+      return enrollment.save();
    }
 
    async create(createEnrollmentDto: CreateEnrollmentDto): Promise<Enrollment> {
@@ -76,5 +63,38 @@ export class EnrollmentService {
 
    async delete(id: Types.ObjectId): Promise<Enrollment> {
       return this.enrollmentModel.findByIdAndDelete(id).exec();
+   }
+
+   async checkPrerequisites(
+      courseId: Types.ObjectId,
+      studentId: string,
+   ): Promise<boolean> {
+      const course = await this.courseModel
+         .findById(courseId)
+         .populate('prerequisites')
+         .exec();
+
+      if (!course || course.prerequisites.length === 0) return true;
+
+      const completedCourses = await this.getCompletedCourses(studentId);
+
+      for (const prerequisite of course.prerequisites) {
+         if (!completedCourses.includes(prerequisite._id)) {
+            return false;
+         }
+      }
+
+      return true;
+   }
+
+   async getCompletedCourses(studentId: string): Promise<any[]> {
+      const enrollments = await this.enrollmentModel
+         .find({
+            studentId,
+            status: Status.COMPLETED,
+         })
+         .exec();
+
+      return enrollments.map((enrollment) => enrollment.courseId);
    }
 }

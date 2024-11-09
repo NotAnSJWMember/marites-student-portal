@@ -3,17 +3,14 @@ import { Document, Types } from 'mongoose';
 
 @Schema({ timestamps: true })
 export class Course extends Document {
-   @Prop({ required: true, type: Types.ObjectId })
-   courseId: Types.ObjectId;
-
-   @Prop({ required: true, ref: 'User' })
-   instructorId: string;
+   @Prop({ type: [Types.ObjectId], ref: 'Course', default: [] })
+   prerequisites: Types.ObjectId[];
 
    @Prop({ required: true, unique: true })
-   courseCode: string;
+   code: string;
 
    @Prop({ required: true, unique: true })
-   courseDescription: string;
+   description: string;
 
    @Prop({ required: true })
    labHour: number;

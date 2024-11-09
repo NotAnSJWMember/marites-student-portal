@@ -40,29 +40,24 @@ export class SectionService {
    async seed(): Promise<void> {
       const dummyBlocks: CreateSectionDto[] = [
          {
-            sectionId: new Types.ObjectId(),
-            sectionDescription: 'Section A',
-            sectionActive: true,
+            description: 'Section A',
+            isActive: true,
          },
          {
-            sectionId: new Types.ObjectId(),
-            sectionDescription: 'Section B',
-            sectionActive: true,
+            description: 'Section B',
+            isActive: true,
          },
          {
-            sectionId: new Types.ObjectId(),
-            sectionDescription: 'Section C',
-            sectionActive: false,
+            description: 'Section C',
+            isActive: false,
          },
          {
-            sectionId: new Types.ObjectId(),
-            sectionDescription: 'Section D',
-            sectionActive: true,
+            description: 'Section D',
+            isActive: true,
          },
          {
-            sectionId: new Types.ObjectId(),
-            sectionDescription: 'Section E',
-            sectionActive: true,
+            description: 'Section E',
+            isActive: true,
          },
       ];
 

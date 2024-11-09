@@ -47,6 +47,6 @@ export class ProgramController {
    @Post('seed')
    async seed(): Promise<string> {
       await this.programService.createDummyPrograms();
-      return 'Dummy courses created successfully.';
+      return 'Dummy programs created successfully.';
    }
 }

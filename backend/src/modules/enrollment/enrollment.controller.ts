@@ -18,9 +18,12 @@ export class EnrollmentController {
    constructor(private readonly enrollmentService: EnrollmentService) {}
 
    @Post('/enroll')
-   async enroll(@Body('userId') userId: string) {
+   async enroll(@Body() courseId: Types.ObjectId, studentId: string) {
       try {
-         const student = await this.enrollmentService.enrollStudent(userId);
+         const student = await this.enrollmentService.enroll(
+            courseId,
+            studentId,
+         );
          return { success: true, data: student };
       } catch (error) {
          throw new BadRequestException(error.message);

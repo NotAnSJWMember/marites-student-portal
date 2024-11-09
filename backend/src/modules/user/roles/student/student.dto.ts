@@ -1,36 +1,25 @@
 import {
-   IsArray,
    IsBoolean,
    IsDateString,
-   IsEnum,
    IsMongoId,
    IsNumber,
    IsOptional,
-   ValidateNested,
 } from 'class-validator';
-import { Type } from 'class-transformer';
-import { Status } from './student.schema';
 import { CreateUserDto } from '../../user.dto';
-import { Types } from 'mongoose';
-
-class CourseRecordDto {
-   @IsMongoId()
-   courseId: string;
-
-   @IsEnum(Status)
-   status: Status;
-
-   @IsOptional()
-   @IsNumber()
-   grade?: number;
-}
 
 export class CreateStudentDto extends CreateUserDto {
    @IsMongoId()
    programId: string;
 
+   @IsMongoId()
+   curriculumId: string;
+
    @IsNumber()
    yearLevel: number;
+
+   @IsNumber()
+   @IsOptional()
+   currentSemester?: number;
 
    @IsBoolean()
    @IsOptional()
@@ -39,18 +28,4 @@ export class CreateStudentDto extends CreateUserDto {
    @IsDateString()
    @IsOptional()
    enrollmentDate?: Date;
-
-   @IsNumber()
-   @IsOptional()
-   currentSemester: number;
-
-   @IsArray()
-   @ValidateNested({ each: true })
-   @Type(() => CourseRecordDto)
-   @IsOptional()
-   courseRecords?: CourseRecordDto[];
-
-   @IsArray()
-   @IsOptional()
-   courses: Types.ObjectId[];
 }

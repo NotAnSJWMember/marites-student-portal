@@ -1,31 +1,25 @@
-import { IsNotEmpty, IsEnum, IsString, IsObject } from 'class-validator';
+import { IsNotEmpty, IsEnum, IsString, IsMongoId } from 'class-validator';
 
 export class CreateScheduleDto {
-   @IsNotEmpty()
-   @IsObject()
-   userId: string;
-
-   @IsNotEmpty()
-   @IsObject()
+   @IsMongoId()
    courseId: string;
 
-   @IsNotEmpty()
-   @IsObject()
-   programId: string;
-
-   @IsNotEmpty()
-   @IsObject()
+   @IsMongoId()
    sectionId: string;
 
    @IsNotEmpty()
-   @IsString()
-   syNo: string;
+   instructorId: string;
 
    @IsNotEmpty()
    @IsString()
-   time: string;
+   startTime: string;
 
    @IsNotEmpty()
+   @IsString()
+   endTime: string;
+
+   @IsNotEmpty()
+   @IsString()
    @IsEnum([
       'Monday',
       'Tuesday',
@@ -35,7 +29,7 @@ export class CreateScheduleDto {
       'Saturday',
       'Sunday',
    ])
-   day: string;
+   days: string[];
 
    @IsNotEmpty()
    @IsString()

@@ -105,4 +105,16 @@ export class CurriculumService {
          throw new BadRequestException('Failed to delete curriculum');
       }
    }
+
+   async getProgramCourses(
+      programId: Types.ObjectId,
+      yearLevel: number,
+      semester: number,
+   ): Promise<any> {
+      const curriculum = await this.curriculumModel
+         .findOne({ programId, yearLevel, semester })
+         .populate('coreCourses electiveCourses')
+         .exec();
+      return curriculum;
+   }
 }

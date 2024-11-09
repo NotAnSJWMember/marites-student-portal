@@ -10,6 +10,7 @@ import {
 import { CourseService } from './course.service';
 import { CreateCourseDto } from './course.dto';
 import { Course } from './course.schema';
+import { Types } from 'mongoose';
 
 @Controller('course')
 export class CourseController {
@@ -26,20 +27,20 @@ export class CourseController {
    }
 
    @Get(':id')
-   async findOne(@Param('id') id: string): Promise<Course> {
+   async findOne(@Param('id') id: Types.ObjectId): Promise<Course> {
       return this.courseService.findOne(id);
    }
 
    @Put(':id')
    async update(
-      @Param('id') id: string,
+      @Param('id') id: Types.ObjectId,
       @Body() userData: Partial<CreateCourseDto>,
    ): Promise<Course> {
       return this.courseService.update(id, userData);
    }
 
    @Delete(':id')
-   async delete(@Param('id') id: string): Promise<Course> {
+   async delete(@Param('id') id: Types.ObjectId): Promise<Course> {
       return this.courseService.delete(id);
    }
 
@@ -47,10 +48,5 @@ export class CourseController {
    async seed(): Promise<string> {
       await this.courseService.createDummyData();
       return 'Dummy courses created successfully!';
-   }
-
-   @Post('test/:userId')
-   async test(@Param('userId') id: string): Promise<void> {
-      return this.courseService.testData(id);
    }
 }

@@ -1,15 +1,19 @@
-import { IsNotEmpty, IsString } from 'class-validator';
-import { Types } from 'mongoose';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class CreateProgramDto {
    @IsNotEmpty()
-   programId: Types.ObjectId;
+   @IsString()
+   description: string;
 
    @IsNotEmpty()
    @IsString()
-   programDescription: string;
+   code: string;
+
+   @IsNotEmpty()
+   @IsNumber()
+   duration: number;
 
    @IsNotEmpty()
    @IsString()
-   collegeCode: string;
+   department: string;
 }

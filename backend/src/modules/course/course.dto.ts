@@ -1,20 +1,13 @@
 import { IsNotEmpty, IsString, IsNumber, IsPositive } from 'class-validator';
-import { Types } from 'mongoose';
 
 export class CreateCourseDto {
    @IsNotEmpty()
-   courseId: Types.ObjectId;
-
-   @IsNotEmpty()
-   instructorId: string;
+   @IsString()
+   code: string;
 
    @IsNotEmpty()
    @IsString()
-   courseCode: string;
-
-   @IsNotEmpty()
-   @IsString()
-   courseDescription: string;
+   description: string;
 
    @IsNotEmpty()
    @IsNumber()
