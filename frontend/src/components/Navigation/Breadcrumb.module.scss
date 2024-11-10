@@ -1,0 +1,28 @@
+@import "../../styles/global.scss";
+
+ul {
+   display: flex;
+   gap: 0.5rem;
+
+   div {
+      display: flex;
+      gap: 0.5rem;
+   }
+   .iconLabel {
+      align-items: start;
+   }  
+   li {
+      font-size: 0.9rem;
+      list-style-type: none;
+      font-weight: 600;
+   }
+}
+
+.link {
+   cursor: pointer;
+   color: $light-gray-color-500;
+}
+
+.activeLink {
+   color: $light-primary-text;
+}

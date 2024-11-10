@@ -15,14 +15,14 @@ import Checkbox from "components/ui/Checkbox/Checkbox";
 import Popup from "components/Popup/Popup";
 import SearchBar from "components/SearchBar/SearchBar";
 
-const Table = ({ data, headers, content, popupContent }) => {
+const Table = ({ data, headers, content, popupContent, ctaText, ctaAction }) => {
    const [activePopup, setActivePopup] = useState(null);
    const [isPopupVisible, setIsPopupVisible] = useState(false);
    const [popupPosition, setPopupPosition] = useState({ top: 0, right: 0 });
    const [selectedData, setSelectedData] = useState([]);
    const [currentPage, setCurrentPage] = useState(1);
 
-   const itemsPerPage = 8;
+   const itemsPerPage = 7;
    const totalPages = Math.ceil(data.length / itemsPerPage);
    const indexOfLastItem = currentPage * itemsPerPage;
    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -105,9 +105,10 @@ const Table = ({ data, headers, content, popupContent }) => {
                   <button
                      type="button"
                      className={`${styles.iconBtn} ${styles.primaryBtn}`}
+                     onClick={ctaAction}
                   >
                      <TbPlus size={IconSizes.SMALL} />
-                     Enroll student
+                     {ctaText}
                   </button>
                </div>
             </div>

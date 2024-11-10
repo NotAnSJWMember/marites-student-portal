@@ -1,41 +1,27 @@
 @import "../../../../styles/global.scss";
 
 .header {
-   display: flex;
-   justify-content: space-between;
+   display: grid;
+   gap: 0.5rem;
+
+   .title {
+      text-transform: none;
+      font-size: 2.5rem;
+   }
 }
 
 .tableWrapper {
    flex: 1;
-}
 
-.tableHeader {
-   display: grid;
-   grid-template-columns: 40px 30% 1fr 1fr 1fr 50px;
-   align-items: start;
-}
-
-.userContainer {
-   display: flex;
-   align-items: center;
-   gap: 1rem;
-
+   .role,
    .title {
-      margin: 0;
+      text-transform: capitalize;
    }
-   .desc {
-      font-size: 0.85rem;
+
+   .lastActive,
+   .createdAt {
+      color: $light-gray-color-600;
    }
-}
-
-.role,
-.title {
-   text-transform: capitalize;
-}
-
-.lastActive,
-.createdAt {
-   color: $light-gray-color-600;
 }
 
 .popupWrapper {

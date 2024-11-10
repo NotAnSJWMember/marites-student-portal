@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 
 import UserIcon from "components/ui/UserIcon/UserIcon";
 import { FormInput, FormSelect } from "components/ui/Form";

@@ -223,3 +223,15 @@
    }
 }
 
+.userContainer {
+   display: flex;
+   align-items: center;
+   gap: 1rem;
+
+   .title {
+      margin: 0;
+   }
+   .desc {
+      font-size: 0.85rem;
+   }
+}

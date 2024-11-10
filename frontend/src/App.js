@@ -1,7 +1,8 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import PrivateRoute from "./components/PrivateRoute";
 import { HelmetProvider } from "react-helmet-async";
+import "./App.scss";
 
+import PrivateRoute from "./components/PrivateRoute";
 import Register from "./pages/Register/Register";
 import Login from "./pages/Login/Login";
 import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
@@ -10,8 +11,6 @@ import AdminDashboard from "./pages/Dashboard/Admin/AdminDashboard";
 import UserManagement from "./pages/Dashboard/Admin/pages/UserManagement";
 import StudentDashboard from "./pages/Dashboard/Student/StudentDashboard";
 import InstructorDashboard from "./pages/Dashboard/Instructor/InstructorDashboard";
-
-import "./App.scss";
 import AcademicPlanner from "pages/Dashboard/Admin/pages/AcademicPlanner";
 import Curriculum from "pages/Dashboard/Admin/pages/Curriculum";
 import Enrollment from "pages/Dashboard/Admin/pages/Enrollment";

@@ -1,6 +1,6 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
-import { Navbar } from "components/Navbar/Navbar";
+import { Sidebar } from "components/Navigation/Sidebar";
 import { Header } from "components/Header/Header";
 
 import styles from "./Layout.module.scss";
@@ -12,12 +12,10 @@ const Layout = ({ role, pageName, children }) => {
             <title>{pageName} | Dr. AMMC</title>
          </Helmet>
          <div className={styles.gridContainer}>
-            <Navbar role={role} />
+            <Sidebar role={role} />
             <div className={styles.contentWrapper}>
                <Header />
-               <div className={styles.dividerWrapper}>
-                  {children}
-               </div>
+               <div className={styles.dividerWrapper}>{children}</div>
             </div>
          </div>
       </div>

@@ -12,24 +12,57 @@
    gap: 1rem;
    flex: 1;
 
-   .header {
+   .label {
+      font-size: 1.5rem;
+      font-weight: 800;
+
+      span {
+         color: $light-green-color-300;
+      }
+   }
+
+   .tools {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-
-      .label {
-         font-size: 1.5rem;
-         font-weight: 800;
-
-         span {
-            color: $light-green-color-300;
-         }
-      }
-
-      .tools {
-         display: flex;
-         gap: 0.5rem;
-      }
+      gap: 0.5rem;
    }
 }
 
+.role,
+.title {
+   text-transform: capitalize;
+}
+
+.lastActive,
+.createdAt {
+   color: $light-gray-color-600;
+}
+
+.popupWrapper {
+   padding: 0.5rem;
+
+   .popupContent {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+
+      button {
+         background-color: transparent;
+      }
+
+      .iconCta {
+         width: 100%;
+         padding: 0.7rem;
+         border-radius: 0.5rem;
+         justify-content: flex-start;
+         transition: 200ms $trans-smooth;
+
+         &:hover {
+            background-color: $light-gray-color-100;
+         }
+      }
+
+      .deleteBtn {
+         color: #e22828;
+      }
+   }
+}

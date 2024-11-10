@@ -1,21 +1,24 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./Enrollment.module.scss";
-import {
-   TbEdit,
-   TbFileArrowRight,
-   TbPlus,
-   TbTrash,
-} from "react-icons/tb";
+import { TbEdit, TbFileArrowRight, TbTrash } from "react-icons/tb";
 import IconSizes from "constants/IconSizes";
 
 import Layout from "components/Layout/Layout";
 import TabMenu from "components/TabMenu/TabMenu";
 import UserIcon from "components/ui/UserIcon/UserIcon";
+import Breadcrumb from "components/Navigation/Breadcrumb";
 import Table from "components/Table/Table";
+
 import useFetchData from "hooks/useFetchData";
 import { format } from "date-fns";
+import { useForm } from "react-hook-form";
+import SearchBar from "components/SearchBar/SearchBar";
 
 const Enrollment = () => {
+   const [currentStep, setCurrentStep] = useState(1);
+   const steps = ["Enrollment", "Select a student"];
+
+   const { register, handleSubmit, reset } = useForm();
    const { data: students } = useFetchData("student");
    const { data: enrollments } = useFetchData("enrollment");
    const { data: programs } = useFetchData("program");
@@ -23,6 +26,8 @@ const Enrollment = () => {
    const { data: curriculums } = useFetchData("curriculum");
    const { data: sections } = useFetchData("section");
    const { data: schedules } = useFetchData("schedule");
+
+   const handleNextStep = () => setCurrentStep((prev) => prev + 1);
 
    const formatDate = (isoString) => {
       return format(new Date(isoString), "MMMM d, yyyy");
@@ -84,6 +89,8 @@ const Enrollment = () => {
             headers={headers}
             content={renderData}
             popupContent={renderPopupContent}
+            ctaText="Enroll student"
+            ctaAction={() => handleNextStep()}
          />
       );
    };
@@ -91,22 +98,16 @@ const Enrollment = () => {
    const CourseView = () => {
       const headers = ["Name", "Program", "Instructor", "Created On"];
 
-      const renderData = (data) => (
-         <>
-            <div className={styles.userContainer}>
-               <UserIcon image={data.userPhoto} size={48} />
-               <div className={styles.userInfo}>
-                  <h4
-                     className={styles.title}
-                  >{`${data.firstName} ${data.lastName}`}</h4>
-                  <p className={styles.desc}>{data.email}</p>
-               </div>
-            </div>
-            <p className={styles.role}>{data.programId}</p>
-            <p className={styles.lastActive}>{data.curriculumId}</p>
-            <p className={styles.createdAt}>{formatDate(data.createdAt)}</p>
-         </>
-      );
+      const renderData = (data) => {
+         return (
+            <>
+               <p></p>
+               <p className={styles.role}>{data.programId}</p>
+               <p className={styles.lastActive}>{data.curriculumId}</p>
+               <p className={styles.createdAt}>{formatDate(data.createdAt)}</p>
+            </>
+         );
+      };
 
       const renderPopupContent = (data) => (
          <div className={styles.popupWrapper}>
@@ -136,6 +137,8 @@ const Enrollment = () => {
             headers={headers}
             content={renderData}
             popupContent={renderPopupContent}
+            ctaText="Enroll student"
+            ctaAction={() => handleNextStep()}
          />
       );
    };
@@ -149,10 +152,22 @@ const Enrollment = () => {
       <Layout role="admin" pageName="Enrollment">
          <main className={styles.mainContent}>
             <div className={styles.header}>
-               <h1>Enrollment</h1>
+               <Breadcrumb
+                  base="academic-planner"
+                  steps={steps}
+                  setCurrentStep={setCurrentStep}
+                  currentStep={currentStep}
+               />
+               <h1 className={styles.title}>{steps[currentStep - 1]}</h1>
             </div>
             <section className={styles.tableWrapper}>
-               <TabMenu tabs={tabs} />
+               {currentStep === 1 && <TabMenu tabs={tabs} />}
+               {currentStep === 2 && (
+                  <div className={styles.selectStudentWrapper}>
+                     <SearchBar height="3rem" />
+                     <div className={styles.searchContent}></div>
+                  </div>
+               )}
             </section>
          </main>
       </Layout>

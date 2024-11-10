@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import styles from "./Navbar.module.scss";
+import styles from "./Sidebar.module.scss";
 
 import logo from "assets/images/logo.png";
 import { useAuth } from "hooks";
@@ -20,7 +20,7 @@ import {
 
 var ICON_SIZE = 26;
 
-export const Navbar = ({ role }) => {
+export const Sidebar = ({ role }) => {
    const [activeTab, setActiveTab] = useState("");
    const { logout } = useAuth();
    const location = useLocation();
@@ -34,7 +34,7 @@ export const Navbar = ({ role }) => {
          "/student/dashboard/enrolled-courses": "enrolledCourses",
          "/student/dashboard/finance": "finance",
          "/student/dashboard/announcements": "announcements",
-         
+
          "/admin/dashboard": "dashboard",
          "/admin/dashboard/user-management": "userManagement",
          "/admin/dashboard/academic-planner": "academicPlanner",
@@ -314,7 +314,7 @@ export const Navbar = ({ role }) => {
    };
 
    return (
-      <nav className={styles.navBar}>
+      <nav className={styles.sidebar}>
          {getNavItems()}
          <div className={styles.itemContainer}>
             <div className={styles.itemBtn}>
