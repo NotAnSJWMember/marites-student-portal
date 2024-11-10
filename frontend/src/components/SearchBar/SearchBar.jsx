@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styles from "./SearchBar.module.scss";
 
 import { TbSearch } from "react-icons/tb";
@@ -6,6 +6,9 @@ import { TbSearch } from "react-icons/tb";
 const SearchBar = ({ data, onSearch, width, height }) => {
    const [searchQuery, setSearchQuery] = useState("");
    const [suggestions, setSuggestions] = useState([]);
+   const [dropdownStyle, setDropdownStyle] = useState({});
+
+   const searchBarRef = useRef(null);
 
    const handleInputChange = (event) => {
       const query = event.target.value;
@@ -25,16 +28,29 @@ const SearchBar = ({ data, onSearch, width, height }) => {
    };
 
    const handleSuggestionClick = (suggestion) => {
-      setSearchQuery(suggestion._id); // Adjust this based on your data
-      setSuggestions([]);
+      setSearchQuery("");  
+      setSuggestions([]); 
+      onSearch(suggestion);
    };
+
+   useEffect(() => {
+      if (searchBarRef.current) {
+         const rect = searchBarRef.current.getBoundingClientRect();
+         setDropdownStyle({
+            top: rect.bottom + 10,
+            left: rect.left,
+            width: rect.width,
+         });
+      }
+   }, [searchQuery]);
 
    return (
       <div
+         ref={searchBarRef}
          className={styles.searchBar}
          style={{ height: height, width: width }}
       >
-         <TbSearch size={20} />
+         <TbSearch style={{ marginLeft: 20 }} size={20} />
          <input
             type="text"
             value={searchQuery}
@@ -42,7 +58,14 @@ const SearchBar = ({ data, onSearch, width, height }) => {
             onChange={handleInputChange}
          />
          {suggestions.length > 0 && (
-            <div className={styles.suggestionsDropdown}>
+            <div
+               className={styles.suggestionsDropdown}
+               style={{
+                  ...dropdownStyle,
+                  position: "absolute",
+                  zIndex: 10,
+               }}
+            >
                {suggestions.map((suggestion, index) => (
                   <div
                      key={index}

@@ -17,7 +17,7 @@ import { useForm } from "react-hook-form";
 
 const Enrollment = () => {
    const [currentStep, setCurrentStep] = useState(1);
-   const [searchQuery, setSearchQuery] = useState("");
+   const [searchedStudent, setSearchedStudent] = useState(null);
 
    const steps = ["Enrollment", "Enroll student"];
 
@@ -30,15 +30,13 @@ const Enrollment = () => {
    const { data: sections } = useFetchData("section");
    const { data: schedules } = useFetchData("schedule");
 
-   const filteredStudents = students.filter(
-      (student) =>
-         student.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-         student.lastName.toLowerCase().includes(searchQuery.toLowerCase())
-   );
-
    const handleSearch = (query) => {
-      setSearchQuery(query);
+      setSearchedStudent(query);
    };
+
+   const selectedProgram = programs.find(
+      (program) => program._id === searchedStudent?.programId
+   );
 
    const handleNextStep = () => setCurrentStep((prev) => prev + 1);
 
@@ -161,11 +159,6 @@ const Enrollment = () => {
       { label: "Courses", content: <CourseView /> },
    ];
 
-   useEffect(() => {
-      console.log(searchQuery);
-      console.log(filteredStudents);
-   });
-
    return (
       <Layout role="admin" pageName="Enrollment">
          <main className={styles.mainContent}>
@@ -182,28 +175,40 @@ const Enrollment = () => {
                {currentStep === 1 && <TabMenu tabs={tabs} />}
                {currentStep === 2 && (
                   <div className={styles.selectStudentWrapper}>
-                     <SearchBar data={students} onSearch={handleSearch} height="3rem" />
+                     <SearchBar
+                        data={students}
+                        onSearch={handleSearch}
+                        height="3rem"
+                     />
                      <div className={styles.searchContent}>
-                        <div className={styles.userContainer}>
-                           <UserIcon image={userPhoto} size={110} />
-                           <div>
-                              <h2 className={styles.title}>Caenar Arteta</h2>
-                              <p className={styles.desc}>
-                                 kaiserlaconfiture@gmail.com
-                              </p>
-                              <div className={styles.line}></div>
-                              <div className={styles.userInfo}>
-                                 <div className={styles.twoColumn}>
-                                    <h3>Program</h3>
-                                    <p>BSIT</p>
-                                 </div>
-                                 <div className={styles.twoColumn}>
-                                    <h3>Year Level</h3>
-                                    <p>1</p>
+                        {searchedStudent && (
+                           <div className={styles.userContainer}>
+                              <UserIcon
+                                 image={searchedStudent.userPhoto}
+                                 size={110}
+                              />
+                              <div>
+                                 <h2 className={styles.title}>
+                                    {searchedStudent.firstName}{" "}
+                                    {searchedStudent.lastName}
+                                 </h2>
+                                 <p className={styles.desc}>
+                                    {searchedStudent.email}
+                                 </p>
+                                 <div className={styles.line}></div>
+                                 <div className={styles.userInfo}>
+                                    <div className={styles.twoColumn}>
+                                       <h3>Program</h3>
+                                       <p>{selectedProgram?.code}</p>
+                                    </div>
+                                    <div className={styles.twoColumn}>
+                                       <h3>Year Level</h3>
+                                       <p>{searchedStudent.yearLevel}</p>
+                                    </div>
                                  </div>
                               </div>
                            </div>
-                        </div>
+                        )}
                         <div className={styles.curriculumContainer}>
                            <div className={styles.coreCourses}>
                               <h3>

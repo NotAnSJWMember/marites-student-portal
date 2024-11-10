@@ -3,8 +3,8 @@ import styles from "./TabMenu.module.scss";
 
 const TabMenu = ({ tabs }) => {
    const [activeTab, setActiveTab] = useState(0);
-   const tabRefs = useRef([]);
    const [indicatorStyle, setIndicatorStyle] = useState({});
+   const tabRefs = useRef([]);
 
    useEffect(() => {
       const tab = tabRefs.current[activeTab];

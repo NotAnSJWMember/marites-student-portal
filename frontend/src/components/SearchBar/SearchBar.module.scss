@@ -3,17 +3,33 @@
 .searchBar {
    display: flex;
    align-items: center;
-   justify-content: flex-start;
+   justify-content: start;
+   align-items: center;
+   justify-content: start;
    background-color: $light-primary-background;
    gap: 0.7rem;
    border-radius: $small-radius;
    border: 1px solid $light-gray-color;
-   padding: 0 1rem;
-   
+
    input {
       border: none;
       background: none;
       outline: none;
       width: 100%;
+   }
+}
+
+.suggestionsDropdown {
+   border-radius: $small-radius;
+   border: 1px solid $light-gray-color;
+   background-color: white;
+
+   .suggestionItem {
+      cursor: pointer;
+      padding: 1rem;
+
+      &:hover {
+         background-color: $light-gray-color-100;
+      }
    }
 }
