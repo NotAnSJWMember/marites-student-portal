@@ -1,0 +1,64 @@
+@import "../../../../styles/global.scss";
+
+.tableWrapper {
+   flex: 1;
+}
+
+.tableHeader {
+   display: grid;
+   grid-template-columns: 40px 30% 1fr 1fr 1fr 50px;
+   align-items: start;
+}
+
+.userContainer {
+   display: flex;
+   align-items: center;
+   gap: 1rem;
+
+   .title {
+      margin: 0;
+   }
+   .desc {
+      font-size: 0.85rem;
+   }
+}
+
+.role,
+.title {
+   text-transform: capitalize;
+}
+
+.lastActive,
+.createdAt {
+   color: $light-gray-color-600;
+}
+
+.popupWrapper {
+   padding: 0.5rem;
+
+   .popupContent {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+
+      button {
+         background-color: transparent;
+      }
+
+      .iconCta {
+         width: 100%;
+         padding: 0.7rem;
+         border-radius: 0.5rem;
+         justify-content: flex-start;
+         transition: 200ms $trans-smooth;
+
+         &:hover {
+            background-color: $light-gray-color-100;
+         }
+      }
+
+      .deleteBtn {
+         color: #e22828;
+      }
+   }
+}

@@ -6,17 +6,19 @@
 
 .overviewContainer {
    display: grid;
-   grid-template-columns: repeat(3, 1fr);
+   grid-template-columns: repeat(4, 1fr);
    gap: 1rem;
 
    .overviewCard {
       cursor: pointer;
       display: flex;
       flex-direction: column;
+      justify-content: end;
       border: 1px solid $light-gray-color;
       border-radius: $small-radius;
       padding: 1.5rem;
-      gap: 1.25rem;
+      gap: 1rem;
+      transition: 300ms $trans-fast;
 
       .cta {
          display: grid;
@@ -29,9 +31,19 @@
          color: $light-gray-color-600;
       }
 
+      &:hover {
+         background-color: #f1f1f1;
+      }
+
+      .enrollmentContainer {
+         flex-direction: column;
+         justify-content: start;
+         flex: 1;
+      }
+
       .flexContainer {
          display: flex;
-         align-items: center;
+         align-items: start;
          gap: 1.25rem;
 
          .iconBtn {
@@ -43,36 +55,6 @@
          h2 {
             font-size: 1.6rem;
          }
-      }
-   }
-}
-
-.semesterSummary {
-   display: flex;
-   flex-direction: column;
-   gap: 1.25rem;
-
-   h4 {
-      font-weight: 600;
-   }
-
-   .semesterTitle {
-      h2 {
-         margin-bottom: 0.2rem;
-      }
-
-      p {
-         color: $light-gray-color-600;
-      }
-   }
-
-   .semesterDates {
-      display: flex;
-      flex-direction: column;
-      gap: 1.25rem;
-
-      p {
-         color: $light-gray-color-600;
       }
    }
 }

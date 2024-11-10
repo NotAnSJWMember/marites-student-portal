@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 
-const useFetchData = (endpoint, token) => {
+const useFetchData = (endpoint) => {
    const [data, setData] = useState([]);
    const [loading, setLoading] = useState(true);
    const [error, setError] = useState(null);
+   
+   const token = localStorage.getItem('token');
 
    useEffect(() => {
       let isMounted = true;

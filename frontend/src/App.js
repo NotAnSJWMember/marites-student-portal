@@ -14,6 +14,7 @@ import InstructorDashboard from "./pages/Dashboard/Instructor/InstructorDashboar
 import "./App.scss";
 import AcademicPlanner from "pages/Dashboard/Admin/pages/AcademicPlanner";
 import Curriculum from "pages/Dashboard/Admin/pages/Curriculum";
+import Enrollment from "pages/Dashboard/Admin/pages/Enrollment";
 
 function App() {
    return (
@@ -55,12 +56,16 @@ function App() {
                />
 
                <Route
+                  path="/admin/dashboard/academic-planner/enrollment"
+                  element={
+                     <PrivateRoute element={<Enrollment />} roles={["admin"]} />
+                  }
+               />
+
+               <Route
                   path="/admin/dashboard/academic-planner/curriculums"
                   element={
-                     <PrivateRoute
-                        element={<Curriculum />}
-                        roles={["admin"]}
-                     />
+                     <PrivateRoute element={<Curriculum />} roles={["admin"]} />
                   }
                />
 

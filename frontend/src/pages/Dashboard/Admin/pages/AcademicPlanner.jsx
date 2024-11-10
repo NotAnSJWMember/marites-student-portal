@@ -8,6 +8,7 @@ import {
    TbCertificate2,
    TbNotes,
    TbSchool,
+   TbUserPlus,
 } from "react-icons/tb";
 import SearchBar from "components/SearchBar/SearchBar";
 
@@ -31,6 +32,22 @@ const AcademicPlanner = () => {
          <main className={styles.mainContent}>
             <section className={styles.overviewContainer}>
                <a
+                  href="/admin/dashboard/academic-planner/enrollment"
+                  className={styles.overviewCard}
+               >
+                  <div
+                     className={`${styles.flexContainer} ${styles.enrollmentContainer}`}
+                  >
+                     <div className={styles.iconBtn}>
+                        <TbUserPlus size={LARGE_ICON_SIZE} />
+                     </div>
+                     <div>
+                        <h2>Enrollment</h2>
+                        <p>Manage student enrollment for courses</p>
+                     </div>
+                  </div>
+               </a>
+               <a
                   href="/admin/dashboard/academic-planner/courses"
                   className={styles.overviewCard}
                >
@@ -44,13 +61,7 @@ const AcademicPlanner = () => {
                      </div>
                   </div>
                   <div className={styles.line}></div>
-                  <div className={styles.cta}>
-                     <p>Check and customize course details</p>
-                     <TbArrowNarrowRight
-                        size={SMALL_ICON_SIZE}
-                        style={{ justifySelf: "self-end" }}
-                     />
-                  </div>
+                  <p>Check and customize course details</p>
                </a>
                <a
                   href="/admin/dashboard/academic-planner/programs"
@@ -66,13 +77,7 @@ const AcademicPlanner = () => {
                      </div>
                   </div>
                   <div className={styles.line}></div>
-                  <div className={styles.cta}>
-                     <p>View and make changes to the program</p>
-                     <TbArrowNarrowRight
-                        size={SMALL_ICON_SIZE}
-                        style={{ justifySelf: "self-end" }}
-                     />
-                  </div>
+                  <p>View and make changes to the program</p>
                </a>
                <a
                   href="/admin/dashboard/academic-planner/curriculums"
@@ -88,71 +93,9 @@ const AcademicPlanner = () => {
                      </div>
                   </div>
                   <div className={styles.line}></div>
-                  <div className={styles.cta}>
-                     <p>Review and edit curriculum options</p>
-                     <TbArrowNarrowRight
-                        size={SMALL_ICON_SIZE}
-                        style={{ justifySelf: "self-end" }}
-                     />
-                  </div>
+                  <p>Review and edit curriculum options</p>
                </a>
             </section>
-            <section>
-               <SearchBar width="100%" height="3rem"/>
-            </section>
-            <div className={styles.twoColumn}>
-               <section className={styles.semesterSummary}>
-                  <div className={styles.semesterTitle}>
-                     <h2>Semester Overview</h2>
-                     <p>Check the details of the current semester</p>
-                  </div>
-                  <div className={styles.line}></div>
-                  <div className={`${styles.semesterCard} ${styles.twoColumn}`}>
-                     <div>
-                        <h4 className={styles.badge}>Timeframe</h4>
-                     </div>
-                     <div className={styles.semesterDates}>
-                        <div>
-                           <h4>May 23, 2024</h4>
-                           <p>Start Date</p>
-                        </div>
-                        <div>
-                           <h4>September 10, 2024</h4>
-                           <p>End Date</p>
-                        </div>
-                     </div>
-                  </div>
-                  <div className={styles.line}></div>
-                  <div className={`${styles.semesterCard} ${styles.twoColumn}`}>
-                     <div>
-                        <h4 className={styles.badge}>Examination</h4>
-                     </div>
-                     <div className={styles.semesterDates}>
-                        <div>
-                           <h4>March 19, 2019</h4>
-                           <p>Midterms Date</p>
-                        </div>
-                        <div>
-                           <h4>May 19, 2024</h4>
-                           <p>Finals Date</p>
-                        </div>
-                     </div>
-                  </div>
-               </section>
-               <section className={styles.overviewCard}>
-                  <div className={styles.flexContainer}>
-                     <div>
-                        <h2>{stats.totalStudents}</h2>
-                        <p>Students Enrolled</p>
-                     </div>
-                  </div>
-                  <div className={styles.line}></div>
-                  <div className={styles.cta}>
-                     <p>Avg Completion Rate: {stats.averageCompletionRate}</p>
-                     <p>Enrolled Per Program: {stats.enrolledPerProgram}</p>
-                  </div>
-               </section>
-            </div>
          </main>
       </Layout>
    );
