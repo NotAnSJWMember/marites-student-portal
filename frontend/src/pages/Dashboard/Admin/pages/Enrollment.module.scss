@@ -24,6 +24,53 @@
    }
 }
 
+.selectStudentWrapper {
+   display: grid;
+   gap: 1rem;
+
+   .searchContent {
+      display: grid;
+      grid-template-columns: max-content 1fr;
+      gap: 3rem;
+   }
+}
+
+.userContainer {
+   .line {
+      margin: 10px 0;
+   }
+
+   .userInfo {
+      display: grid;
+      gap: 3px;
+
+      .twoColumn {
+         h3,
+         p {
+            font-size: 0.8rem;
+            font-weight: 600;
+         }
+      }
+   }
+}
+
+.curriculumContainer {
+   display: grid;
+   gap: 1rem;
+
+   .coreCourses,
+   .electiveCourses {
+      border: 1px solid $light-gray-color-100;
+      border-radius: $small-radius;
+      padding: 1rem;
+
+      .badge {
+         font-size: 0.9rem;
+         padding: 0.3rem 0.7rem;
+      }
+   }
+}
+
 .popupWrapper {
    padding: 0.5rem;
 

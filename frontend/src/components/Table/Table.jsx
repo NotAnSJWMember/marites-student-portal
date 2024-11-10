@@ -118,8 +118,8 @@ const Table = ({ data, headers, content, popupContent, ctaText, ctaAction }) => 
                   isChecked={selectedData.length === currentData.length}
                   onChange={handleSelectAll}
                />
-               {headers.map((header) => {
-                  return <h4>{header}</h4>;
+               {headers.map((header, index) => {
+                  return <h4 key={`header-${index}`}>{header}</h4>;
                })}
             </div>
             {currentData.map((data, index) => (
@@ -162,7 +162,7 @@ const Table = ({ data, headers, content, popupContent, ctaText, ctaAction }) => 
             />
             {[...Array(totalPages)].map((_, index) => (
                <button
-                  key={index}
+                  key={`button-${index}`}
                   type="button"
                   className={currentPage === index + 1 ? styles.active : ""}
                   onClick={() => handlePageChange(index + 1)}

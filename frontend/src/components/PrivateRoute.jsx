@@ -2,8 +2,8 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "hooks";
 
 const PrivateRoute = ({ element, roles }) => {
-   const { user } = useAuth();
-   
+   const { user } = useAuth()
+
    if (!user) {
       return <Navigate to="/login" />;
    }

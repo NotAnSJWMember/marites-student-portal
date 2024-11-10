@@ -1,22 +1,25 @@
 import React, { useEffect, useState } from "react";
 import styles from "./Enrollment.module.scss";
 import { TbEdit, TbFileArrowRight, TbTrash } from "react-icons/tb";
-import IconSizes from "constants/IconSizes";
+import userPhoto from "assets/images/profile.jpg";
 
 import Layout from "components/Layout/Layout";
 import TabMenu from "components/TabMenu/TabMenu";
 import UserIcon from "components/ui/UserIcon/UserIcon";
 import Breadcrumb from "components/Navigation/Breadcrumb";
 import Table from "components/Table/Table";
+import SearchBar from "components/SearchBar/SearchBar";
 
+import IconSizes from "constants/IconSizes";
 import useFetchData from "hooks/useFetchData";
 import { format } from "date-fns";
 import { useForm } from "react-hook-form";
-import SearchBar from "components/SearchBar/SearchBar";
 
 const Enrollment = () => {
    const [currentStep, setCurrentStep] = useState(1);
-   const steps = ["Enrollment", "Select a student"];
+   const [searchQuery, setSearchQuery] = useState("");
+
+   const steps = ["Enrollment", "Enroll student"];
 
    const { register, handleSubmit, reset } = useForm();
    const { data: students } = useFetchData("student");
@@ -26,6 +29,16 @@ const Enrollment = () => {
    const { data: curriculums } = useFetchData("curriculum");
    const { data: sections } = useFetchData("section");
    const { data: schedules } = useFetchData("schedule");
+
+   const filteredStudents = students.filter(
+      (student) =>
+         student.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+         student.lastName.toLowerCase().includes(searchQuery.toLowerCase())
+   );
+
+   const handleSearch = (query) => {
+      setSearchQuery(query);
+   };
 
    const handleNextStep = () => setCurrentStep((prev) => prev + 1);
 
@@ -148,6 +161,11 @@ const Enrollment = () => {
       { label: "Courses", content: <CourseView /> },
    ];
 
+   useEffect(() => {
+      console.log(searchQuery);
+      console.log(filteredStudents);
+   });
+
    return (
       <Layout role="admin" pageName="Enrollment">
          <main className={styles.mainContent}>
@@ -164,8 +182,66 @@ const Enrollment = () => {
                {currentStep === 1 && <TabMenu tabs={tabs} />}
                {currentStep === 2 && (
                   <div className={styles.selectStudentWrapper}>
-                     <SearchBar height="3rem" />
-                     <div className={styles.searchContent}></div>
+                     <SearchBar data={students} onSearch={handleSearch} height="3rem" />
+                     <div className={styles.searchContent}>
+                        <div className={styles.userContainer}>
+                           <UserIcon image={userPhoto} size={110} />
+                           <div>
+                              <h2 className={styles.title}>Caenar Arteta</h2>
+                              <p className={styles.desc}>
+                                 kaiserlaconfiture@gmail.com
+                              </p>
+                              <div className={styles.line}></div>
+                              <div className={styles.userInfo}>
+                                 <div className={styles.twoColumn}>
+                                    <h3>Program</h3>
+                                    <p>BSIT</p>
+                                 </div>
+                                 <div className={styles.twoColumn}>
+                                    <h3>Year Level</h3>
+                                    <p>1</p>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                        <div className={styles.curriculumContainer}>
+                           <div className={styles.coreCourses}>
+                              <h3>
+                                 Core courses{" "}
+                                 <span className={styles.badge}>5</span>
+                              </h3>
+                              {/* <div className={styles.courseCard}>
+                                 <div className={styles.courseTitle}>
+                                    <h3 className={styles.title}>
+                                       {course.description}
+                                    </h3>
+                                    <p className={styles.badge}>
+                                       {course.code}
+                                    </p>
+                                 </div>
+                                 <div className={styles.courseInfo}>
+                                    <div className={styles.line}></div>
+                                    <p className={styles.instructor}>
+                                       {instructor
+                                          ? `${instructor.firstName} ${instructor.lastName}`
+                                          : "No instructor found"}
+                                    </p>
+                                    <div className={styles.courseDetails}>
+                                       <p>Lab hour: {course.labHour}</p>
+                                       <p>Lecture hour: {course.lecHour}</p>
+                                       <p>Total unit: {course.totalUnit}</p>
+                                    </div>
+                                 </div>
+                              </div> */}
+                           </div>
+                           <div className={styles.electiveCourses}>
+                              <h3>
+                                 Elective courses{" "}
+                                 <span className={styles.badge}>2</span>
+                              </h3>
+                           </div>
+                        </div>
+                     </div>
                   </div>
                )}
             </section>

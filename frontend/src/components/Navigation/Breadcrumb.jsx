@@ -5,37 +5,26 @@ import { TbChevronRight } from "react-icons/tb";
 import IconSizes from "constants/IconSizes";
 
 const Breadcrumb = ({ base, steps, setCurrentStep, currentStep }) => {
-   const [isStepNavigated, setIsStepNavigated] = useState({});
    const lastStep = steps.length;
-   const stepCounts = {};
 
    const goToPreviousStep = () => {
       setCurrentStep((prev) => {
          const newStep = prev === 1 ? lastStep : prev - 1;
          return newStep;
       });
-      stepCounts[`step${currentStep}`] = true;
-      setIsStepNavigated(stepCounts);
-   };
-
-   const goToNextStep = () => {
-      setCurrentStep((prev) => {
-         const newStep = prev === lastStep ? 1 : prev + 1;
-         return newStep;
-      });
-
-      // window.history.pushState(null, "", window.location.href);
    };
 
    useEffect(() => {
       const handlePopState = (event) => {
+         console.log(event);
+
          if (currentStep !== 1) {
             goToPreviousStep();
          } else {
             window.history.back();
          }
       };
-      
+
       window.history.pushState({ step: currentStep }, "", window.location.href);
       window.addEventListener("popstate", handlePopState);
       return () => {
@@ -64,7 +53,7 @@ const Breadcrumb = ({ base, steps, setCurrentStep, currentStep }) => {
             </li>
             {steps.slice(0, currentStep).map((step, index) => {
                return (
-                  <li className={styles.iconLabel}>
+                  <li key={index} className={styles.iconLabel}>
                      <p
                         className={`${styles.link} ${
                            currentStep === index + 1 ? styles.activeLink : ""
