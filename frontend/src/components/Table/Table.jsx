@@ -1,11 +1,19 @@
 import React, { useMemo, useState } from "react";
 import styles from "./Table.module.scss";
-import { TbArrowLeft, TbArrowRight, TbDotsVertical } from "react-icons/tb";
+import {
+   TbArrowLeft,
+   TbArrowRight,
+   TbArrowsUpDown,
+   TbDotsVertical,
+   TbFileArrowRight,
+   TbFilter,
+   TbPlus,
+} from "react-icons/tb";
+import IconSizes from "constants/IconSizes";
 
 import Checkbox from "components/ui/Checkbox/Checkbox";
 import Popup from "components/Popup/Popup";
-
-const MEDIUM_ICON_SIZE = 22;
+import SearchBar from "components/SearchBar/SearchBar";
 
 const Table = ({ data, headers, content, popupContent }) => {
    const [activePopup, setActivePopup] = useState(null);
@@ -70,6 +78,39 @@ const Table = ({ data, headers, content, popupContent }) => {
    return (
       <div className={styles.tableWrapper}>
          <div className={styles.table}>
+            <div className={styles.toolsContainer}>
+               <SearchBar height="100%" width="30rem" />
+               <div className={styles.buttonContainer}>
+                  <button
+                     type="button"
+                     className={`${styles.iconBtn} ${styles.secondaryBtn}`}
+                  >
+                     <TbFileArrowRight size={IconSizes.SMALL} />
+                     Export
+                  </button>
+                  <button
+                     type="button"
+                     className={`${styles.iconBtn} ${styles.secondaryBtn}`}
+                  >
+                     <TbFilter size={IconSizes.SMALL} />
+                     Filter
+                  </button>
+                  <button
+                     type="button"
+                     className={`${styles.iconBtn} ${styles.secondaryBtn}`}
+                  >
+                     <TbArrowsUpDown size={IconSizes.SMALL} />
+                     Sort
+                  </button>
+                  <button
+                     type="button"
+                     className={`${styles.iconBtn} ${styles.primaryBtn}`}
+                  >
+                     <TbPlus size={IconSizes.SMALL} />
+                     Enroll student
+                  </button>
+               </div>
+            </div>
             <div className={styles.tableHeader}>
                <Checkbox
                   id="select-all"
@@ -94,7 +135,7 @@ const Table = ({ data, headers, content, popupContent }) => {
                         className={`${styles.actionBtn} ${styles.iconBtn}`}
                         onClick={(event) => togglePopupAction(data._id, event)}
                      >
-                        <TbDotsVertical size={MEDIUM_ICON_SIZE} />
+                        <TbDotsVertical size={IconSizes.MEDIUM} />
                      </button>
                      {activePopup === data._id && (
                         <Popup

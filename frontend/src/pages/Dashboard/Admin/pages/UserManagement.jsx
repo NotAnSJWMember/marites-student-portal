@@ -9,14 +9,12 @@ import {
    TbFileArrowRight,
    TbTrash,
 } from "react-icons/tb";
+import IconSizes from "constants/IconSizes";
 
 import Table from "components/Table/Table";
 import Layout from "components/Layout/Layout";
 import SearchBar from "components/SearchBar/SearchBar";
 import useFetchData from "hooks/useFetchData";
-
-const POPUP_ICON_SIZE = 25;
-const SMALL_ICON_SIZE = 19;
 
 const UserManagement = () => {
    const [activePopup, setActivePopup] = useState(null);
@@ -39,18 +37,18 @@ const UserManagement = () => {
       <div className={styles.popupWrapper}>
          <div className={styles.popupContent}>
             <button type="button" className={styles.iconCta}>
-               <TbEdit size={POPUP_ICON_SIZE} />
+               <TbEdit size={IconSizes.POPUP} />
                Edit details
             </button>
             <button type="button" className={styles.iconCta}>
-               <TbFileArrowRight size={POPUP_ICON_SIZE} />
+               <TbFileArrowRight size={IconSizes.POPUP} />
                Export details
             </button>
             <button
                type="button"
                className={`${styles.deleteBtn} ${styles.iconCta}`}
             >
-               <TbTrash size={POPUP_ICON_SIZE} />
+               <TbTrash size={IconSizes.POPUP} />
                Delete user
             </button>
          </div>
@@ -103,14 +101,14 @@ const UserManagement = () => {
                            type="button"
                            className={`${styles.secondaryBtn} ${styles.iconBtn}`}
                         >
-                           <TbFilter size={SMALL_ICON_SIZE} />
+                           <TbFilter size={IconSizes.SMALL} />
                            Filters
                         </button>
                         <button
                            type="button"
                            className={`${styles.primaryBtn} ${styles.iconBtn}`}
                         >
-                           <TbPlus size={SMALL_ICON_SIZE} />
+                           <TbPlus size={IconSizes.SMALL} />
                            Add user
                         </button>
                      </div>

@@ -10,6 +10,13 @@
 .table {
    display: flex;
    flex-direction: column;
+   gap: 0.7rem;
+
+   .toolsContainer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+   }
 
    .tableHeader,
    .tableItem {

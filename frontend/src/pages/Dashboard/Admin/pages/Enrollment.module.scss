@@ -1,5 +1,10 @@
 @import "../../../../styles/global.scss";
 
+.header {
+   display: flex;
+   justify-content: space-between;
+}
+
 .tableWrapper {
    flex: 1;
 }

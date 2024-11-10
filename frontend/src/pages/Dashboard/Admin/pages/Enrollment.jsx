@@ -1,6 +1,12 @@
 import React from "react";
 import styles from "./Enrollment.module.scss";
-import { TbEdit, TbFileArrowRight, TbTrash } from "react-icons/tb";
+import {
+   TbEdit,
+   TbFileArrowRight,
+   TbPlus,
+   TbTrash,
+} from "react-icons/tb";
+import IconSizes from "constants/IconSizes";
 
 import Layout from "components/Layout/Layout";
 import TabMenu from "components/TabMenu/TabMenu";
@@ -8,8 +14,6 @@ import UserIcon from "components/ui/UserIcon/UserIcon";
 import Table from "components/Table/Table";
 import useFetchData from "hooks/useFetchData";
 import { format } from "date-fns";
-
-const POPUP_ICON_SIZE = 25;
 
 const Enrollment = () => {
    const { data: students } = useFetchData("student");
@@ -28,9 +32,9 @@ const Enrollment = () => {
       const headers = ["Name", "Program", "Courses", "Enrolled On"];
 
       const renderData = (data) => {
-         // const programCode = programs.map(
-         //    (program) => program._id === data.programId
-         // );
+         const program = programs.find(
+            (program) => program._id === data.programId
+         );
 
          return (
             <>
@@ -43,8 +47,10 @@ const Enrollment = () => {
                      <p className={styles.desc}>{data.email}</p>
                   </div>
                </div>
-               <p className={styles.role}>{data.programId}</p>
-               <p className={styles.lastActive}>{data.curriculumId}</p>
+               <p className={styles.role}>
+                  {program?.code} {data.yearLevel}
+               </p>
+               <p className={styles.lastActive}>No courses enrolled</p>
                <p className={styles.createdAt}>{formatDate(data.createdAt)}</p>
             </>
          );
@@ -54,18 +60,18 @@ const Enrollment = () => {
          <div className={styles.popupWrapper}>
             <div className={styles.popupContent}>
                <button type="button" className={styles.iconCta}>
-                  <TbEdit size={POPUP_ICON_SIZE} />
+                  <TbEdit size={IconSizes.POPUP} />
                   Edit details
                </button>
                <button type="button" className={styles.iconCta}>
-                  <TbFileArrowRight size={POPUP_ICON_SIZE} />
+                  <TbFileArrowRight size={IconSizes.POPUP} />
                   Export details
                </button>
                <button
                   type="button"
                   className={`${styles.deleteBtn} ${styles.iconCta}`}
                >
-                  <TbTrash size={POPUP_ICON_SIZE} />
+                  <TbTrash size={IconSizes.POPUP} />
                   Delete user
                </button>
             </div>
@@ -106,18 +112,18 @@ const Enrollment = () => {
          <div className={styles.popupWrapper}>
             <div className={styles.popupContent}>
                <button type="button" className={styles.iconCta}>
-                  <TbEdit size={POPUP_ICON_SIZE} />
+                  <TbEdit size={IconSizes.POPUP} />
                   Edit details
                </button>
                <button type="button" className={styles.iconCta}>
-                  <TbFileArrowRight size={POPUP_ICON_SIZE} />
+                  <TbFileArrowRight size={IconSizes.POPUP} />
                   Export details
                </button>
                <button
                   type="button"
                   className={`${styles.deleteBtn} ${styles.iconCta}`}
                >
-                  <TbTrash size={POPUP_ICON_SIZE} />
+                  <TbTrash size={IconSizes.POPUP} />
                   Delete user
                </button>
             </div>
@@ -142,7 +148,9 @@ const Enrollment = () => {
    return (
       <Layout role="admin" pageName="Enrollment">
          <main className={styles.mainContent}>
-            <h1>Enrollment</h1>
+            <div className={styles.header}>
+               <h1>Enrollment</h1>
+            </div>
             <section className={styles.tableWrapper}>
                <TabMenu tabs={tabs} />
             </section>
