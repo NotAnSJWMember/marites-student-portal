@@ -27,6 +27,7 @@
     "@nestjs/mongoose": "^10.0.10",
     "@nestjs/passport": "^10.0.3",
     "@nestjs/platform-express": "^10.0.0",
+    "@nestjs/serve-static": "^4.0.2",
     "@types/nodemailer": "^6.4.16",
     "backend": "file:",
     "bcrypt": "^5.1.1",

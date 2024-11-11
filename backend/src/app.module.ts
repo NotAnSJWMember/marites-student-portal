@@ -4,6 +4,8 @@ dotenv.config();
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -33,6 +35,10 @@ import { CurriculumModule } from './modules/curriculum/curriculum.module';
             secret: process.env.JWT_SECRET,
             signOptions: { expiresIn: '1h' },
          }),
+      }),
+      ServeStaticModule.forRoot({
+         rootPath: join(__dirname, '..', 'public'),
+         serveRoot: '/public',
       }),
       DatabaseModule,
       AuthModule,

@@ -12,7 +12,10 @@ export class User extends Document {
    @Prop({ required: true })
    lastName: string;
 
-   @Prop({ type: String, default: null })
+   @Prop({
+      type: String,
+      default: 'http://localhost:8080/public/images/default-user.png',
+   })
    userPhoto: string;
 
    @Prop({ required: true, unique: true, match: /.+\@.+\..+/ })
