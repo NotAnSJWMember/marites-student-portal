@@ -8,13 +8,21 @@ import Layout from "components/Layout/Layout";
 import UserIcon from "components/ui/UserIcon/UserIcon";
 import useFetchData from "hooks/useFetchData";
 import { format, formatDistanceToNow } from "date-fns";
+import useDeleteData from "hooks/useDeleteData";
+import PopupAlert from "components/Popup/PopupAlert";
 
 const UserManagement = () => {
    const { data: users } = useFetchData("user");
+   const { popupState, showPopup, deleteData } = useDeleteData();
 
    const formatDate = (isoString) => {
       return format(new Date(isoString), "MMMM d, yyyy");
    };
+
+   const handleDeleteUser = async (userId) => {      
+      if (userId)
+         await deleteData("user", userId)
+   }
 
    const headers = ["Name", "Role", "Last Seen", "Created on"];
 
@@ -53,6 +61,7 @@ const UserManagement = () => {
             <button
                type="button"
                className={`${styles.deleteBtn} ${styles.iconCta}`}
+               onClick={() => handleDeleteUser(user.userId)}
             >
                <TbTrash size={IconSizes.POPUP} />
                Delete user
@@ -79,6 +88,14 @@ const UserManagement = () => {
                </div>
             </section>
          </main>
+         <PopupAlert
+            icon={popupState.icon}
+            border={popupState.border}
+            color={popupState.color}
+            title={popupState.title}
+            message={popupState.message}
+            show={showPopup}
+         />
       </Layout>
    );
 };

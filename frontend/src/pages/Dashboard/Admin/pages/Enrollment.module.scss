@@ -26,15 +26,17 @@
 }
 
 .selectStudentWrapper {
-   display: grid;
+   display: flex;
+   flex-direction: column;
    gap: 1.5rem;
+   height: 100%;
+}
 
-   .searchContent {
-      display: grid;
-      grid-template-columns: 20rem 1fr;
-      align-items: start;
-      gap: 3rem;
-   }
+.searchContent {
+   display: grid;
+   grid-template-columns: 20rem 1fr;
+   align-items: start;
+   gap: 3rem;
 }
 
 .userContainer {
@@ -57,10 +59,10 @@
    .electiveCourses {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
       border: 1px solid $light-gray-color-100;
       border-radius: $small-radius;
       padding: 1rem;
+      gap: 1rem;
 
       .badge {
          font-size: 0.9rem;

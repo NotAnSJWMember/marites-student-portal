@@ -3,8 +3,15 @@ import styles from "./SearchBar.module.scss";
 
 import { TbSearch } from "react-icons/tb";
 
-const SearchBar = ({ data, onSearch, width, height }) => {
+const SearchBar = ({
+   data,
+   onSearch,
+   width,
+   height,
+   placeholder = "Search",
+}) => {
    const [searchQuery, setSearchQuery] = useState("");
+   const [selectedQuery, setSelectedQuery] = useState("");
    const [suggestions, setSuggestions] = useState([]);
    const [dropdownStyle, setDropdownStyle] = useState({});
 
@@ -13,7 +20,6 @@ const SearchBar = ({ data, onSearch, width, height }) => {
    const handleInputChange = (event) => {
       const query = event.target.value;
       setSearchQuery(query);
-      onSearch(query);
 
       if (query.length > 0) {
          const filteredSuggestions = data.filter((item) =>
@@ -28,8 +34,8 @@ const SearchBar = ({ data, onSearch, width, height }) => {
    };
 
    const handleSuggestionClick = (suggestion) => {
-      setSearchQuery("");  
-      setSuggestions([]); 
+      setSearchQuery("");
+      setSuggestions([]);
       onSearch(suggestion);
    };
 
@@ -54,7 +60,7 @@ const SearchBar = ({ data, onSearch, width, height }) => {
          <input
             type="text"
             value={searchQuery}
-            placeholder="Search"
+            placeholder={placeholder}
             onChange={handleInputChange}
          />
          {suggestions.length > 0 && (

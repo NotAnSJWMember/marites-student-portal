@@ -14,7 +14,7 @@ export class User extends Document {
 
    @Prop({
       type: String,
-      default: 'http://localhost:8080/public/images/default-user.png',
+      default: 'http://localhost:8080/public/images/default-user-photo.png',
    })
    userPhoto: string;
 

@@ -7,18 +7,20 @@ import TabMenu from "components/TabMenu/TabMenu";
 import UserIcon from "components/ui/UserIcon/UserIcon";
 import Breadcrumb from "components/Navigation/Breadcrumb";
 import Table from "components/Table/Table";
+import UserTable from "components/Table/UserTable";
 import SearchBar from "components/SearchBar/SearchBar";
 
 import IconSizes from "constants/IconSizes";
 import useFetchData from "hooks/useFetchData";
 import { format } from "date-fns";
-import UserTable from "components/Table/UserTable";
 
 const Enrollment = () => {
    const [currentStep, setCurrentStep] = useState(1);
    const [searchedStudent, setSearchedStudent] = useState(null);
+   const [selectedCourses, setSelectedCourses] = useState([]);
+   const [selectedElective, setSelectedElective] = useState([]);
 
-   const steps = ["Enrollment", "Enroll student"];
+   const steps = ["Enrollment", "Select a student", "Select courses"];
 
    const { data: students } = useFetchData("student");
    const { data: enrollments } = useFetchData("enrollment");
@@ -34,22 +36,32 @@ const Enrollment = () => {
       (curriculum) => curriculum._id === searchedStudent?.curriculumId
    );
 
-   const handleNextStep = () => setCurrentStep((prev) => prev + 1);
-   const handlePreviousStep = () => {
-      setCurrentStep((prev) => prev - 1);
-      resetSearch();
-   };
-
    const formatDate = (isoString) => {
       return format(new Date(isoString), "MMMM d, yyyy");
    };
 
-   const resetSearch = () => {
+   const handleNextStep = () => setCurrentStep((prev) => prev + 1);
+
+   const handlePreviousStep = () => {
+      setCurrentStep((prev) => prev - 1);
       setSearchedStudent(null);
    };
 
-   const handleSearch = (query) => {
-      setSearchedStudent(query);
+   const handleSearchedStudent = (student) => {
+      setSearchedStudent(student);
+      handleNextStep();
+   };
+
+   const handleSelectCourse = (courseId) => {
+      setSelectedCourses((prevSelectedCourses) =>
+         prevSelectedCourses.includes(courseId)
+            ? prevSelectedCourses.filter((c) => c !== courseId)
+            : [...prevSelectedCourses, courseId]
+      );
+   };
+
+   const handleSelectAllCourses = (data) => {
+      setSelectedCourses(data);
    };
 
    const CourseCard = ({ data }) => {
@@ -58,7 +70,13 @@ const Enrollment = () => {
       return data.map((courseId) => {
          const course = courses.find((course) => course._id === courseId);
          return course ? (
-            <div key={course._id} className={styles.courseCard}>
+            <div
+               key={course._id}
+               className={`${styles.courseCard} 
+               ${selectedCourses.includes(course._id) ? styles.selected : ""}
+               ${selectedElective.includes(course._id) ? styles.selected : ""}`}
+               onClick={() => handleSelectCourse(courseId)}
+            >
                <div className={styles.courseTitle}>
                   <h3 className={styles.title}>{course.description}</h3>
                   <p className={styles.badge}>{course.code}</p>
@@ -209,107 +227,127 @@ const Enrollment = () => {
                   <div className={styles.selectStudentWrapper}>
                      <SearchBar
                         data={students}
-                        onSearch={handleSearch}
                         height="3rem"
+                        placeholder="Search for a student to enroll"
+                        onSearch={handleSearchedStudent}
                      />
-                     {searchedStudent ? (
-                        <div
-                           className={styles.searchContent}
-                           key={searchedStudent._id}
-                        >
-                           <div className={styles.sideContent}>
-                              <div className={styles.userContainer}>
-                                 <UserIcon
-                                    image={searchedStudent.userPhoto}
-                                    size={110}
-                                 />
-                                 <div>
-                                    <h2 className={styles.title}>
-                                       {searchedStudent.firstName}{" "}
-                                       {searchedStudent.lastName}
-                                    </h2>
-                                    <p className={styles.desc}>
-                                       {searchedStudent.email}
-                                    </p>
-                                    <div className={styles.line}></div>
-                                    <div className={styles.userInfo}>
-                                       <div className={styles.twoColumn}>
-                                          <h3>Program</h3>
-                                          <p>{studentProgram?.code}</p>
-                                       </div>
-                                       <div className={styles.twoColumn}>
-                                          <h3>Year Level</h3>
-                                          <p>{searchedStudent.yearLevel}</p>
-                                       </div>
-                                    </div>
+                     <UserTable
+                        data={students}
+                        headers={["Name", "Program", "Courses", "Created on"]}
+                        content={renderStudentData}
+                        isClickable={true}
+                        clickableAction={handleSearchedStudent}
+                     />
+                  </div>
+               )}
+               {currentStep === 3 && (
+                  <div
+                     className={styles.searchContent}
+                     key={searchedStudent._id}
+                  >
+                     <div className={styles.sideContent}>
+                        <div className={styles.userContainer}>
+                           <UserIcon
+                              image={searchedStudent.userPhoto}
+                              size={110}
+                           />
+                           <div>
+                              <h2 className={styles.title}>
+                                 {searchedStudent.firstName}{" "}
+                                 {searchedStudent.lastName}
+                              </h2>
+                              <p className={styles.desc}>
+                                 {searchedStudent.email}
+                              </p>
+                              <div className={styles.line}></div>
+                              <div className={styles.userInfo}>
+                                 <div className={styles.twoColumn}>
+                                    <h3>Program</h3>
+                                    <p>{studentProgram?.code}</p>
                                  </div>
-                              </div>
-                           </div>
-                           <div className={styles.curriculumContent}>
-                              <div className={styles.instructions}>
-                                 <h3 className={styles.title}>Instructions</h3>
-                                 <p className={styles.desc}>
-                                    Please select the courses you'd like to
-                                    enroll in. Click on each course to add it to
-                                    your selection.
-                                 </p>
-                              </div>
-                              <div className={styles.coreCourses}>
-                                 <h3>
-                                    Core courses{" "}
-                                    <span className={styles.badge}>
-                                       {studentCurriculum?.courses?.length || 0}
-                                    </span>
-                                 </h3>
-                                 <div className={styles.courseContainer}>
-                                    <CourseCard
-                                       data={studentCurriculum?.courses}
-                                    />
+                                 <div className={styles.twoColumn}>
+                                    <h3>Year Level</h3>
+                                    <p>{searchedStudent.yearLevel}</p>
                                  </div>
-                              </div>
-                              <div className={styles.electiveCourses}>
-                                 <h3>
-                                    Elective courses{" "}
-                                    <span className={styles.badge}>
-                                       {studentCurriculum?.electiveCourses
-                                          ?.length || 0}
-                                    </span>
-                                 </h3>
-                                 <div className={styles.courseContainer}>
-                                    <CourseCard
-                                       data={studentCurriculum?.electiveCourses}
-                                    />
-                                 </div>
-                              </div>
-                              <div className={styles.buttonContainer}>
-                                 <button
-                                    type="button"
-                                    className={`${styles.iconBtn} ${styles.secondaryBtn}`}
-                                    onClick={() => handlePreviousStep()}
-                                 >
-                                    Cancel
-                                 </button>
-                                 <button
-                                    type="button"
-                                    className={`${styles.iconBtn} ${styles.primaryBtn}`}
-                                 >
-                                    Enroll student
-                                 </button>
                               </div>
                            </div>
                         </div>
-                     ) : (
-                        <UserTable
-                           data={students}
-                           headers={[
-                              "Name",
-                              "Program",
-                              "Courses",
-                              "Enrolled On",
-                           ]}
-                           content={renderStudentData}
-                        />
-                     )}
+                     </div>
+                     <div className={styles.curriculumContent}>
+                        <div className={styles.instructions}>
+                           <h3 className={styles.title}>Instructions</h3>
+                           <p className={styles.desc}>
+                              Please select the courses you'd like to enroll in.
+                              Click on each course to add it to your selection.
+                           </p>
+                        </div>
+                        <div className={styles.coreCourses}>
+                           <div className={styles.spaceBetween}>
+                              <h3>
+                                 Core courses{" "}
+                                 <span className={styles.badge}>
+                                    {studentCurriculum?.courses?.length || 0}
+                                 </span>
+                              </h3>
+                              <button
+                                 type="button"
+                                 className={styles.primaryBtn}
+                                 onClick={() =>
+                                    handleSelectAllCourses(
+                                       studentCurriculum?.courses
+                                    )
+                                 }
+                              >
+                                 Select all
+                              </button>
+                           </div>
+                           <div className={styles.courseContainer}>
+                              <CourseCard data={studentCurriculum?.courses} />
+                           </div>
+                        </div>
+                        <div className={styles.electiveCourses}>
+                           <div className={styles.spaceBetween}>
+                              <h3>
+                                 Core courses{" "}
+                                 <span className={styles.badge}>
+                                    {studentCurriculum?.electiveCourses
+                                       ?.length || 0}
+                                 </span>
+                              </h3>
+                              <button
+                                 type="button"
+                                 className={styles.primaryBtn}
+                                 onClick={() =>
+                                    handleSelectAllCourses(
+                                       studentCurriculum?.electiveCourses
+                                    )
+                                 }
+                              >
+                                 Select all
+                              </button>
+                           </div>
+                           <div className={styles.courseContainer}>
+                              <CourseCard
+                                 data={studentCurriculum?.electiveCourses}
+                              />
+                           </div>
+                        </div>
+                        <div className={styles.buttonContainer}>
+                           <button
+                              type="button"
+                              className={`${styles.iconBtn} ${styles.secondaryBtn}`}
+                              onClick={() => handlePreviousStep()}
+                           >
+                              Cancel
+                           </button>
+                           <button
+                              type="button"
+                              className={`${styles.iconBtn} ${styles.primaryBtn}`}
+                           >
+                              Enroll student
+                           </button>
+                        </div>
+                     </div>
                   </div>
                )}
             </section>

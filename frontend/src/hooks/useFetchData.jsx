@@ -1,44 +1,54 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useRefetchData } from "./contexts/useRefetchData";
 
 const useFetchData = (endpoint) => {
+   const { registerRefetchFunction, unregisterRefetchFunction } =
+      useRefetchData();
    const [data, setData] = useState([]);
    const [loading, setLoading] = useState(true);
    const [error, setError] = useState(null);
-   
-   const token = localStorage.getItem('token');
+   const token = localStorage.getItem("token");
+
+   const fetchData = useCallback(async () => {
+      setLoading(true);
+
+      try {
+         const response = await fetch(`http://localhost:8080/${endpoint}`, {
+            method: "GET",
+            headers: {
+               "Content-Type": "application/json",
+               Authorization: `Bearer ${token}`,
+            },
+         });
+         if (!response.ok) {
+            throw new Error(`Failed to fetch data from ${endpoint}`);
+         }
+
+         const data = await response.json();
+         setData(data);
+      } catch (error) {
+         setError(error.message);
+      } finally {
+         setLoading(false);
+      }
+   }, [endpoint, token]);
 
    useEffect(() => {
-      let isMounted = true;
-
-      const fetchData = async () => {
-         try {
-            const response = await fetch(`http://localhost:8080/${endpoint}`, {
-               method: "GET",
-               headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${token}`,
-               },
-            });
-
-            if (!response.ok) {
-               throw new Error(`Failed to fetch data from ${endpoint}`);
-            }
-
-            const data = await response.json();
-            setData(data);
-         } catch (error) {
-            setError(error.message);
-         } finally {
-            if (isMounted) setLoading(false);
-         }
-      };
-
       fetchData();
+   }, [fetchData]);
+
+   useEffect(() => {
+      registerRefetchFunction(endpoint, fetchData);
 
       return () => {
-         isMounted = false;
+         unregisterRefetchFunction(endpoint);
       };
-   }, [endpoint, token]);
+   }, [
+      endpoint,
+      fetchData,
+      registerRefetchFunction,
+      unregisterRefetchFunction,
+   ]);
 
    return { data, loading, error };
 };

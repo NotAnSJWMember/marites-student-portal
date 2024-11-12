@@ -20,6 +20,10 @@
    grid-template-columns: 15% auto;
    height: 100%;
    width: 100%;
+   
+   @media screen and (max-width: "1400px") {
+      grid-template-columns: 20% auto;
+   }
 
    .contentWrapper {
       display: flex;

@@ -29,7 +29,7 @@ export class StudentService {
       );
 
       if (!curriculum) {
-         throw new Error(
+         this.logger.warn(
             'Curriculum not found for this program and year level',
          );
       }
@@ -39,14 +39,15 @@ export class StudentService {
          userId: student.userId,
          curriculumId: curriculum._id,
          password: student.password,
+         role: 'student',
       });
 
       await newStudent.save();
 
-      await this.userModel.updateOne(
-         { userId: student.userId },
-         { $set: { role: 'student' } },
-      );
+      // await this.userModel.updateOne(
+      //    { userId: student.userId },
+      //    { $set: { role: 'student' } },
+      // );
 
       this.logger.log('Student created successfully!');
    }
