@@ -36,7 +36,10 @@ export class Section extends Document {
    @Prop({ required: true })
    description: string;
 
-   @Prop({ default: 40 })
+   @Prop({ default: 0 })
+   capacity: number;
+
+   @Prop({ default: 40, min: 1 })
    availableSlots: number;
 
    @Prop({ default: true })

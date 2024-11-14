@@ -4,12 +4,15 @@ import { Section } from './section.schema';
 import { Model, Types } from 'mongoose';
 import { CreateSectionDto } from './section.dto';
 import { Instructor } from '../user/roles/instructor/instructor.schema';
+import { Schedule } from '../schedule/schedule.schema';
 
 @Injectable()
 export class SectionService {
    constructor(
       @InjectModel(Section.name)
       private sectionModel: Model<Section>,
+      @InjectModel(Schedule.name)
+      private scheduleModel: Model<Schedule>,
       @InjectModel(Instructor.name)
       private instructorModel: Model<Instructor>,
    ) {}
@@ -102,7 +105,6 @@ export class SectionService {
       ];
 
       const courseIds = dummySections.map((section) => section.courseId);
-      console.log('Course Ids:', courseIds);
       await this.instructorModel.updateOne(
          { userId: '000001' },
          { $set: { courses: courseIds } },

@@ -1,0 +1,53 @@
+@import "../../styles/global.scss";
+
+.timeline {
+   display: flex;
+   flex-direction: column;
+   align-items: flex-start;
+}
+
+.timelineItem {
+   position: relative;
+   display: flex;
+   align-items: flex-start;
+   margin-bottom: 20px;
+   padding-left: 20px;
+}
+
+.circle {
+   width: 12px;
+   height: 12px;
+   border-radius: 50%;
+   background-color: #ccc;
+   margin-right: 10px;
+   position: relative;
+}
+
+.active {
+   background-color: #4caf50;
+}
+
+.line {
+   position: absolute;
+   top: 16px;
+   left: 25.4px;
+   width: 1px;
+   height: 100%;
+   background-color: #ccc;
+   z-index: 1;
+}
+
+.content {
+   display: flex;
+   flex-direction: column;
+}
+
+.label {
+   font-weight: bold;
+   margin-bottom: 5px;
+}
+
+.description {
+   font-size: 0.9em;
+   color: #777;
+}

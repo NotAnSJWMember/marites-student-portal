@@ -13,6 +13,9 @@ export class Enrollment extends Document {
    @Prop({ required: true, type: Types.ObjectId, ref: 'Course' })
    courseId: Types.ObjectId;
 
+   @Prop({ required: true, type: Types.ObjectId, ref: 'Schedule' })
+   scheduleId: Types.ObjectId;
+
    @Prop({ required: true, ref: 'Student' })
    studentId: string;
 

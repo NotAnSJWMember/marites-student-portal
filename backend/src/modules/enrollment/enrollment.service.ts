@@ -4,6 +4,8 @@ import { Model, Types } from 'mongoose';
 import { Enrollment, Status } from './enrollment.schema';
 import { CreateEnrollmentDto } from './enrollment.dto';
 import { Course } from '../course/course.schema';
+import { Section } from '../section/section.schema';
+import { Schedule } from '../schedule/schedule.schema';
 
 @Injectable()
 export class EnrollmentService {
@@ -12,6 +14,8 @@ export class EnrollmentService {
    constructor(
       @InjectModel(Enrollment.name) private enrollmentModel: Model<Enrollment>,
       @InjectModel(Course.name) private courseModel: Model<Course>,
+      @InjectModel(Section.name) private sectionModel: Model<Section>,
+      @InjectModel(Schedule.name) private scheduleModel: Model<Schedule>,
    ) {}
 
    async enroll(
@@ -33,10 +37,33 @@ export class EnrollmentService {
          studentId,
          status: Status.ENROLLED,
          remarks: 'Enrolled in course',
-         dropped: false,
       });
 
-      return enrollment.save();
+      await enrollment.save();
+
+      const section = await this.sectionModel.findOne({
+         courseId,
+      });
+
+      if (!section) {
+         throw new Error('Section not found');
+      }
+
+      const schedule = new this.scheduleModel({
+         courseId,
+         sectionId: section._id,
+         studentId,
+         instructor: section.instructorId,
+         startTime: section.startTime,
+         endTime: section.endTime,
+         roomCode: section.roomCode,
+         days: section.days,
+         description: section.description,
+      });
+
+      await schedule.save();
+
+      return enrollment;
    }
 
    async batchEnroll(
@@ -65,7 +92,32 @@ export class EnrollmentService {
             remarks: 'Enrolled in course',
          });
 
-         enrollments.push(await enrollment.save());
+         await enrollment.save();
+
+         const section = await this.sectionModel.findOne({
+            courseId,
+         });
+
+         if (!section) {
+            this.logger.warn(`Section not found for course ${courseId}`);
+            continue;
+         }
+
+         const schedule = new this.scheduleModel({
+            courseId,
+            sectionId: section._id,
+            studentId,
+            instructor: section.instructorId,
+            startTime: section.startTime,
+            endTime: section.endTime,
+            roomCode: section.roomCode,
+            days: section.days,
+            description: section.description,
+         });
+
+         await schedule.save();
+
+         enrollments.push(enrollment);
       }
 
       return enrollments;

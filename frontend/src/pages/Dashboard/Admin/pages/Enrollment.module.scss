@@ -132,13 +132,35 @@
          }
       }
    }
+}
 
-   .buttonContainer {
-      justify-self: end;
+.selectSectionWrapper {
+   display: grid;
+   grid-template-columns: 20rem 1fr;
+   gap: 1rem;
+
+   .mainContent {
+      display: grid;
+      grid-template-rows: repeat(2, max-content);
+
+      .sectionsContainer {
+         display: grid;
+         grid-template-columns: repeat(3, 1fr);
+         gap: 0.5rem;
+      }
+
+      .sectionCard {
+         background-color: white;
+         border: 1px solid $light-gray-color;
+         border-radius: $small-radius;
+         padding: 1rem;
+      }
    }
 }
 
-.sectionCard
+.buttonContainer {
+   justify-self: end;
+}
 
 .promptMessage {
    display: flex;
