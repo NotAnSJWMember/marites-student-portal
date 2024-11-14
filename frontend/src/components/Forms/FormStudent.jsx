@@ -10,7 +10,7 @@ export const FormStudent = ({ register, onBack }) => {
    const { showError } = usePopupAlert();
 
    const token = localStorage.getItem("token");
-   const { data: programs, loading, error } = useFetchData("program", token);
+   const { data: programs, loading, error } = useFetchData("program");
 
    const yearOptions = useMemo(() => {
       const baseOptions = [

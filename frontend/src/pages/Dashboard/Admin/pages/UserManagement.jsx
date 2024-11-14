@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styles from "./UserManagement.module.scss";
 import { TbEdit, TbFileArrowRight, TbTrash } from "react-icons/tb";
 import IconSizes from "constants/IconSizes";
@@ -12,17 +12,21 @@ import useDeleteData from "hooks/useDeleteData";
 import PopupAlert from "components/Popup/PopupAlert";
 
 const UserManagement = () => {
-   const { data: users } = useFetchData("user");
-   const { popupState, showPopup, deleteData } = useDeleteData();
+   const [shouldRefetch, setShouldRefetch] = useState(false);
+   const { data: users } = useFetchData("user", shouldRefetch);
+
+   const { popupState, showPopup, deleteData } = useDeleteData("user");
 
    const formatDate = (isoString) => {
       return format(new Date(isoString), "MMMM d, yyyy");
    };
 
-   const handleDeleteUser = async (userId) => {      
-      if (userId)
-         await deleteData("user", userId)
-   }
+   const handleDeleteUser = async (userId) => {
+      if (userId) {
+         await deleteData(userId);
+         setShouldRefetch((prev) => !prev); 
+      }
+   };
 
    const headers = ["Name", "Role", "Last Seen", "Created on"];
 
@@ -76,7 +80,7 @@ const UserManagement = () => {
             <section className={styles.tableWrapper}>
                <div className={styles.tableContainer}>
                   <h3 className={styles.label}>
-                     All users <span>{users.length}</span>
+                     All users <span>{users?.length}</span>
                   </h3>
                   <Table
                      data={users}

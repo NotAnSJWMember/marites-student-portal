@@ -10,9 +10,6 @@ export enum Status {
 
 @Schema({ timestamps: true })
 export class Enrollment extends Document {
-   @Prop({ required: true, type: Types.ObjectId, ref: 'Program' })
-   programId: Types.ObjectId;
-
    @Prop({ required: true, type: Types.ObjectId, ref: 'Course' })
    courseId: Types.ObjectId;
 

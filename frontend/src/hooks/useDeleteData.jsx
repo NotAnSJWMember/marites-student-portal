@@ -1,44 +1,60 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { usePopupAlert } from "hooks";
+import useFetchData from "./useFetchData";
 
-const useDeleteData = () => {
+const useDeleteData = (endpoint) => {
+   const { error, fetchData } = useFetchData(endpoint);
+
    const { setShowPopup, showError, showSuccess, ...popupProps } =
       usePopupAlert();
-   const [loading, setLoading] = useState(false);
+   const [loadingDelete, setLoadingDelete] = useState(false);
 
-   const token = localStorage.getItem("token");
-   const deleteData = async (endpoint, key) => {
-      setLoading(true);
-      try {
-         const response = await fetch(
-            `http://localhost:8080/${endpoint}/${key}`,
-            {
-               method: "DELETE",
-               headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${token}`,
-               },
-            }
-         );
+   const deleteData = useCallback(
+      async (id) => {
+         setLoadingDelete(true);
 
-         if (!response.ok) throw new Error(`Failed to post to ${endpoint}`);
+         try {
+            const response = await fetch(
+               `http://localhost:8080/${endpoint}/${id}`,
+               {
+                  method: "DELETE",
+                  headers: {
+                     "Content-Type": "application/json",
+                     Authorization: `Bearer ${localStorage.getItem("token")}`,
+                  },
+               }
+            );
 
-         const responseData = await response.json();
-         showSuccess(
-            "Success!",
-            responseData.message || "Data deleted successfully!"
-         );
-      } catch (error) {
-         showError(
-            "Internal Server Error",
-            error?.message || "An unexpected error occurred. Please try again."
-         );
-      } finally {
-         setLoading(false);
-      }
+            if (!response.ok)
+               throw new Error(`Failed to delete from ${endpoint}`);
+
+            const responseData = await response.json();
+            showSuccess(
+               "Success!",
+               responseData.message || "Data deleted successfully!"
+            );
+
+            fetchData();
+         } catch (error) {
+            showError(
+               "Internal Server Error",
+               error?.message ||
+                  "An unexpected error occurred. Please try again."
+            );
+         } finally {
+            setLoadingDelete(false);
+         }
+      },
+      [endpoint, fetchData, showError, showSuccess]
+   );
+
+   return {
+      ...popupProps,
+      setShowPopup,
+      loading: loadingDelete,
+      deleteData,
+      error,
    };
-
-   return { ...popupProps, deleteData, loading, setShowPopup };
 };
 
 export default useDeleteData;

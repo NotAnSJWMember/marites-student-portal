@@ -1,13 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRefetchData } from "./contexts/useRefetchData";
 
-const useFetchData = (endpoint) => {
+const useFetchData = (endpoint, shouldRefetch = false) => {
    const { registerRefetchFunction, unregisterRefetchFunction } =
       useRefetchData();
    const [data, setData] = useState([]);
    const [loading, setLoading] = useState(true);
    const [error, setError] = useState(null);
-   const token = localStorage.getItem("token");
 
    const fetchData = useCallback(async () => {
       setLoading(true);
@@ -17,7 +16,7 @@ const useFetchData = (endpoint) => {
             method: "GET",
             headers: {
                "Content-Type": "application/json",
-               Authorization: `Bearer ${token}`,
+               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
          });
          if (!response.ok) {
@@ -31,11 +30,11 @@ const useFetchData = (endpoint) => {
       } finally {
          setLoading(false);
       }
-   }, [endpoint, token]);
+   }, [endpoint]);
 
    useEffect(() => {
       fetchData();
-   }, [fetchData]);
+   }, [fetchData, shouldRefetch]);
 
    useEffect(() => {
       registerRefetchFunction(endpoint, fetchData);
@@ -50,7 +49,7 @@ const useFetchData = (endpoint) => {
       unregisterRefetchFunction,
    ]);
 
-   return { data, loading, error };
+   return { data, loading, error, fetchData };
 };
 
 export default useFetchData;

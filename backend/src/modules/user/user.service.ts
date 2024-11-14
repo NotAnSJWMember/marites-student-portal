@@ -151,7 +151,7 @@ export class UserService {
    async update(
       userId: string,
       userData: Partial<CreateUserDto>,
-   ): Promise<User | null> {
+   ): Promise<{ message: string; updatedUser?: User | null }> {
       this.logger.log(`Updating user with ID: ${userId}`);
 
       const updatedUser = await this.userModel
@@ -160,14 +160,23 @@ export class UserService {
 
       if (updatedUser) {
          this.logger.log(`Successfully updated user: ${updatedUser}`);
-      } else {
-         this.logger.warn(`User with ID: ${userId} not found for update.`);
-      }
 
-      return updatedUser || null;
+         return {
+            message: `Successfully updated the user ${updatedUser.firstName}`,
+            updatedUser,
+         };
+      } else {
+         this.logger.warn(`No user found with ID: ${userId} to update.`);
+         return {
+            message: `No user found with ID: ${userId} to update.`,
+            updatedUser: null,
+         };
+      }
    }
 
-   async delete(userId: string): Promise<User | null> {
+   async delete(
+      userId: string,
+   ): Promise<{ message: string; deletedUser?: User | null }> {
       this.logger.log(`Deleting user with ID: ${userId}`);
 
       const deletedUser = await this.userModel
@@ -181,7 +190,11 @@ export class UserService {
 
          await this.studentModel.findOneAndDelete({ userId }).exec();
          await this.instructorModel.findOneAndDelete({ userId }).exec();
-         return deletedUser;
+
+         return {
+            message: `Successfully deleted the user ${deletedUser.firstName}`,
+            deletedUser,
+         };
       } else {
          const deletedStudent = await this.studentModel
             .findOneAndDelete({ userId })
@@ -194,10 +207,16 @@ export class UserService {
             this.logger.log(
                `Successfully deleted user from ${deletedStudent ? 'studentModel' : 'instructorModel'}.`,
             );
-            return deletedStudent || deletedInstructor;
+            return {
+               message: `Successfully deleted the user from ${deletedStudent ? 'studentModel' : 'instructorModel'}`,
+               deletedUser: deletedStudent || deletedInstructor,
+            };
          } else {
             this.logger.warn(`No user found with ID: ${userId} to delete.`);
-            return null;
+            return {
+               message: `No user found with ID: ${userId} to delete.`,
+               deletedUser: null,
+            };
          }
       }
    }

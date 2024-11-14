@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import axios from "axios";
+import { isTokenExpired } from "utils/authUtils";
 
 const AuthContext = createContext();
 
@@ -12,7 +13,20 @@ export const AuthProvider = ({ children }) => {
 
    useEffect(() => {
       if (token) {
-         axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+         if (isTokenExpired(token)) {
+            logout();
+         } else {
+            axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+            const tokenExpirationTime =
+               JSON.parse(atob(token.split(".")[1])).exp * 1000 - Date.now();
+
+            const logoutTimer = setTimeout(() => {
+               logout();
+               alert("Session expired. Please login again.")
+            }, tokenExpirationTime);
+
+            return() => clearTimeout(logoutTimer)
+         }
       } else {
          setUser(null);
       }

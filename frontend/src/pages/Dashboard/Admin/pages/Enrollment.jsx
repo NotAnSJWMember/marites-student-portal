@@ -13,27 +13,42 @@ import SearchBar from "components/SearchBar/SearchBar";
 import IconSizes from "constants/IconSizes";
 import useFetchData from "hooks/useFetchData";
 import { format } from "date-fns";
+import usePostData from "hooks/usePostData";
 
 const Enrollment = () => {
    const [currentStep, setCurrentStep] = useState(1);
    const [searchedStudent, setSearchedStudent] = useState(null);
    const [selectedCourses, setSelectedCourses] = useState([]);
-   const [selectedElective, setSelectedElective] = useState([]);
-
-   const steps = ["Enrollment", "Select a student", "Select courses"];
+   const [selectedElectiveCourses, setSelectedElectiveCourses] = useState([]);
+   const [, setAllCoreSelected] = useState(false);
+   const [, setAllElectiveSelected] = useState(false);
 
    const { data: students } = useFetchData("student");
    const { data: enrollments } = useFetchData("enrollment");
    const { data: programs } = useFetchData("program");
    const { data: courses } = useFetchData("course");
    const { data: curriculums } = useFetchData("curriculum");
+   const { postData } = usePostData();
 
-   const studentProgram = programs.find(
-      (program) => program._id === searchedStudent?.programId
+   const steps = [
+      "Enrollment",
+      "Choose a Student",
+      "Select Courses",
+      "Assign Section to Courses",
+   ];
+
+   const studentProgram = React.useMemo(
+      () =>
+         programs.find((program) => program._id === searchedStudent?.programId),
+      [searchedStudent, programs]
    );
 
-   const studentCurriculum = curriculums.find(
-      (curriculum) => curriculum._id === searchedStudent?.curriculumId
+   const studentCurriculum = React.useMemo(
+      () =>
+         curriculums.find(
+            (curriculum) => curriculum._id === searchedStudent?.curriculumId
+         ),
+      [searchedStudent, curriculums]
    );
 
    const formatDate = (isoString) => {
@@ -41,10 +56,11 @@ const Enrollment = () => {
    };
 
    const handleNextStep = () => setCurrentStep((prev) => prev + 1);
-
    const handlePreviousStep = () => {
+      if (currentStep === 2) {
+         setSearchedStudent(null);
+      }
       setCurrentStep((prev) => prev - 1);
-      setSearchedStudent(null);
    };
 
    const handleSearchedStudent = (student) => {
@@ -52,47 +68,55 @@ const Enrollment = () => {
       handleNextStep();
    };
 
-   const handleSelectCourse = (courseId) => {
-      setSelectedCourses((prevSelectedCourses) =>
-         prevSelectedCourses.includes(courseId)
-            ? prevSelectedCourses.filter((c) => c !== courseId)
-            : [...prevSelectedCourses, courseId]
+   const handleSelectCourse = (courseId, type) => {
+      const updateSelection = (current, setCurrent) =>
+         current.includes(courseId)
+            ? current.filter((id) => id !== courseId)
+            : [...current, courseId];
+
+      if (type === "core") {
+         setSelectedCourses((prev) =>
+            updateSelection(prev, setSelectedCourses)
+         );
+      } else if (type === "elective") {
+         setSelectedElectiveCourses((prev) =>
+            updateSelection(prev, setSelectedElectiveCourses)
+         );
+      }
+   };
+
+   const handleSelectAllCourses = (courses, type) => {
+      const selectedState =
+         type === "core" ? selectedCourses : selectedElectiveCourses;
+      const setSelectedState =
+         type === "core" ? setSelectedCourses : setSelectedElectiveCourses;
+      const allSelected = courses.every((course) =>
+         selectedState.includes(course._id)
       );
+
+      if (allSelected) {
+         setSelectedState([]);
+         if (type === "core") setAllCoreSelected(false);
+         else setAllElectiveSelected(false);
+      } else {
+         const courseIds = courses.map((course) => course._id);
+         setSelectedState(courseIds);
+         if (type === "core") setAllCoreSelected(true);
+         else setAllElectiveSelected(true);
+      }
    };
 
-   const handleSelectAllCourses = (data) => {
-      setSelectedCourses(data);
-   };
-
-   const CourseCard = ({ data }) => {
-      if (!data || !Array.isArray(data)) return null;
-
-      return data.map((courseId) => {
-         const course = courses.find((course) => course._id === courseId);
-         return course ? (
-            <div
-               key={course._id}
-               className={`${styles.courseCard} 
-               ${selectedCourses.includes(course._id) ? styles.selected : ""}
-               ${selectedElective.includes(course._id) ? styles.selected : ""}`}
-               onClick={() => handleSelectCourse(courseId)}
-            >
-               <div className={styles.courseTitle}>
-                  <h3 className={styles.title}>{course.description}</h3>
-                  <p className={styles.badge}>{course.code}</p>
-               </div>
-               <div className={styles.courseInfo}>
-                  <div className={styles.line}></div>
-                  <div className={styles.courseDetails}>
-                     <p>Lab hour: {course.labHour}</p>
-                     <p>Lecture hour: {course.lecHour}</p>
-                     <p>Total unit: {course.totalUnit}</p>
-                  </div>
-               </div>
-            </div>
-         ) : null;
-      });
-   };
+   // const handleEnrollStudent = async () => {
+   //    const allSelectedCourses = [
+   //       ...selectedCourses,
+   //       ...selectedElectiveCourses,
+   //    ];
+   //    const payload = {
+   //       courseIds: allSelectedCourses,
+   //       studentId: searchedStudent,
+   //    };
+   //    await postData(payload, "enrollment/batch-enroll");
+   // };
 
    const renderStudentData = (data) => {
       const program = programs.find(
@@ -204,6 +228,68 @@ const Enrollment = () => {
       );
    };
 
+   function CourseList({
+      data,
+      selectedCourses,
+      onSelectCourse,
+      handleSelectAllCourses,
+      type,
+   }) {
+      const handleCourseSelection = (courseId) => {
+         onSelectCourse(courseId, type);
+      };
+
+      return (
+         <div className={styles[`${type}Courses`]}>
+            <div className={styles.spaceBetween}>
+               <h3>{type === "core" ? "Core courses" : "Elective courses"}</h3>
+               <button
+                  type="button"
+                  className={styles.primaryBtn}
+                  onClick={() => handleSelectAllCourses(courses, type)}
+               >
+                  {selectedCourses.length === courses.length
+                     ? "Deselect all"
+                     : "Select all"}
+               </button>
+            </div>
+            <div className={styles.courseContainer}>
+               {data.map((courseId) => {
+                  const course = courses.find(
+                     (course) => course._id === courseId
+                  );
+                  return (
+                     <div
+                        key={course._id}
+                        className={`${styles.courseCard} ${
+                           selectedCourses.includes(course._id)
+                              ? styles.selected
+                              : ""
+                        }`}
+                        onClick={() => handleCourseSelection(course._id)}
+                     >
+                        <div className={styles.courseTitle}>
+                           <h3 className={styles.title}>
+                              {course.description}
+                           </h3>
+                           <p className={styles.badge}>{course.code}</p>
+                        </div>
+                        <div className={styles.courseInfo}>
+                           <div className={styles.line}></div>
+                           <div className={styles.courseDetails}>
+                              <p>Lab hour: {course.labHour}</p>
+                              <p>Lecture hour: {course.lecHour}</p>
+                              <p>Total unit: {course.totalUnit}</p>
+                           </div>
+                        </div>
+                     </div>
+                  );
+               })}
+            </div>
+         </div>
+      );
+   }
+
    const tabs = [
       { label: "Students", content: <StudentView /> },
       { label: "Courses", content: <CourseView /> },
@@ -281,57 +367,20 @@ const Enrollment = () => {
                               Click on each course to add it to your selection.
                            </p>
                         </div>
-                        <div className={styles.coreCourses}>
-                           <div className={styles.spaceBetween}>
-                              <h3>
-                                 Core courses{" "}
-                                 <span className={styles.badge}>
-                                    {studentCurriculum?.courses?.length || 0}
-                                 </span>
-                              </h3>
-                              <button
-                                 type="button"
-                                 className={styles.primaryBtn}
-                                 onClick={() =>
-                                    handleSelectAllCourses(
-                                       studentCurriculum?.courses
-                                    )
-                                 }
-                              >
-                                 Select all
-                              </button>
-                           </div>
-                           <div className={styles.courseContainer}>
-                              <CourseCard data={studentCurriculum?.courses} />
-                           </div>
-                        </div>
-                        <div className={styles.electiveCourses}>
-                           <div className={styles.spaceBetween}>
-                              <h3>
-                                 Core courses{" "}
-                                 <span className={styles.badge}>
-                                    {studentCurriculum?.electiveCourses
-                                       ?.length || 0}
-                                 </span>
-                              </h3>
-                              <button
-                                 type="button"
-                                 className={styles.primaryBtn}
-                                 onClick={() =>
-                                    handleSelectAllCourses(
-                                       studentCurriculum?.electiveCourses
-                                    )
-                                 }
-                              >
-                                 Select all
-                              </button>
-                           </div>
-                           <div className={styles.courseContainer}>
-                              <CourseCard
-                                 data={studentCurriculum?.electiveCourses}
-                              />
-                           </div>
-                        </div>
+                        <CourseList
+                           data={studentCurriculum?.courses}
+                           selectedCourses={selectedCourses}
+                           onSelectCourse={handleSelectCourse}
+                           handleSelectAllCourses={handleSelectAllCourses}
+                           type="core"
+                        />
+                        <CourseList
+                           data={studentCurriculum?.electiveCourses}
+                           selectedCourses={selectedElectiveCourses}
+                           onSelectCourse={handleSelectCourse}
+                           handleSelectAllCourses={handleSelectAllCourses}
+                           type="elective"
+                        />
                         <div className={styles.buttonContainer}>
                            <button
                               type="button"
@@ -343,9 +392,25 @@ const Enrollment = () => {
                            <button
                               type="button"
                               className={`${styles.iconBtn} ${styles.primaryBtn}`}
+                              onClick={() => handleNextStep()}
                            >
-                              Enroll student
+                              Next step
                            </button>
+                        </div>
+                     </div>
+                  </div>
+               )}
+               {currentStep === 4 && (
+                  <div className={styles.selectSectionWrapper}>
+                     <h2>Course name</h2>
+                     <div className={styles.sectionsContainer}>
+                        <div className={styles.sectionCard}>
+                           <h3>Section Name</h3>
+                           <h3>Instructor</h3>
+                           <p>Start time - end time</p>
+                           <p>Days</p>
+                           <p>Room</p>
+                           <p>Available Slots</p>
                         </div>
                      </div>
                   </div>

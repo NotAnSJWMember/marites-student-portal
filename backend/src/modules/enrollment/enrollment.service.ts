@@ -39,6 +39,38 @@ export class EnrollmentService {
       return enrollment.save();
    }
 
+   async batchEnroll(
+      courseIds: Types.ObjectId[],
+      studentId: string,
+   ): Promise<Enrollment[]> {
+      const enrollments: Enrollment[] = [];
+
+      for (const courseId of courseIds) {
+         const hasPrerequisites = await this.checkPrerequisites(
+            courseId,
+            studentId,
+         );
+
+         if (!hasPrerequisites) {
+            this.logger.warn(
+               `Student ${studentId} has not completed prerequisites for course ${courseId}`,
+            );
+            continue;
+         }
+
+         const enrollment = new this.enrollmentModel({
+            courseId,
+            studentId,
+            status: Status.ENROLLED,
+            remarks: 'Enrolled in course',
+         });
+
+         enrollments.push(await enrollment.save());
+      }
+
+      return enrollments;
+   }
+
    async create(createEnrollmentDto: CreateEnrollmentDto): Promise<Enrollment> {
       const newEnrollment = new this.enrollmentModel(createEnrollmentDto);
       return newEnrollment.save();

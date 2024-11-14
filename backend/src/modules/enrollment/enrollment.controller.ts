@@ -30,6 +30,15 @@ export class EnrollmentController {
       }
    }
 
+   @Post('/batch-enroll')
+   async batchEnroll(
+      @Body() body: { courseIds: Types.ObjectId[]; studentId: string },
+   ) {
+      console.log(body.courseIds);
+      console.log(body.studentId);
+      return this.enrollmentService.batchEnroll(body.courseIds, body.studentId);
+   }
+
    @Get()
    async findAll(): Promise<Enrollment[]> {
       return this.enrollmentService.findAll();

@@ -21,8 +21,6 @@ export class StudentService {
    async create(createStudentDto: CreateStudentDto): Promise<void> {
       this.logger.log('Creating new student...');
 
-      const student = await this.userService.create(createStudentDto);
-
       const curriculum = await this.curriculumService.findCurriculum(
          createStudentDto.programId,
          createStudentDto.yearLevel,
@@ -32,24 +30,20 @@ export class StudentService {
          this.logger.warn(
             'Curriculum not found for this program and year level',
          );
+      } else {
+         const student = await this.userService.create(createStudentDto);
+
+         const newStudent = new this.studentModel({
+            ...createStudentDto,
+            userId: student.userId,
+            curriculumId: curriculum._id,
+            password: student.password,
+            role: 'student',
+         });
+
+         await newStudent.save();
+         this.logger.log('Student created successfully!');
       }
-
-      const newStudent = new this.studentModel({
-         ...createStudentDto,
-         userId: student.userId,
-         curriculumId: curriculum._id,
-         password: student.password,
-         role: 'student',
-      });
-
-      await newStudent.save();
-
-      // await this.userModel.updateOne(
-      //    { userId: student.userId },
-      //    { $set: { role: 'student' } },
-      // );
-
-      this.logger.log('Student created successfully!');
    }
 
    async findAll(): Promise<Student[]> {

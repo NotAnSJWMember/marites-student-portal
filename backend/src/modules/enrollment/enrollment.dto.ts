@@ -9,9 +9,6 @@ import { Types } from 'mongoose';
 
 export class CreateEnrollmentDto {
    @IsString()
-   programId: Types.ObjectId;
-
-   @IsString()
    courseId: Types.ObjectId;
 
    @IsNotEmpty()

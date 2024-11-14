@@ -6,14 +6,14 @@ const usePostData = () => {
       usePopupAlert();
    const [loading, setLoading] = useState(false);
 
-   const postData = async (data, endpoint, token) => {
+   const postData = async (data, endpoint) => {
       setLoading(true);
       try {
          const response = await fetch(`http://localhost:8080/${endpoint}`, {
             method: "POST",
             headers: {
                "Content-Type": "application/json",
-               Authorization: `Bearer ${token}`,
+               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
             body: JSON.stringify(data),
          });
@@ -35,7 +35,7 @@ const usePostData = () => {
       }
    };
 
-   return { ...popupProps, postData, loading, setShowPopup,  };
+   return { ...popupProps, postData, loading, setShowPopup };
 };
 
 export default usePostData;

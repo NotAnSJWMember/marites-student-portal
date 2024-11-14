@@ -17,9 +17,9 @@ const SMALL_ICON_SIZE = 20;
 
 const AcademicPlanner = () => {
    const token = localStorage.getItem("token");
-   const { data: courses } = useFetchData("course", token);
-   const { data: programs } = useFetchData("program", token);
-   const { data: curriculums } = useFetchData("curriculum", token);
+   const { data: courses } = useFetchData("course");
+   const { data: programs } = useFetchData("program");
+   const { data: curriculums } = useFetchData("curriculum");
 
    const stats = {
       totalStudents: 1200,

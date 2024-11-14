@@ -10,6 +10,7 @@ import {
    Param,
    Post,
    Put,
+   Res,
    UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
@@ -18,6 +19,7 @@ import { RolesGuard } from 'src/common/guards/roles.guard';
 import { User } from './user.schema';
 import { UserService } from './user.service';
 import { CreateUserDto } from './user.dto';
+import { Response } from 'express';
 
 @Controller('user')
 export class UserController {
@@ -54,15 +56,52 @@ export class UserController {
    async update(
       @Param('userId') userId: string,
       @Body() userData: Partial<User>,
-   ): Promise<User> {
-      return this.userService.update(userId, userData);
+      @Res() res: Response,
+   ) {
+      try {
+         const result = await this.userService.update(userId, userData);
+
+         if (result.updatedUser) {
+            return res.status(HttpStatus.OK).json({
+               message: result.message,
+               updatedUser: result.updatedUser,
+            });
+         } else {
+            return res.status(HttpStatus.NOT_FOUND).json({
+               message: result.message,
+            });
+         }
+      } catch (error) {
+         return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+            message: 'An error occurred while updating the user.',
+            error: error.message,
+         });
+      }
    }
 
    @Delete(':userId')
    @UseGuards(AuthGuard('jwt'), RolesGuard)
    @Roles('admin')
-   async delete(@Param('userId') userId: string): Promise<User> {
-      return this.userService.delete(userId);
+   async delete(@Param('userId') userId: string, @Res() res: Response) {
+      try {
+         const result = await this.userService.delete(userId);
+
+         if (result.deletedUser) {
+            return res.status(HttpStatus.OK).json({
+               message: result.message,
+               deletedUser: result.deletedUser,
+            });
+         } else {
+            return res.status(HttpStatus.NOT_FOUND).json({
+               message: result.message,
+            });
+         }
+      } catch (error) {
+         return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+            message: 'An error occurred while deleting the user.',
+            error: error.message,
+         });
+      }
    }
 
    @All('*')
