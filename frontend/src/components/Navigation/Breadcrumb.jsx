@@ -44,7 +44,7 @@ const Breadcrumb = ({ base, steps, setCurrentStep, currentStep }) => {
 
    return (
       <nav>
-         <ul>
+         <ul className={styles.breadcrumb}>
             <li className={styles.iconLabel}>
                <Link to={`/${baseUrl}`} className={styles.link}>
                   {baseName}

@@ -137,11 +137,20 @@
 .selectSectionWrapper {
    display: grid;
    grid-template-columns: 20rem 1fr;
-   gap: 1rem;
+   gap: 4rem;
+
+   .timelineContent {
+      display: grid;
+      gap: 1rem;
+   }
 
    .mainContent {
       display: grid;
-      grid-template-rows: repeat(2, max-content);
+      padding: 1rem;
+      border: 1px solid $light-gray-color;
+      border-radius: $small-radius;
+      background-color: white;
+      height: max-content;
 
       .sectionsContainer {
          display: grid;
@@ -154,6 +163,20 @@
          border: 1px solid $light-gray-color;
          border-radius: $small-radius;
          padding: 1rem;
+
+         h3 {
+            font-size: 1.3rem;
+         }
+
+         ul {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+
+            .badge {
+               padding: 0.3rem 0.5rem;
+            }
+         }
       }
    }
 }

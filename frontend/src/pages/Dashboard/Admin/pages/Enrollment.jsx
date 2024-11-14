@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useMemo, useState } from "react";
 import styles from "./Enrollment.module.scss";
 
@@ -12,14 +13,18 @@ import Timeline from "components/Timeline/Timeline";
 
 import useFetchData from "hooks/useFetchData";
 import { format } from "date-fns";
+import { TbArrowLeft } from "react-icons/tb";
+import IconSizes from "constants/IconSizes";
 
 const Enrollment = () => {
    const [currentStep, setCurrentStep] = useState(1);
    const [currentItemStep, setCurrentItemStep] = useState(0);
    const [currentItemCourse, setCurrentItemCourse] = useState(null);
    const [searchedStudent, setSearchedStudent] = useState(null);
-   const [selectedCourses, setSelectedCourses] = useState([]);
-   const [selectedElectiveCourses, setSelectedElectiveCourses] = useState([]);
+   const [selectedCourses, setSelectedCourses] = useState({
+      core: [],
+      elective: [],
+   });
 
    const { data: students } = useFetchData("student");
    const { data: instructors } = useFetchData("instructor");
@@ -31,6 +36,13 @@ const Enrollment = () => {
 
    const steps = ["Enrollment", "Choose a Student", "Select Courses", "Assign Section to Courses"];
 
+   const courseMap = useMemo(() => {
+      return courses.reduce((map, course) => {
+         map[course._id] = course;
+         return map;
+      }, {});
+   }, [courses]);
+
    const studentProgram = useMemo(
       () => programs.find((program) => program._id === searchedStudent?.programId),
       [searchedStudent, programs]
@@ -41,17 +53,18 @@ const Enrollment = () => {
       [searchedStudent, curriculums]
    );
 
-   const formatDate = (isoString) => {
-      return format(new Date(isoString), "MMMM d, yyyy");
+   const currentItemSections = useMemo(() => {
+      return currentItemCourse
+         ? sections.filter((section) => section.courseId === currentItemCourse?._id)
+         : [];
+   }, [currentItemCourse, sections]);
+
+   const findCourse = (courseId) => {
+      return courses.find((course) => course._id === courseId);
    };
 
-   const handleNextStep = () => {
-      if (currentStep === 3) setCurrentItemCourse(selectedCourses[0]);
-      setCurrentStep((prev) => prev + 1);
-   };
-   const handlePreviousStep = () => {
-      if (currentStep === 2) setSearchedStudent(null);
-      setCurrentStep((prev) => Math.max(prev - 1, 1));
+   const formatDate = (isoString) => {
+      return format(new Date(isoString), "MMMM d, yyyy");
    };
 
    const handleSearchedStudent = (student) => {
@@ -59,20 +72,82 @@ const Enrollment = () => {
       handleNextStep();
    };
 
+   const handleNextStep = () => {
+      if (currentStep === 3) {
+         setCurrentItemCourse(findCourse(selectedCourses.core[0] || selectedCourses.elective[0]));
+      }
+      setCurrentStep((prev) => prev + 1);
+   };
+
+   const handlePreviousStep = () => {
+      if (currentStep === 2) setSearchedStudent(null);
+      setCurrentStep((prev) => Math.max(prev - 1, 1));
+   };
+
+   const handleNextTimelineStep = () => {
+      if (currentItemStep < selectedCourses.core.length + selectedCourses.elective.length - 1) {
+         setCurrentItemStep(currentItemStep + 1);
+         const nextCourse =
+            currentItemStep + 1 < selectedCourses.core.length
+               ? selectedCourses.core[currentItemStep + 1]
+               : selectedCourses.elective[currentItemStep - selectedCourses.core.length];
+         setCurrentItemCourse(findCourse(nextCourse));
+      }
+   };
+
+   const handlePreviousTimelineStep = () => {
+      if (currentItemStep > 0) {
+         setCurrentItemStep(currentItemStep - 1);
+         const prevCourse =
+            currentItemStep <= selectedCourses.core.length - 1
+               ? selectedCourses.core[currentItemStep - 1]
+               : selectedCourses.elective[currentItemStep - selectedCourses.core.length - 1];
+         setCurrentItemCourse(findCourse(prevCourse));
+      }
+   };
+
+   const generateTimelineItems = (selectedCourses, courseMap) => {
+      return selectedCourses.map((courseId, index) => {
+         const course = courseMap[courseId];
+         return {
+            label: course?.code || "Unknown Course",
+            description: course?.description || "No description available",
+            isActive: index === currentItemStep,
+         };
+      });
+   };
+
+   const coreTimelineItems = useMemo(
+      () => generateTimelineItems(selectedCourses.core, courseMap),
+      [selectedCourses.core, currentItemStep, courseMap]
+   );
+   const electiveTimelineItems = useMemo(
+      () => generateTimelineItems(selectedCourses.elective, courseMap),
+      [selectedCourses.elective, currentItemStep, courseMap]
+   );
+
    const handleSelectCourse = (courseId, type) => {
-      const setCourses = type === "core" ? setSelectedCourses : setSelectedElectiveCourses;
-      const courses = type === "core" ? selectedCourses : selectedElectiveCourses;
-      setCourses(
-         courses.includes(courseId)
-            ? courses.filter((id) => id !== courseId)
-            : [...courses, courseId]
-      );
+      setSelectedCourses((prevState) => {
+         const updatedCourses = prevState[type].includes(courseId)
+            ? prevState[type].filter((id) => id !== courseId)
+            : [...prevState[type], courseId];
+
+         return {
+            ...prevState,
+            [type]: updatedCourses,
+         };
+      });
    };
 
    const handleSelectAllCourses = (courseIds, type) => {
-      const setCourses = type === "core" ? setSelectedCourses : setSelectedElectiveCourses;
-      const courses = type === "core" ? selectedCourses : selectedElectiveCourses;
-      setCourses(courses.length === courseIds.length ? [] : courseIds);
+      setSelectedCourses((prevState) => {
+         const updatedCourses = prevState[type].length === courseIds.length ? [] : courseIds;
+
+         return {
+            ...prevState,
+            [type]: updatedCourses,
+         };
+      });
    };
 
    const renderStudentData = (data) => {
@@ -107,7 +182,7 @@ const Enrollment = () => {
    const StudentView = () => {
       return (
          <Table
-            data={students}
+            data={enrollments}
             headers={["Name", "Program", "Courses", "Enrolled On"]}
             content={renderStudentData}
             popupContent={renderPopupContent}
@@ -118,114 +193,72 @@ const Enrollment = () => {
    };
 
    const CourseView = () => {
-      <Table
-         data={enrollments}
-         headers={["Name", "Program", "Instructor", "Created On"]}
-         content={(data) => (
-            <>
-               <p>{data.name}</p>
-               <p>{data.programId}</p>
-               <p>{data.curriculumId}</p>
-               <p>{formatDate(data.createdAt)}</p>
-            </>
-         )}
-         popupContent={renderPopupContent}
-         ctaText='Enroll student'
-         ctaAction={handleNextStep}
-      />;
+      return (
+         <Table
+            data={enrollments}
+            headers={["Name", "Program", "Instructor", "Created On"]}
+            content={(data) => (
+               <>
+                  <p>{data.name}</p>
+                  <p>{data.programId}</p>
+                  <p>{data.curriculumId}</p>
+                  <p>{formatDate(data.createdAt)}</p>
+               </>
+            )}
+            popupContent={renderPopupContent}
+            ctaText='Enroll student'
+            ctaAction={handleNextStep}
+         />
+      );
    };
 
-   const CourseList = ({ data, type, onSelectCourse, selectedCourses }) => (
-      <div className={styles[`${type}Courses`]}>
-         <div className={styles.spaceBetween}>
-            <h3>{type === "core" ? "Core courses" : "Elective courses"}</h3>
-            <button
-               className={styles.primaryBtn}
-               onClick={() => handleSelectAllCourses(data, type)}
-            >
-               {selectedCourses.length === data.length ? "Deselect all" : "Select all"}
-            </button>
-         </div>
-         <div className={styles.courseContainer}>
-            {data.map((courseId) => {
-               const course = courses.find((c) => c._id === courseId);
-               return (
-                  <div
-                     key={course._id}
-                     className={`${styles.courseCard} ${
-                        selectedCourses.includes(course._id) ? styles.selected : ""
-                     }`}
-                     onClick={() => onSelectCourse(course._id)}
-                  >
-                     <div className={styles.courseTitle}>
-                        <h3>{course.description}</h3>
-                        <p>{course.code}</p>
+   const CourseList = ({ data, type, selectedCourses }) => {
+      return (
+         <div className={styles[`${type}Courses`]}>
+            <div className={styles.spaceBetween}>
+               <h3>{type === "core" ? "Core courses" : "Elective courses"}</h3>
+               <button
+                  className={styles.primaryBtn}
+                  onClick={() => handleSelectAllCourses(data, type)}
+               >
+                  {selectedCourses.length === data.length ? "Deselect all" : "Select all"}
+               </button>
+            </div>
+            <div className={styles.courseContainer}>
+               {data.map((courseId) => {
+                  const course = courses.find((c) => c._id === courseId);
+                  return (
+                     <div
+                        key={course._id}
+                        className={`${styles.courseCard} ${
+                           selectedCourses.includes(course._id) ? styles.selected : ""
+                        }`}
+                        onClick={() => handleSelectCourse(course._id, type)}
+                     >
+                        <div className={styles.courseTitle}>
+                           <h3 className={styles.title}>{course.description}</h3>
+                           <p className={styles.badge}>{course.code}</p>
+                        </div>
+                        <div className={styles.courseInfo}>
+                           <div className={styles.line}></div>
+                           <div className={styles.courseDetails}>
+                              <p>Lab hour: {course.labHour}</p>
+                              <p>Lecture hour: {course.lecHour}</p>
+                              <p>Total unit: {course.totalUnit}</p>
+                           </div>
+                        </div>
                      </div>
-                  </div>
-               );
-            })}
+                  );
+               })}
+            </div>
          </div>
-      </div>
-   );
-
-   const handleNextTimelineStep = () => {
-      if (currentItemStep < coreTimelineItems.length - 1) {
-         setCurrentItemStep(currentItemStep + 1);
-      }
+      );
    };
-
-   const handlePreviousTimelineStep = () => {
-      if (currentItemStep !== 0) {
-         setCurrentItemStep(currentItemStep - 1);
-      }
-   };
-
-   const courseMap = useMemo(() => {
-      return courses.reduce((map, course) => {
-         map[course._id] = course;
-         return map;
-      }, {});
-   }, [courses]);
-
-   const coreTimelineItems = useMemo(() => {
-      return selectedCourses.map((courseId, index) => {
-         const course = courseMap[courseId];
-         return {
-            label: course?.code || "Unknown Course",
-            description: course?.description || "No description available",
-            isActive: index === currentItemStep,
-         };
-      });
-   }, [selectedCourses, currentItemStep, courseMap]);
-
-   const electiveTimelineItems = useMemo(() => {
-      return selectedElectiveCourses.map((courseId, index) => {
-         const course = courseMap[courseId];
-         return {
-            label: course?.code || "Unknown Course",
-            description: course?.description || "No description available",
-            isActive: index === currentItemStep,
-         };
-      });
-   }, [selectedElectiveCourses, currentItemStep, courseMap]);
-
-   const currentItemSections = useMemo(() => {
-      return currentItemCourse
-         ? sections.filter((section) => section.courseId === currentItemCourse?._id)
-         : [];
-   }, [currentItemCourse, sections]);
 
    const tabs = [
       { label: "Students", content: <StudentView /> },
       { label: "Courses", content: <CourseView /> },
    ];
-
-   useEffect(() => {
-      console.log("Selected courses: ", selectedCourses);
-      console.log("Current timeline step: ", currentItemStep);
-      console.log("Current course: ", currentItemCourse);
-      console.log("Current course sections: ", currentItemSections);
-   });
 
    return (
       <Layout role='admin' pageName='Enrollment'>
@@ -293,14 +326,14 @@ const Enrollment = () => {
                         <CourseList
                            data={studentCurriculum?.courses}
                            type='core'
-                           selectedCourses={selectedCourses}
+                           selectedCourses={selectedCourses.core}
                            onSelectCourse={handleSelectCourse}
                            handleSelectAllCourses={handleSelectAllCourses}
                         />
                         <CourseList
                            data={studentCurriculum?.electiveCourses}
                            type='elective'
-                           selectedCourses={selectedElectiveCourses}
+                           selectedCourses={selectedCourses.elective}
                            onSelectCourse={handleSelectCourse}
                            handleSelectAllCourses={handleSelectAllCourses}
                         />
@@ -310,14 +343,14 @@ const Enrollment = () => {
                               className={`${styles.iconBtn} ${styles.secondaryBtn}`}
                               onClick={() => handlePreviousStep()}
                            >
-                              Cancel
+                              Back
                            </button>
                            <button
                               type='button'
                               className={`${styles.iconBtn} ${styles.primaryBtn}`}
                               onClick={() => handleNextStep()}
                            >
-                              Next step
+                              Continue
                            </button>
                         </div>
                      </div>
@@ -326,41 +359,46 @@ const Enrollment = () => {
                {currentStep === 4 && (
                   <div className={styles.selectSectionWrapper}>
                      <div className={styles.sideContent}>
-                        <div>
+                        <div className={styles.timelineContent}>
                            <h2>Core courses</h2>
                            <div className={styles.line}></div>
                            <Timeline items={coreTimelineItems} currentStep={currentItemStep} />
                         </div>
-                        <div>
+                        <div className={styles.timelineContent}>
                            <h2>Elective courses</h2>
                            <div className={styles.line}></div>
                            <Timeline items={electiveTimelineItems} currentStep={currentItemStep} />
                         </div>
                      </div>
                      <div className={styles.mainContent}>
-                        <h2>{currentItemCourse?.description}</h2>
                         <div className={styles.sectionsContainer}>
                            {currentItemSections.map((section) => {
                               const instructor = instructors.find(
                                  (instructor) => instructor.userId === section.instructorId
                               );
                               return (
-                                 <div className={styles.sectionCard}>
-                                    <h3>{section.description}</h3>
-                                    <p>
-                                       {instructor?.firstName} {instructor?.lastName}
-                                    </p>
-                                    <p>{section?.roomCode}</p>
-                                    <p>
-                                       {section?.startTime} - {section?.endTime}
-                                    </p>
-                                    <ul>
-                                       {section?.days.map((day) => (
-                                          <li>{day}</li>
-                                       ))}
-                                    </ul>
-                                    <p>{section?.availableSlots}</p>
-                                 </div>
+                                 section && (
+                                    <div key={section._id} className={styles.sectionCard}>
+                                       <h3 className={styles.title}>{section.description}</h3>
+                                       <ul>
+                                          {section?.days.map((day, index) => (
+                                             <li key={index} className={styles.badge}>
+                                                {day}
+                                             </li>
+                                          ))}
+                                       </ul>
+                                       <p>
+                                          {section?.startTime} - {section?.endTime}
+                                       </p>
+                                       <p>Room: {section?.roomCode}</p>
+                                       <p>
+                                          Slots: {section?.capacity}/{section?.availableSlots}
+                                       </p>
+                                       <p>
+                                          Instructor: {instructor?.firstName} {instructor?.lastName}
+                                       </p>
+                                    </div>
+                                 )
                               );
                            })}
                         </div>
@@ -368,10 +406,19 @@ const Enrollment = () => {
                            <button
                               type='button'
                               className={styles.secondaryBtn}
-                              onClick={() => handlePreviousTimelineStep()}
+                              onClick={() => handlePreviousStep()}
                            >
-                              Previous course
+                              Back
                            </button>
+                           {currentItemStep >= 1 && (
+                              <button
+                                 type='button'
+                                 className={styles.secondaryBtn}
+                                 onClick={() => handlePreviousTimelineStep()}
+                              >
+                                 Previous course
+                              </button>
+                           )}
                            <button
                               type='button'
                               className={styles.primaryBtn}
