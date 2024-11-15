@@ -79,31 +79,22 @@ const Table = ({ data, headers, content, popupContent, ctaText, ctaAction }) => 
       <div className={styles.tableWrapper}>
          <div className={styles.table}>
             <div className={styles.toolsContainer}>
-               <SearchBar height="100%" width="30rem" />
+               <SearchBar height='100%' width='30rem' />
                <div className={styles.buttonContainer}>
-                  <button
-                     type="button"
-                     className={`${styles.iconBtn} ${styles.secondaryBtn}`}
-                  >
+                  <button type='button' className={`${styles.iconBtn} ${styles.secondaryBtn}`}>
                      <TbFileArrowRight size={IconSizes.SMALL} />
                      Export
                   </button>
-                  <button
-                     type="button"
-                     className={`${styles.iconBtn} ${styles.secondaryBtn}`}
-                  >
+                  <button type='button' className={`${styles.iconBtn} ${styles.secondaryBtn}`}>
                      <TbFilter size={IconSizes.SMALL} />
                      Filter
                   </button>
-                  <button
-                     type="button"
-                     className={`${styles.iconBtn} ${styles.secondaryBtn}`}
-                  >
+                  <button type='button' className={`${styles.iconBtn} ${styles.secondaryBtn}`}>
                      <TbArrowsUpDown size={IconSizes.SMALL} />
                      Sort
                   </button>
                   <button
-                     type="button"
+                     type='button'
                      className={`${styles.iconBtn} ${styles.primaryBtn}`}
                      onClick={ctaAction}
                   >
@@ -114,7 +105,7 @@ const Table = ({ data, headers, content, popupContent, ctaText, ctaAction }) => 
             </div>
             <div className={styles.tableHeader}>
                <Checkbox
-                  id="select-all"
+                  id='select-all'
                   isChecked={selectedData.length === currentData.length}
                   onChange={handleSelectAll}
                />
@@ -132,7 +123,7 @@ const Table = ({ data, headers, content, popupContent, ctaText, ctaAction }) => 
                      />
                      {content(data)}
                      <button
-                        type="button"
+                        type='button'
                         className={`${styles.actionBtn} ${styles.iconBtn}`}
                         onClick={(event) => togglePopupAction(data._id, event)}
                      >
@@ -148,33 +139,23 @@ const Table = ({ data, headers, content, popupContent, ctaText, ctaAction }) => 
                         </Popup>
                      )}
                   </div>
-                  {index !== currentData.length - 1 && (
-                     <div className={styles.line}></div>
-                  )}
+                  {index !== currentData.length - 1 && <div className={styles.line}></div>}
                </div>
             ))}
          </div>
          <div className={styles.pagination}>
-            <TbArrowLeft
-               className={styles.iconBtn}
-               onClick={handlePreviousPage}
-               size={16}
-            />
+            <TbArrowLeft className={styles.iconBtn} onClick={handlePreviousPage} size={16} />
             {[...Array(totalPages)].map((_, index) => (
                <button
                   key={`button-${index}`}
-                  type="button"
+                  type='button'
                   className={currentPage === index + 1 ? styles.active : ""}
                   onClick={() => handlePageChange(index + 1)}
                >
                   {index + 1}
                </button>
             ))}
-            <TbArrowRight
-               className={styles.iconBtn}
-               onClick={handleNextPage}
-               size={16}
-            />
+            <TbArrowRight className={styles.iconBtn} onClick={handleNextPage} size={16} />
          </div>
       </div>
    );

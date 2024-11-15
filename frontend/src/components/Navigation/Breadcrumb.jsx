@@ -1,25 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import styles from "./Breadcrumb.module.scss";
 import { TbChevronRight } from "react-icons/tb";
 import IconSizes from "constants/IconSizes";
 
-const Breadcrumb = ({ base, steps, setCurrentStep, currentStep }) => {
-   const lastStep = steps.length;
-
-   const goToPreviousStep = () => {
-      setCurrentStep((prev) => {
-         const newStep = prev === 1 ? lastStep : prev - 1;
-         return newStep;
-      });
-   };
-
+const Breadcrumb = ({ base, steps, handlePreviousStep, setCurrentStep, currentStep }) => {
    useEffect(() => {
       const handlePopState = (event) => {
-         console.log(event);
-
          if (currentStep !== 1) {
-            goToPreviousStep();
+            handlePreviousStep();
          } else {
             window.history.back();
          }
@@ -49,7 +38,7 @@ const Breadcrumb = ({ base, steps, setCurrentStep, currentStep }) => {
                <Link to={`/${baseUrl}`} className={styles.link}>
                   {baseName}
                </Link>
-               <TbChevronRight size={IconSizes.SMALL} color="#8b8b8b" />
+               <TbChevronRight size={IconSizes.SMALL} color='#8b8b8b' />
             </li>
             {steps.slice(0, currentStep).map((step, index) => {
                return (
@@ -63,10 +52,7 @@ const Breadcrumb = ({ base, steps, setCurrentStep, currentStep }) => {
                         {step}
                      </p>
                      {currentStep !== index + 1 && (
-                        <TbChevronRight
-                           size={IconSizes.SMALL}
-                           color="#8b8b8b"
-                        />
+                        <TbChevronRight size={IconSizes.SMALL} color='#8b8b8b' />
                      )}
                   </li>
                );

@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import styles from "./Enrollment.module.scss";
 
 import Layout from "components/Layout/Layout";
@@ -13,8 +13,6 @@ import Timeline from "components/Timeline/Timeline";
 
 import useFetchData from "hooks/useFetchData";
 import { format } from "date-fns";
-import { TbArrowLeft } from "react-icons/tb";
-import IconSizes from "constants/IconSizes";
 
 const Enrollment = () => {
    const [currentStep, setCurrentStep] = useState(1);

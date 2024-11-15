@@ -34,8 +34,7 @@
 
 .selectProgram {
   display: grid;
-  gap: 0 3rem;
-  grid-template-columns: 30% 1fr;
+  gap: 1rem;
 
   .info {
     display: flex;
@@ -50,9 +49,8 @@
 
   .programsList {
     display: grid;
-    grid-row-start: 2;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1rem;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0.5rem;
 
     .programCard {
       cursor: pointer;
