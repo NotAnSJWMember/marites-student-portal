@@ -100,8 +100,8 @@
 
       .courseInfo {
          display: grid;
-         grid-template-rows: repeat(2, max-content);
          grid-template-columns: repeat(2, 1fr);
+         grid-template-rows: repeat(2, max-content);
 
          .line {
             grid-row-start: 1;
@@ -144,12 +144,13 @@
       gap: 1rem;
    }
 
-   .mainContent {
+   .sectionsContent {
       display: grid;
-      padding: 1rem;
+      grid-template-rows: repeat(2, max-content);
       border: 1px solid $light-gray-color;
       border-radius: $small-radius;
       background-color: white;
+      padding: 1rem;
       height: max-content;
 
       .sectionsContainer {

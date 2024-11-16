@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { getApiUrl } from "utils/api";
 
-
 export const useValidateToken = () => {
    const [isTokenValid, setIsTokenValid] = useState(true);
 
