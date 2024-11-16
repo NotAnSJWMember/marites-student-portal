@@ -15,6 +15,7 @@ import { MailService } from 'src/common/services/mail/mail.service';
 import { User } from '../user/user.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { getOriginUrl } from 'src/common/utils/get-origin-url.helper';
 
 @Controller('auth')
 export class AuthController {
@@ -97,7 +98,8 @@ export class AuthController {
       }
 
       const resetToken = await this.authService.generateResetToken(user.userId);
-      const resetLink = `http://localhost:3000/reset-password?token=${resetToken}`;
+      const originUrl = getOriginUrl();
+      const resetLink = `${originUrl}/reset-password?token=${resetToken}`;
 
       try {
          await this.mailService.sendPasswordResetEmail(user.email, resetLink);

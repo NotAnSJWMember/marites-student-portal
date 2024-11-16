@@ -17,85 +17,59 @@ import Enrollment from "pages/Dashboard/Admin/pages/Enrollment";
 import { RefetchDataProvider } from "hooks/contexts/useRefetchData";
 
 function App() {
+   // Inside your React components or any JavaScript files
+   const apiUrl = process.env.REACT_APP_API_URL;
+   const environment = process.env.REACT_APP_ENV;
+
+   console.log("API URL:", apiUrl);
+   console.log("Environment:", environment);
+
    return (
       <HelmetProvider>
          <RefetchDataProvider>
             <Router>
                <Routes>
-                  <Route path="/register" element={<Register />} />
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/forgot-password" element={<ForgotPassword />} />
-                  <Route path="/reset-password" element={<ResetPassword />} />
+                  <Route path='/register' element={<Register />} />
+                  <Route path='/login' element={<Login />} />
+                  <Route path='/forgot-password' element={<ForgotPassword />} />
+                  <Route path='/reset-password' element={<ResetPassword />} />
 
                   {/* Admin Routes */}
                   <Route
-                     path="/admin/dashboard"
-                     element={
-                        <PrivateRoute
-                           element={<AdminDashboard />}
-                           roles={["admin"]}
-                        />
-                     }
+                     path='/admin/dashboard'
+                     element={<PrivateRoute element={<AdminDashboard />} roles={["admin"]} />}
                   />
                   <Route
-                     path="/admin/dashboard/user-management"
-                     element={
-                        <PrivateRoute
-                           element={<UserManagement />}
-                           roles={["admin"]}
-                        />
-                     }
+                     path='/admin/dashboard/user-management'
+                     element={<PrivateRoute element={<UserManagement />} roles={["admin"]} />}
                   />
                   <Route
-                     path="/admin/dashboard/academic-planner"
-                     element={
-                        <PrivateRoute
-                           element={<AcademicPlanner />}
-                           roles={["admin"]}
-                        />
-                     }
+                     path='/admin/dashboard/academic-planner'
+                     element={<PrivateRoute element={<AcademicPlanner />} roles={["admin"]} />}
                   />
 
                   <Route
-                     path="/admin/dashboard/academic-planner/enrollment"
-                     element={
-                        <PrivateRoute
-                           element={<Enrollment />}
-                           roles={["admin"]}
-                        />
-                     }
+                     path='/admin/dashboard/academic-planner/enrollment'
+                     element={<PrivateRoute element={<Enrollment />} roles={["admin"]} />}
                   />
 
                   <Route
-                     path="/admin/dashboard/academic-planner/curriculums"
-                     element={
-                        <PrivateRoute
-                           element={<Curriculum />}
-                           roles={["admin"]}
-                        />
-                     }
+                     path='/admin/dashboard/academic-planner/curriculums'
+                     element={<PrivateRoute element={<Curriculum />} roles={["admin"]} />}
                   />
 
                   {/* Instructor Routes */}
                   <Route
-                     path="/instructor/dashboard"
+                     path='/instructor/dashboard'
                      element={
-                        <PrivateRoute
-                           element={<InstructorDashboard />}
-                           roles={["instructor"]}
-                        />
+                        <PrivateRoute element={<InstructorDashboard />} roles={["instructor"]} />
                      }
                   />
 
                   {/* Student Routes */}
                   <Route
-                     path="/student/dashboard"
-                     element={
-                        <PrivateRoute
-                           element={<StudentDashboard />}
-                           roles={["student"]}
-                        />
-                     }
+                     path='/student/dashboard'
+                     element={<PrivateRoute element={<StudentDashboard />} roles={["student"]} />}
                   />
                </Routes>
             </Router>

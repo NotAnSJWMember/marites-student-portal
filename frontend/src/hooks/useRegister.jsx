@@ -1,12 +1,14 @@
+
 import { usePopupAlert } from "./usePopupAlert";
+import { getApiUrl } from "utils/api";
 
 export const useRegister = () => {
    const { setShowPopup, showError, showSuccess, ...popupProps } = usePopupAlert();
 
    const createAccount = async (data, role, resetForm) => {
       try {
-         const url = `http://localhost:8080/${role}`;
-         const response = await fetch(url, {
+         const url = getApiUrl();
+         const response = await fetch(`${url}/${role}`, {
             method: "POST",
             headers: {
                "Content-Type": "application/json",
@@ -15,10 +17,7 @@ export const useRegister = () => {
          });
 
          if (response.ok) {
-            showSuccess(
-               "Created account!",
-               "You can now sign in with the registered account."
-            );
+            showSuccess("Created account!", "You can now sign in with the registered account.");
             resetForm();
          } else {
             const errorData = await response.json();
@@ -38,5 +37,5 @@ export const useRegister = () => {
          setShowPopup(true);
       }
    };
-   return {...popupProps, setShowPopup, createAccount}
+   return { ...popupProps, setShowPopup, createAccount };
 };

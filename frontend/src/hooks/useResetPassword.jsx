@@ -1,12 +1,14 @@
+
 import { usePopupAlert } from "./usePopupAlert";
+import { getApiUrl } from "utils/api";
 
 export const useResetPassword = () => {
    const { setShowPopup, showError, showSuccess, ...popupProps } = usePopupAlert();
 
    const resetPassword = async (payload, resetForm) => {
       try {
-         const url = "http://localhost:8080/auth/reset-password";
-         const response = await fetch(url, {
+         const url = getApiUrl();
+         const response = await fetch(`${url}/auth/reset-password`, {
             method: "POST",
             headers: {
                "Content-Type": "application/json",

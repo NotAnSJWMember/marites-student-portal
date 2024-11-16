@@ -2,6 +2,8 @@ import React, { createContext, useState, useContext, useEffect } from "react";
 import axios from "axios";
 import { isTokenExpired } from "utils/authUtils";
 
+import { getApiUrl } from "utils/api";
+
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -34,7 +36,8 @@ export const AuthProvider = ({ children }) => {
 
    const login = async (userId, password) => {
       try {
-         const response = await axios.post("http://localhost:8080/auth/login", {
+         const url = getApiUrl();
+         const response = await axios.post(`${url}/auth/login`, {
             userId,
             password,
          });

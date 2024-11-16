@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRefetchData } from "./contexts/useRefetchData";
 
+import { getApiUrl } from "utils/api";
+
 const useFetchData = (endpoint, shouldRefetch = false) => {
    const { registerRefetchFunction, unregisterRefetchFunction } =
       useRefetchData();
@@ -12,7 +14,8 @@ const useFetchData = (endpoint, shouldRefetch = false) => {
       setLoading(true);
 
       try {
-         const response = await fetch(`http://localhost:8080/${endpoint}`, {
+         const url = getApiUrl();
+         const response = await fetch(`${url}/${endpoint}`, {
             method: "GET",
             headers: {
                "Content-Type": "application/json",

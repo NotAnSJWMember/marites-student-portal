@@ -1,6 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
+const env = process.env.NODE_ENV || 'development';
+const URL = process.env[`${env.toUpperCase()}_URL`];
+
 @Schema({ timestamps: true })
 export class User extends Document {
    @Prop({ unique: true })
@@ -14,7 +17,7 @@ export class User extends Document {
 
    @Prop({
       type: String,
-      default: 'http://localhost:8080/public/images/default-user-photo.png',
+      default: `${URL}/public/images/default-user-photo.png`,
    })
    userPhoto: string;
 

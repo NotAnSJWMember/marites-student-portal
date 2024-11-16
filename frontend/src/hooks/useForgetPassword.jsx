@@ -1,13 +1,14 @@
+
 import { usePopupAlert } from "./usePopupAlert";
+import { getApiUrl } from "utils/api";
 
 export const useForgetPassword = () => {
-   const { setShowPopup, showError, showSuccess, ...popupProps } =
-      usePopupAlert();
+   const { setShowPopup, showError, showSuccess, ...popupProps } = usePopupAlert();
 
    const forgetPassword = async (data, resetForm) => {
       try {
-         const url = "http://localhost:8080/auth/forgot-password";
-         const response = await fetch(url, {
+         const url = getApiUrl();
+         const response = await fetch(`${url}/auth/forgot-password`, {
             method: "POST",
             headers: {
                "Content-Type": "application/json",

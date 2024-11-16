@@ -1,15 +1,17 @@
 import { useState } from "react";
 import { usePopupAlert } from "hooks";
 
+import { getApiUrl } from "utils/api";
+
 const useUpdateData = () => {
-   const { setShowPopup, showError, showSuccess, ...popupProps } =
-      usePopupAlert();
+   const { setShowPopup, showError, showSuccess, ...popupProps } = usePopupAlert();
    const [loading, setLoading] = useState(false);
 
    const updateData = async (data, endpoint, key, token) => {
       setLoading(true);
       try {
-         const response = await fetch(`http://localhost:8080/${endpoint}/${key}`, {
+         const url = getApiUrl();
+         const response = await fetch(`${url}/${endpoint}/${key}`, {
             method: "PUT",
             headers: {
                "Content-Type": "application/json",
@@ -21,10 +23,7 @@ const useUpdateData = () => {
          if (!response.ok) throw new Error(`Failed to post to ${endpoint}`);
 
          const responseData = await response.json();
-         showSuccess(
-            "Success!",
-            responseData.message || "Data updated successfully!"
-         );
+         showSuccess("Success!", responseData.message || "Data updated successfully!");
       } catch (error) {
          showError(
             "Internal Server Error",

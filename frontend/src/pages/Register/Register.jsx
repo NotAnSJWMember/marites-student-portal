@@ -1,5 +1,5 @@
 import React from "react";
-import PopupAlert from "../../components/Popup/PopupAlert";
+import PopupAlert from "components/Popup/PopupAlert";
 import { FormUser } from "components/Forms/FormUser";
 import { useRegister } from "../../hooks";
 import { Helmet } from "react-helmet-async";
@@ -22,16 +22,14 @@ const Register = () => {
          <div className={styles.contentWrapper}>
             <div className={styles.contentContainer}>
                <div className={styles.sealContainer}>
-                  <img src={LogoIcon} alt="Dr. AMMC Seal" />
+                  <img src={LogoIcon} alt='Dr. AMMC Seal' />
                   <div className={styles.head}>
                      <h1 className={styles.title}>Portal Registration</h1>
-                     <p className={styles.desc}>
-                        Create an account to start your session
-                     </p>
+                     <p className={styles.desc}>Create an account to start your session</p>
                   </div>
                </div>
                <FormUser
-                  role="student"
+                  role='student'
                   setShowPopup={setShowPopup}
                   createAccount={createAccount}
                   isRegister={true}

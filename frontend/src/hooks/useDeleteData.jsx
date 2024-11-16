@@ -2,6 +2,8 @@ import { useCallback, useState } from "react";
 import { usePopupAlert } from "hooks";
 import useFetchData from "./useFetchData";
 
+import { getApiUrl } from "utils/api";
+
 const useDeleteData = (endpoint) => {
    const { error, fetchData } = useFetchData(endpoint);
 
@@ -14,8 +16,9 @@ const useDeleteData = (endpoint) => {
          setLoadingDelete(true);
 
          try {
+            const url = getApiUrl();
             const response = await fetch(
-               `http://localhost:8080/${endpoint}/${id}`,
+               `${url}/${endpoint}/${id}`,
                {
                   method: "DELETE",
                   headers: {

@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { getApiUrl } from "utils/api";
+
 
 export const useValidateToken = () => {
    const [isTokenValid, setIsTokenValid] = useState(true);
@@ -15,9 +17,8 @@ export const useValidateToken = () => {
          }
 
          try {
-            const url = `http://localhost:8080/auth/validate-reset-token?token=${resetToken}`;
-
-            const response = await fetch(url, {
+            const url = getApiUrl();
+            const response = await fetch(`${url}/auth/validate-reset-token?token=${resetToken}`, {
                method: "POST",
                headers: {
                   "Content-Type": "application/json",
