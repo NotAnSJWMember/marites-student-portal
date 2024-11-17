@@ -202,6 +202,35 @@
   }
 }
 
+.reviewAndEnroll {
+  .container {
+    .tableHeader,
+    .item {
+      display: grid;
+      grid-template-columns: 400px 1fr 1fr 1fr;
+      align-items: center;
+      justify-items: center;
+    }
+    
+    .tableHeader {
+      background-color: $light-green-color-300;
+      color: $light-primary-background;
+      border-radius: $small-radius;
+      padding: 0.5rem 1rem;
+    }
+
+    .tableContent {
+      display: flex;
+      flex-direction: column;
+
+      .item {
+        padding: 0.7rem 1rem;
+      }
+    }
+
+  }
+}
+
 .buttonContainer {
   justify-self: end;
 }

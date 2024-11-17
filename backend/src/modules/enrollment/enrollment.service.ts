@@ -1,21 +1,24 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { InjectConnection, InjectModel } from '@nestjs/mongoose';
+import { Connection, Model, Types } from 'mongoose';
 import { Enrollment, Status } from './enrollment.schema';
 import { CreateEnrollmentDto } from './enrollment.dto';
 import { Course } from '../course/course.schema';
 import { Section } from '../section/section.schema';
 import { Schedule } from '../schedule/schedule.schema';
+import { Student } from '../user/roles/student/student.schema';
 
 @Injectable()
 export class EnrollmentService {
    private readonly logger = new Logger(EnrollmentService.name);
 
    constructor(
+      @InjectConnection() private readonly connection: Connection,
       @InjectModel(Enrollment.name) private enrollmentModel: Model<Enrollment>,
       @InjectModel(Course.name) private courseModel: Model<Course>,
       @InjectModel(Section.name) private sectionModel: Model<Section>,
       @InjectModel(Schedule.name) private scheduleModel: Model<Schedule>,
+      @InjectModel(Student.name) private studentModel: Model<Student>,
    ) {}
 
    async enroll(
@@ -71,17 +74,30 @@ export class EnrollmentService {
       sectionIds: Types.ObjectId[],
       studentId: string,
    ): Promise<Enrollment[]> {
+      if (courseIds.length !== sectionIds.length) {
+         throw new Error('Mismatch between courseIds and sectionIds.');
+      }
+
       const enrollments: Enrollment[] = [];
+      const errors: string[] = [];
 
-      for (const courseId of courseIds) {
-         for (const sectionId of sectionIds) {
-            const section = await this.sectionModel.findById(sectionId);
+      const session = await this.connection.startSession();
+      session.startTransaction();
 
+      try {
+         for (let i = 0; i < courseIds.length; i++) {
+            const courseId = courseIds[i];
+            const sectionId = sectionIds[i];
+
+            const section = await this.sectionModel
+               .findById(sectionId)
+               .session(session);
             if (!section) {
-               this.logger.warn(`Section not found for course ${courseId}`);
+               errors.push(`Section not found for course ${courseId}`);
                continue;
             }
 
+            // Create schedule
             const schedule = new this.scheduleModel({
                courseId,
                sectionId,
@@ -94,8 +110,9 @@ export class EnrollmentService {
                description: section.description,
             });
 
-            const savedSchedule = await schedule.save();
+            const savedSchedule = await schedule.save({ session });
 
+            // Create enrollment
             const enrollment = new this.enrollmentModel({
                courseId,
                scheduleId: savedSchedule._id,
@@ -104,11 +121,32 @@ export class EnrollmentService {
                remarks: 'Enrolled in course',
             });
 
-            await enrollment.save();
+            await enrollment.save({ session });
+
+            // Update student status
+            await this.studentModel.updateOne(
+               { userId: studentId },
+               { $set: { enrollmentStatus: true } },
+               { session },
+            );
 
             enrollments.push(enrollment);
          }
+
+         if (errors.length) {
+            console.warn(
+               `Errors during batch enrollment: ${errors.join(', ')}`,
+            );
+         }
+
+         await session.commitTransaction();
+      } catch (error) {
+         await session.abortTransaction();
+         throw new Error(`Batch enrollment failed: ${error.message}`);
+      } finally {
+         session.endSession();
       }
+
       return enrollments;
    }
 
@@ -136,6 +174,10 @@ export class EnrollmentService {
 
    async delete(id: Types.ObjectId): Promise<Enrollment> {
       return this.enrollmentModel.findByIdAndDelete(id).exec();
+   }
+
+   async findEnrollmentsByStudent(studentId: string): Promise<Enrollment[]> {
+      return await this.enrollmentModel.find({ studentId }).lean();
    }
 
    async checkPrerequisites(

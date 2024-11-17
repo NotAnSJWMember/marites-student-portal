@@ -16,7 +16,7 @@ export class Student extends User {
    @Prop({ default: 1, required: true, min: 1, max: 2 })
    currentSemester: number;
 
-   @Prop({ default: true })
+   @Prop({ default: false })
    enrollmentStatus: boolean;
 
    @Prop({ type: Date, default: Date.now() })

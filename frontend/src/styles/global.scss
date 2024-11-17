@@ -54,10 +54,16 @@
   background-color: $light-green-color-100;
 }
 
+.yellowBadge {
+  color: $light-yellow-color-300;
+  border-color: $light-yellow-color-300;
+  background-color: $light-yellow-color-100;
+}
+
 .redBadge {
   color: $red-color-400;
-  border-color: $red-color-100;
-  background-color: $red-color-400;
+  border-color: $red-color-400;
+  background-color: $red-color-100;
 }
 
 .buttonContainer {

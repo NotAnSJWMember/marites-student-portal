@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useMemo, useState } from "react";
 import styles from "./Enrollment.module.scss";
+import { TbClock, TbMapPin, TbUser } from "react-icons/tb";
 
 import Layout from "components/Layout/Layout";
 import TabMenu from "components/TabMenu/TabMenu";
@@ -10,14 +11,14 @@ import Table from "components/Table/Table";
 import UserTable from "components/Table/UserTable";
 import SearchBar from "components/SearchBar/SearchBar";
 import Timeline from "components/Timeline/Timeline";
-
-import useFetchData from "hooks/useFetchData";
-import { format } from "date-fns";
-import { TbClock, TbMapPin, TbUser } from "react-icons/tb";
-import IconSizes from "constants/IconSizes";
-import { debounce } from "lodash";
 import PopupAlert from "components/Popup/PopupAlert";
+
+import IconSizes from "constants/IconSizes";
+import useFetchData from "hooks/useFetchData";
+import usePostData from "hooks/usePostData";
 import { usePopupAlert } from "hooks";
+import { format } from "date-fns";
+import { debounce } from "lodash";
 
 const Enrollment = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -28,7 +29,6 @@ const Enrollment = () => {
   const [currentTimelineStep, setCurrentTimelineStep] = useState(0);
   const [currentTimelineCourse, setCurrentTimelineCourse] = useState(null);
 
-  const { popupState, setShowPopup, showPopup, showError } = usePopupAlert();
   const { data: students } = useFetchData("student");
   const { data: instructors } = useFetchData("instructor");
   const { data: enrollments } = useFetchData("enrollment");
@@ -36,14 +36,32 @@ const Enrollment = () => {
   const { data: courses } = useFetchData("course");
   const { data: curriculums } = useFetchData("curriculum");
   const { data: sections } = useFetchData("section");
+  const { popupState, showPopup, showError } = usePopupAlert();
+  const { postData } = usePostData();
 
   const steps = [
     "Enrollment",
     "Choose a Student",
     "Select Courses",
     "Assign Section to Courses",
-    "Review & Enroll Student"
   ];
+
+  const groupedEnrollments = Object.values(
+    enrollments.reduce((acc, enrollment) => {
+      const { studentId, courseId, createdAt } = enrollment;
+
+      if (!acc[studentId]) {
+        acc[studentId] = {
+          studentId,
+          courses: [],
+          createdAt,
+        };
+      }
+
+      acc[studentId].courses.push(courseId);
+      return acc;
+    }, {})
+  );
 
   const courseMap = useMemo(() => {
     return courses.reduce((map, course) => {
@@ -182,24 +200,72 @@ const Enrollment = () => {
     }));
   };
 
+  const handleEnrollStudent = async () => {
+    const courseIds = Object.keys(selectedSections);
+    const sectionIds = Object.values(selectedSections);
+
+    const body = {
+      courseIds: courseIds,
+      sectionIds: sectionIds,
+      studentId: selectedStudent.userId,
+    };
+
+    await postData(body, "enrollment/batch-enroll");
+  };
+
   const renderStudentData = (data) => {
-    const program = programs.find((program) => program._id === data.programId);
+    const student = students.find((student) => student.userId === data.studentId);
+    const program = programs.find((program) => program._id === student?.programId);
 
     return (
-      <>
-        <div className={styles.userContainer}>
-          <UserIcon image={data.userPhoto} size={48} />
-          <div className={styles.userInfo}>
-            <h4 className={styles.title}>{`${data.firstName} ${data.lastName}`}</h4>
-            <p className={styles.desc}>{data.email}</p>
+      student && (
+        <>
+          <div className={styles.userContainer}>
+            <UserIcon image={student.userPhoto} size={48} />
+            <div className={styles.userInfo}>
+              <h4 className={styles.title}>{`${student.firstName} ${student.lastName}`}</h4>
+              <p className={styles.desc}>{student.email}</p>
+            </div>
           </div>
-        </div>
-        <p className={styles.role}>
-          {program?.code} {data.yearLevel}
-        </p>
-        <p className={styles.lastActive}>No courses enrolled</p>
-        <p className={styles.createdAt}>{formatDate(data.createdAt)}</p>
-      </>
+          <p className={styles.role}>
+            {program?.code} - {student.yearLevel}
+          </p>
+          <p className={styles.lastActive}>
+            {data.courses.length > 0
+              ? `${data.courses.length} courses enrolled`
+              : "No courses enrolled"}
+          </p>
+          <p className={styles.createdAt}>{formatDate(student.enrollmentDate)}</p>
+        </>
+      )
+    );
+  };
+
+  const renderStudentDataSearch = (data) => {
+    const program = programs.find((program) => program._id === data?.programId);
+
+    return (
+      data && (
+        <>
+          <div className={styles.userContainer}>
+            <UserIcon image={data.userPhoto} size={48} />
+            <div className={styles.userInfo}>
+              <h4 className={styles.title}>{`${data.firstName} ${data.lastName}`}</h4>
+              <p className={styles.desc}>{data.email}</p>
+            </div>
+          </div>
+          <p className={styles.role}>
+            {program?.code} - {data.yearLevel}
+          </p>
+          <p
+            className={`${styles.badge} ${
+              data.enrollmentStatus ? styles.greenBadge : styles.redBadge
+            }`}
+          >
+            {data.enrollmentStatus ? "Enrolled" : "Not enrolled"}
+          </p>
+        </>
+      )
     );
   };
 
@@ -214,8 +280,8 @@ const Enrollment = () => {
   const StudentView = () => {
     return (
       <Table
-        data={enrollments}
-        headers={["Name", "Program", "Courses", "Enrolled On"]}
+        data={groupedEnrollments}
+        headers={["Name", "Program & Year", "Courses", "Enrolled On"]}
         content={renderStudentData}
         popupContent={renderPopupContent}
         ctaText="Enroll student"
@@ -318,8 +384,8 @@ const Enrollment = () => {
               />
               <UserTable
                 data={students}
-                headers={["Name", "Program", "Courses", "Created on"]}
-                content={renderStudentData}
+                headers={["Name", "Program", "Status"]}
+                content={renderStudentDataSearch}
                 isClickable={true}
                 clickableAction={handleSearch}
               />
@@ -471,11 +537,11 @@ const Enrollment = () => {
                     className={styles.primaryBtn}
                     onClick={
                       allSectionsSelected
-                        ? () => handleNextStep()
+                        ? () => handleEnrollStudent()
                         : () => handleTimelineNavigation(1)
                     }
                   >
-                    {allSectionsSelected ? "Review & Enroll Student" : "Next course"}
+                    {allSectionsSelected ? "Enroll Student" : "Next course"}
                   </button>
                 </div>
               </div>

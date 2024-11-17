@@ -6,7 +6,7 @@ export class Section extends Document {
    @Prop({ required: true, type: Types.ObjectId, ref: 'Course' })
    courseId: Types.ObjectId;
 
-   @Prop({ required: true, ref: 'Instructor' })
+   @Prop({ required: true })
    instructorId: string;
 
    @Prop({ required: true })

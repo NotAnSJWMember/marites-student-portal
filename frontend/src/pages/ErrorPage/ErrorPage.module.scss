@@ -1,0 +1,29 @@
+@import "../../styles/global.scss";
+
+.wrapper {
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+
+  .content {
+    display: grid;
+    border: 1px solid $light-gray-color;
+    width: 27rem;
+    gap: 1.7rem;
+
+    .code {
+      font-size: 4rem;
+      font-weight: 800;
+    }
+    .label {
+      font-size: 1.2rem;
+      font-weight: 400;
+      color: $light-gray-color-500;
+    }
+    .message {
+      text-wrap: pretty;
+      line-height: 1.4rem;
+    }
+  }
+}

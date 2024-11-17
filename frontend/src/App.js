@@ -1,81 +1,87 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { RefetchDataProvider } from "hooks/contexts/useRefetchData";
 import { HelmetProvider } from "react-helmet-async";
-import "./App.scss";
 
 import PrivateRoute from "./components/PrivateRoute";
-import Register from "./pages/Register/Register";
+import ErrorPage from "pages/ErrorPage/ErrorPage";
+
 import Login from "./pages/Login/Login";
+import Register from "./pages/Register/Register";
 import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword/ResetPassword";
+
 import AdminDashboard from "./pages/Dashboard/Admin/AdminDashboard";
-import UserManagement from "./pages/Dashboard/Admin/pages/UserManagement";
 import StudentDashboard from "./pages/Dashboard/Student/StudentDashboard";
 import InstructorDashboard from "./pages/Dashboard/Instructor/InstructorDashboard";
-import AcademicPlanner from "pages/Dashboard/Admin/pages/AcademicPlanner";
-import Curriculum from "pages/Dashboard/Admin/pages/Curriculum";
+
 import Enrollment from "pages/Dashboard/Admin/pages/Enrollment";
-import { RefetchDataProvider } from "hooks/contexts/useRefetchData";
+import Curriculum from "pages/Dashboard/Admin/pages/Curriculum";
+import AcademicPlanner from "pages/Dashboard/Admin/pages/AcademicPlanner";
+import UserManagement from "./pages/Dashboard/Admin/pages/UserManagement";
+
+import "./App.scss";
 
 function App() {
-   // Inside your React components or any JavaScript files
-   const apiUrl = process.env.REACT_APP_API_URL;
-   const environment = process.env.REACT_APP_ENV;
+  return (
+    <HelmetProvider>
+      <RefetchDataProvider>
+        <Router>
+          <Routes>
+            {/* Main Routes */}
+            <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
 
-   console.log("API URL:", apiUrl);
-   console.log("Environment:", environment);
+            {/* Admin Routes */}
+            <Route
+              path="/admin/dashboard"
+              element={<PrivateRoute element={<AdminDashboard />} roles={["admin"]} />}
+            />
+            <Route
+              path="/admin/dashboard/user-management"
+              element={<PrivateRoute element={<UserManagement />} roles={["admin"]} />}
+            />
+            <Route
+              path="/admin/dashboard/academic-planner"
+              element={<PrivateRoute element={<AcademicPlanner />} roles={["admin"]} />}
+            />
+            <Route
+              path="/admin/dashboard/academic-planner/enrollment"
+              element={<PrivateRoute element={<Enrollment />} roles={["admin"]} />}
+            />
+            <Route
+              path="/admin/dashboard/academic-planner/curriculums"
+              element={<PrivateRoute element={<Curriculum />} roles={["admin"]} />}
+            />
 
-   return (
-      <HelmetProvider>
-         <RefetchDataProvider>
-            <Router>
-               <Routes>
-                  <Route path='/register' element={<Register />} />
-                  <Route path='/login' element={<Login />} />
-                  <Route path='/forgot-password' element={<ForgotPassword />} />
-                  <Route path='/reset-password' element={<ResetPassword />} />
+            {/* Instructor Routes */}
+            <Route
+              path="/instructor/dashboard"
+              element={
+                <PrivateRoute element={<InstructorDashboard />} roles={["instructor"]} />
+              }
+            />
 
-                  {/* Admin Routes */}
-                  <Route
-                     path='/admin/dashboard'
-                     element={<PrivateRoute element={<AdminDashboard />} roles={["admin"]} />}
-                  />
-                  <Route
-                     path='/admin/dashboard/user-management'
-                     element={<PrivateRoute element={<UserManagement />} roles={["admin"]} />}
-                  />
-                  <Route
-                     path='/admin/dashboard/academic-planner'
-                     element={<PrivateRoute element={<AcademicPlanner />} roles={["admin"]} />}
-                  />
+            {/* Student Routes */}
+            <Route
+              path="/student/dashboard"
+              element={<PrivateRoute element={<StudentDashboard />} roles={["student"]} />}
+            />
 
-                  <Route
-                     path='/admin/dashboard/academic-planner/enrollment'
-                     element={<PrivateRoute element={<Enrollment />} roles={["admin"]} />}
-                  />
+            {/* Error Routes */}
+            <Route path="/404" element={<ErrorPage errorCode={404} />} />
+            <Route path="/401" element={<ErrorPage errorCode={401} />} />
+            <Route path="/403" element={<ErrorPage errorCode={403} />} />
+            <Route path="/500" element={<ErrorPage errorCode={500} />} />
 
-                  <Route
-                     path='/admin/dashboard/academic-planner/curriculums'
-                     element={<PrivateRoute element={<Curriculum />} roles={["admin"]} />}
-                  />
-
-                  {/* Instructor Routes */}
-                  <Route
-                     path='/instructor/dashboard'
-                     element={
-                        <PrivateRoute element={<InstructorDashboard />} roles={["instructor"]} />
-                     }
-                  />
-
-                  {/* Student Routes */}
-                  <Route
-                     path='/student/dashboard'
-                     element={<PrivateRoute element={<StudentDashboard />} roles={["student"]} />}
-                  />
-               </Routes>
-            </Router>
-         </RefetchDataProvider>
-      </HelmetProvider>
-   );
+            {/* Default fallback page */}
+            <Route path="*" element={<ErrorPage errorCode={404} />} />
+          </Routes>
+        </Router>
+      </RefetchDataProvider>
+    </HelmetProvider>
+  );
 }
 
 export default App;
