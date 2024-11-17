@@ -1,7 +1,9 @@
 import React, { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
+
 import styles from "./Breadcrumb.module.scss";
 import { TbChevronRight } from "react-icons/tb";
+
 import IconSizes from "constants/IconSizes";
 
 const Breadcrumb = ({ base, steps, handlePreviousStep, setCurrentStep, currentStep }) => {

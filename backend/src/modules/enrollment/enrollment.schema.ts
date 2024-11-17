@@ -16,7 +16,7 @@ export class Enrollment extends Document {
    @Prop({ required: true, type: Types.ObjectId, ref: 'Schedule' })
    scheduleId: Types.ObjectId;
 
-   @Prop({ required: true, ref: 'Student' })
+   @Prop({ required: true })
    studentId: string;
 
    @Prop({ default: 0 })

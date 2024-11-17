@@ -92,13 +92,22 @@ export class UserService {
    }
 
    async findOne(userId: string): Promise<User> {
-      this.logger.log(`Fetching user with ID: ${userId}`);
-      const user = await this.userModel.findOne({ userId }).exec();
+      this.logger.log(`Fetching user: ${userId}`);
+
+      this.logger.log(`Trying their username...`);
+      let user = await this.findByUsername(userId);
+
+      if (!user) {
+         this.logger.log('Username not found, trying their ID...');
+         user = await this.findByUserId(userId);
+      }
+
       if (user) {
          this.logger.log(`Found user: ${user}`);
       } else {
-         this.logger.warn(`User with ID: ${userId} not found.`);
+         this.logger.warn(`User ${userId} not found.`);
       }
+
       return user;
    }
 

@@ -13,15 +13,22 @@ import Timeline from "components/Timeline/Timeline";
 
 import useFetchData from "hooks/useFetchData";
 import { format } from "date-fns";
+import { TbClock, TbMapPin, TbUser } from "react-icons/tb";
+import IconSizes from "constants/IconSizes";
+import { debounce } from "lodash";
+import PopupAlert from "components/Popup/PopupAlert";
+import { usePopupAlert } from "hooks";
 
 const Enrollment = () => {
   const [currentStep, setCurrentStep] = useState(1);
-  const [currentTimelineStep, setCurrentTimelineStep] = useState(0);
-  const [currentTimelineCourse, setCurrentTimelineCourse] = useState(null);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [studentCourses, setStudentCourses] = useState({ core: [], elective: [] });
   const [selectedCourses, setSelectedCourses] = useState({ core: [], elective: [] });
+  const [selectedSections, setSelectedSections] = useState({});
+  const [currentTimelineStep, setCurrentTimelineStep] = useState(0);
+  const [currentTimelineCourse, setCurrentTimelineCourse] = useState(null);
 
+  const { popupState, setShowPopup, showPopup, showError } = usePopupAlert();
   const { data: students } = useFetchData("student");
   const { data: instructors } = useFetchData("instructor");
   const { data: enrollments } = useFetchData("enrollment");
@@ -35,6 +42,7 @@ const Enrollment = () => {
     "Choose a Student",
     "Select Courses",
     "Assign Section to Courses",
+    "Review & Enroll Student"
   ];
 
   const courseMap = useMemo(() => {
@@ -52,6 +60,16 @@ const Enrollment = () => {
   const studentCurriculum = useMemo(
     () => curriculums.find((curriculum) => curriculum._id === selectedStudent?.curriculumId),
     [selectedStudent, curriculums]
+  );
+
+  const allSelectedCourses = [...selectedCourses.core, ...selectedCourses.elective];
+
+  const allSectionsSelected = allSelectedCourses.every(
+    (courseId) => selectedSections[courseId] !== undefined
+  );
+
+  const [timelineProgress, setTimelineProgress] = useState(
+    allSelectedCourses.map(() => false)
   );
 
   useEffect(() => {
@@ -77,69 +95,60 @@ const Enrollment = () => {
     return format(new Date(isoString), "MMMM d, yyyy");
   };
 
-  const handleSearch = (student) => {
+  const handleSearch = debounce((student) => {
     setSelectedStudent(student);
     handleNextStep();
-  };
+  }, 300);
 
   const handleNextStep = () => {
     if (currentStep === 3) {
       setCurrentTimelineCourse(
-        findCourse(studentCourses.core[0] || studentCourses.elective[0])
+        findCourse(selectedCourses.core[0] || selectedCourses.elective[0])
       );
     }
     setCurrentStep((prev) => prev + 1);
   };
 
   const handlePreviousStep = () => {
-    if (currentStep === 3) setSelectedStudent(null);
-    if (currentStep === 3) setSelectedCourses({ core: [], elective: [] });
+    if (currentStep === 3) {
+      setSelectedStudent(null);
+      setSelectedCourses({ core: [], elective: [] });
+      setSelectedSections({});
+    }
     setCurrentStep((prev) => Math.max(prev - 1, 1));
   };
 
-  const handleNextTimelineStep = () => {
-    if (
-      currentTimelineStep <
-      studentCourses.core.length + studentCourses.elective.length - 1
-    ) {
-      setCurrentTimelineStep(currentTimelineStep + 1);
-      const nextCourse =
-        currentTimelineStep + 1 < studentCourses.core.length
-          ? studentCourses.core[currentTimelineStep + 1]
-          : studentCourses.elective[currentTimelineStep - studentCourses.core.length];
-      setCurrentTimelineCourse(findCourse(nextCourse));
-    }
-  };
+  const handleTimelineNavigation = (direction) => {
+    const previousStep = currentTimelineStep;
+    const nextStep = currentTimelineStep + direction;
 
-  const handlePreviousTimelineStep = () => {
-    if (currentTimelineStep > 0) {
-      setCurrentTimelineStep(currentTimelineStep - 1);
-      const prevCourse =
-        currentTimelineStep <= studentCourses.core.length - 1
-          ? studentCourses.core[currentTimelineStep - 1]
-          : studentCourses.elective[currentTimelineStep - studentCourses.core.length - 1];
-      setCurrentTimelineCourse(findCourse(prevCourse));
+    if (nextStep < 0 || nextStep >= allSelectedCourses.length) return;
+    if (selectedSections[currentTimelineCourse._id] === undefined && direction === 1) {
+      return showError("No section selected", "Please choose a section for the course.");
     }
-  };
 
-  const generateTimelineItems = (selectedCourses, courseMap) => {
-    return selectedCourses.map((courseId, index) => {
-      const course = courseMap[courseId];
-      return {
-        label: course?.code || "Unknown Course",
-        description: course?.description || "No description available",
-        isActive: index === currentTimelineStep,
-      };
+    setTimelineProgress((prev) => {
+      const updatedProgress = [...prev];
+      updatedProgress[previousStep] = true;
+      return updatedProgress;
     });
+
+    setCurrentTimelineStep(nextStep);
+    setCurrentTimelineCourse(findCourse(allSelectedCourses[nextStep]));
   };
 
-  const coreTimelineItems = useMemo(
-    () => generateTimelineItems(selectedCourses.core, courseMap),
-    [selectedCourses.core, currentTimelineStep, courseMap]
-  );
-  const electiveTimelineItems = useMemo(
-    () => generateTimelineItems(selectedCourses.elective, courseMap),
-    [selectedCourses.elective, currentTimelineStep, courseMap]
+  const timelineItems = useMemo(
+    () =>
+      allSelectedCourses.map((courseId, index) => {
+        const course = courseMap[courseId];
+        return {
+          label: course?.code || "Unknown Course",
+          description: course?.description || "No description available",
+          isActive: index === currentTimelineStep,
+          isDone: timelineProgress[index],
+        };
+      }),
+    [allSelectedCourses, currentTimelineStep, courseMap, timelineProgress]
   );
 
   const handleSelectCourse = (courseId, type) => {
@@ -164,6 +173,13 @@ const Enrollment = () => {
         [type]: updatedCourses,
       };
     });
+  };
+
+  const handleSelectSection = (sectionId) => {
+    setSelectedSections((prev) => ({
+      ...prev,
+      [currentTimelineCourse._id]: sectionId,
+    }));
   };
 
   const renderStudentData = (data) => {
@@ -366,27 +382,61 @@ const Enrollment = () => {
             <div className={styles.selectSectionWrapper}>
               <div className={styles.sideContent}>
                 <div className={styles.timelineContent}>
-                  <h2>Core courses</h2>
+                  <h2>Selected Courses</h2>
                   <div className={styles.line}></div>
-                  <Timeline items={coreTimelineItems} currentStep={currentTimelineStep} />
-                </div>
-                <div className={styles.timelineContent}>
-                  <h2>Elective courses</h2>
-                  <div className={styles.line}></div>
-                  <Timeline items={electiveTimelineItems} currentStep={currentTimelineStep} />
+                  <Timeline items={timelineItems} currentStep={currentTimelineStep} />
                 </div>
               </div>
               <div className={styles.sectionsContent}>
+                <h1>Enroll in a Section for {currentTimelineCourse?.description}</h1>
                 <div className={styles.sectionsContainer}>
-                  <h1>Sections for {currentTimelineCourse.description}</h1>
                   {courseSections.map((section) => {
                     const instructor = instructors.find(
                       (instructor) => instructor.userId === section.instructorId
                     );
                     return (
                       section && (
-                        <div key={section._id} className={styles.sectionCard}>
-                          <h3 className={styles.title}>{section.description}</h3>
+                        <div
+                          key={section._id}
+                          className={`${styles.sectionCard} ${
+                            selectedSections[currentTimelineCourse._id]?.includes(section._id)
+                              ? styles.selected
+                              : ""
+                          }`}
+                          onClick={() => handleSelectSection(section._id)}
+                        >
+                          <div className={styles.spaceBetween}>
+                            <div>
+                              <h3 className={styles.title}>{section.description}</h3>
+                              <p className={styles.desc}>
+                                {section?.capacity} out of {section?.availableSlots} enrolled
+                              </p>
+                            </div>
+                            <span
+                              className={`${styles.badge} ${
+                                section?.isActive === true
+                                  ? styles.greenBadge
+                                  : styles.redBadge
+                              }`}
+                            >
+                              {section?.isActive === true ? "Active" : "Inactive"}
+                            </span>
+                          </div>
+                          <div className={styles.line}></div>
+                          <div className={styles.sectionInfo}>
+                            <p className={styles.iconLabel}>
+                              <TbUser size={IconSizes.SMALL} />
+                              {instructor?.firstName} {instructor?.lastName}
+                            </p>
+                            <p className={styles.iconLabel}>
+                              <TbClock size={IconSizes.SMALL} />
+                              {section?.startTime} - {section?.endTime}
+                            </p>
+                            <p className={styles.iconLabel}>
+                              <TbMapPin size={IconSizes.SMALL} />
+                              Room {section?.roomCode}
+                            </p>
+                          </div>
                           <ul>
                             {section?.days.map((day, index) => (
                               <li key={index} className={styles.badge}>
@@ -394,16 +444,6 @@ const Enrollment = () => {
                               </li>
                             ))}
                           </ul>
-                          <p>
-                            {section?.startTime} - {section?.endTime}
-                          </p>
-                          <p>Room: {section?.roomCode}</p>
-                          <p>
-                            Slots: {section?.capacity}/{section?.availableSlots}
-                          </p>
-                          <p>
-                            Instructor: {instructor?.firstName} {instructor?.lastName}
-                          </p>
                         </div>
                       )
                     );
@@ -421,7 +461,7 @@ const Enrollment = () => {
                     <button
                       type="button"
                       className={styles.secondaryBtn}
-                      onClick={() => handlePreviousTimelineStep()}
+                      onClick={() => handleTimelineNavigation(-1)}
                     >
                       Previous course
                     </button>
@@ -429,9 +469,13 @@ const Enrollment = () => {
                   <button
                     type="button"
                     className={styles.primaryBtn}
-                    onClick={() => handleNextTimelineStep()}
+                    onClick={
+                      allSectionsSelected
+                        ? () => handleNextStep()
+                        : () => handleTimelineNavigation(1)
+                    }
                   >
-                    Next course
+                    {allSectionsSelected ? "Review & Enroll Student" : "Next course"}
                   </button>
                 </div>
               </div>
@@ -439,6 +483,14 @@ const Enrollment = () => {
           )}
         </section>
       </main>
+      <PopupAlert
+        icon={popupState.icon}
+        border={popupState.border}
+        color={popupState.color}
+        title={popupState.title}
+        message={popupState.message}
+        show={showPopup}
+      />
     </Layout>
   );
 };

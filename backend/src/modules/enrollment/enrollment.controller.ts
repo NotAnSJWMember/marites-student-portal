@@ -32,11 +32,18 @@ export class EnrollmentController {
 
    @Post('/batch-enroll')
    async batchEnroll(
-      @Body() body: { courseIds: Types.ObjectId[]; studentId: string },
+      @Body()
+      body: {
+         courseIds: Types.ObjectId[];
+         sectionIds: Types.ObjectId[];
+         studentId: string;
+      },
    ) {
-      console.log(body.courseIds);
-      console.log(body.studentId);
-      return this.enrollmentService.batchEnroll(body.courseIds, body.studentId);
+      return this.enrollmentService.batchEnroll(
+         body.courseIds,
+         body.sectionIds,
+         body.studentId,
+      );
    }
 
    @Get()

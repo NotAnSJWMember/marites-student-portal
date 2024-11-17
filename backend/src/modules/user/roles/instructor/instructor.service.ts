@@ -62,10 +62,10 @@ export class InstructorService {
       const dummyInstructors = [
          {
             userId: '000001',
-            birthDate: new Date('2004-08-15'),
+            birthDate: new Date('2004-11-01'),
             firstName: 'Caenar',
             lastName: 'Arteta',
-            email: 'iwasnothere@example.com',
+            email: 'crazy@apple.com',
             phoneNum: '12345678910',
             gender: 'Male',
             username: 'whoami',
@@ -78,6 +78,8 @@ export class InstructorService {
          await this.create(instructor);
       }
 
-      this.logger.log('Dummy instructors created successfully.');
+      this.logger.log(
+         'And Caenar said, "Let there be one ultimate instructor in this portal.',
+      );
    }
 }

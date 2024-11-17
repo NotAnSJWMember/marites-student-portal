@@ -68,58 +68,47 @@ export class EnrollmentService {
 
    async batchEnroll(
       courseIds: Types.ObjectId[],
+      sectionIds: Types.ObjectId[],
       studentId: string,
    ): Promise<Enrollment[]> {
       const enrollments: Enrollment[] = [];
 
       for (const courseId of courseIds) {
-         const hasPrerequisites = await this.checkPrerequisites(
-            courseId,
-            studentId,
-         );
+         for (const sectionId of sectionIds) {
+            const section = await this.sectionModel.findById(sectionId);
 
-         if (!hasPrerequisites) {
-            this.logger.warn(
-               `Student ${studentId} has not completed prerequisites for course ${courseId}`,
-            );
-            continue;
+            if (!section) {
+               this.logger.warn(`Section not found for course ${courseId}`);
+               continue;
+            }
+
+            const schedule = new this.scheduleModel({
+               courseId,
+               sectionId,
+               studentId,
+               instructor: section.instructorId,
+               startTime: section.startTime,
+               endTime: section.endTime,
+               roomCode: section.roomCode,
+               days: section.days,
+               description: section.description,
+            });
+
+            const savedSchedule = await schedule.save();
+
+            const enrollment = new this.enrollmentModel({
+               courseId,
+               scheduleId: savedSchedule._id,
+               studentId,
+               status: Status.ENROLLED,
+               remarks: 'Enrolled in course',
+            });
+
+            await enrollment.save();
+
+            enrollments.push(enrollment);
          }
-
-         const enrollment = new this.enrollmentModel({
-            courseId,
-            studentId,
-            status: Status.ENROLLED,
-            remarks: 'Enrolled in course',
-         });
-
-         await enrollment.save();
-
-         const section = await this.sectionModel.findOne({
-            courseId,
-         });
-
-         if (!section) {
-            this.logger.warn(`Section not found for course ${courseId}`);
-            continue;
-         }
-
-         const schedule = new this.scheduleModel({
-            courseId,
-            sectionId: section._id,
-            studentId,
-            instructor: section.instructorId,
-            startTime: section.startTime,
-            endTime: section.endTime,
-            roomCode: section.roomCode,
-            days: section.days,
-            description: section.description,
-         });
-
-         await schedule.save();
-
-         enrollments.push(enrollment);
       }
-
       return enrollments;
    }
 

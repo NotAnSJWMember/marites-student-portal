@@ -4,6 +4,7 @@ import { SectionController } from './section.controller';
 import { DatabaseModule } from 'src/common/database/database.module';
 import { AuthModule } from '../auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
+import { CourseModule } from '../course/course.module';
 
 @Module({
    imports: [
@@ -15,6 +16,7 @@ import { JwtModule } from '@nestjs/jwt';
             signOptions: { expiresIn: '1h' },
          }),
       }),
+      CourseModule,
    ],
    providers: [SectionService],
    controllers: [SectionController],

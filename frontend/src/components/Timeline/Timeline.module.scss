@@ -1,53 +1,44 @@
 @import "../../styles/global.scss";
 
 .timeline {
-   display: flex;
-   flex-direction: column;
-   align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .timelineItem {
-   position: relative;
-   display: flex;
-   align-items: flex-start;
-   margin-bottom: 20px;
-   padding-left: 20px;
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
 }
 
-.circle {
-   width: 12px;
-   height: 12px;
-   border-radius: 50%;
-   background-color: #ccc;
-   margin-right: 10px;
-   position: relative;
-}
-
-.active {
-   background-color: #4caf50;
+.idk {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .line {
-   position: absolute;
-   top: 16px;
-   left: 25.4px;
-   width: 1px;
-   height: 100%;
-   background-color: #ccc;
-   z-index: 1;
+  top: 18px;
+  width: 1px;
+  height: 40px;
+  background-color: #ccc;
+  z-index: 1;
 }
 
 .content {
-   display: flex;
-   flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .label {
-   font-weight: bold;
-   margin-bottom: 5px;
+  font-weight: bold;
+  margin-bottom: 5px;
 }
 
 .description {
-   font-size: 0.9em;
-   color: #777;
+  font-size: 0.9em;
+  color: #777;
 }

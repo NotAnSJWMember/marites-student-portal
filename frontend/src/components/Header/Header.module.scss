@@ -1,200 +1,198 @@
 @import "../../styles/global.scss";
 
 .header {
-   display: flex;
-   align-items: center;
-   justify-content: space-between;
-   padding: 1rem 2rem;
-   border-bottom: 1px solid $light-gray-color-200;
-   background-color: $light-primary-background;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  border-bottom: 1px solid $light-gray-color-200;
+  background-color: $light-primary-background;
 
-   .sideBar {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100%;
-      gap: 0.5rem;
+  .sideBar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    gap: 0.5rem;
 
-      div {
-         border-radius: 0.5rem;
-         padding: 0.5rem 0.8rem;
+    div {
+      border-radius: 0.5rem;
+      padding: 0.5rem 0.8rem;
+    }
+
+    .notif {
+      cursor: pointer;
+      color: $light-primary-text;
+      transition: 300ms $trans-smooth;
+
+      &:hover {
+        background-color: $light-gray-color-100;
       }
+    }
 
-      .notif {
-         cursor: pointer;
-         color: $light-primary-text;
-         transition: 300ms $trans-smooth;
+    .userIcon {
+      cursor: pointer;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      padding: 0;
+      overflow: hidden;
 
-         &:hover {
-            background-color: $light-gray-color-100;
-         }
+      img {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+        object-position: center;
+        display: block;
       }
+    }
 
-      .userIcon {
-         cursor: pointer;
-         width: 42px;
-         height: 42px;
-         border-radius: 50%;
-         padding: 0;
-         overflow: hidden;
-
-         img {
-            height: 100%;
-            width: 100%;
-            object-fit: cover;
-            object-position: center;
-            display: block;
-         }
-      }
-
-      .verticalLine {
-         padding: 0;
-         height: 70%;
-         margin: 0 0.5rem;
-         opacity: 0.2;
-      }
-   }
+    .verticalLine {
+      padding: 0;
+      height: 70%;
+      margin: 0 0.5rem;
+      opacity: 0.2;
+    }
+  }
 }
 
 .popupWrapperUser,
 .popupWrapperNotif {
-   position: relative;
+  position: relative;
 
-   .line {
-      height: 1.5px;
-      opacity: 0.1;
-   }
+  .line {
+    height: 1.5px;
+    opacity: 0.1;
+  }
 }
 
 .popupWrapperUser {
-   width: 15rem;
-   padding: 1rem 0.5rem 0.5rem 0.5rem;
+  width: 15rem;
+  padding: 1rem 0.5rem 0.5rem 0.5rem;
 
-   .userContainer {
-      display: flex;
-      gap: 0.5rem;
-      margin-bottom: 1rem;
+  .userContainer {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
 
-      .userIcon {
-         width: 42px;
-         height: 42px;
-         border-radius: 50%;
-         padding: 0;
-         overflow: hidden;
-         margin-left: 0.5rem;
+    .userIcon {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      padding: 0;
+      overflow: hidden;
+      margin-left: 0.5rem;
 
-         img {
-            height: 100%;
-            width: 100%;
-            object-fit: cover;
-            object-position: center;
-            display: block;
-         }
+      img {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+        object-position: center;
+        display: block;
       }
+    }
 
-      .userName {
-         display: flex;
-         flex-direction: column;
-         align-items: center;
-         justify-content: center;
-         .name {
-            font-weight: 500;
-         }
-         .course {
-            font-size: 0.9rem;
-            opacity: 0.5;
-         }
-      }
-   }
-   .popupContent {
+    .userName {
       display: flex;
       flex-direction: column;
-      gap: 0.4rem;
-
-      button {
-         background-color: transparent;
+      .name {
+        font-weight: 600;
       }
-
-      .iconCta {
-         color: $light-primary-text;
-         padding: 0.7rem;
-         justify-content: flex-start;
-         width: 100%;
-         border-radius: 0.5rem;
-         transition: 200ms $trans-smooth;
-
-         &:hover {
-            background-color: $light-gray-color-100;
-         }
+      .course {
+        font-size: 0.9rem;
+        opacity: 0.5;
       }
-   }
+    }
+  }
+  .popupContent {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+
+    button {
+      background-color: transparent;
+    }
+
+    .iconCta {
+      color: $light-primary-text;
+      padding: 0.7rem;
+      justify-content: flex-start;
+      width: 100%;
+      border-radius: 0.5rem;
+      transition: 200ms $trans-smooth;
+
+      &:hover {
+        background-color: $light-gray-color-100;
+      }
+    }
+  }
 }
 
 .popupWrapperNotif {
-   width: 25rem;
+  width: 25rem;
 
-   .titleContainer {
+  .titleContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+
+    h2 {
+      font-size: 1.2rem;
+      font-weight: 500;
+    }
+
+    p {
+      font-size: 0.9rem;
+    }
+  }
+
+  .notifItem:not(:last-of-type) {
+    border-bottom: 1px solid $light-gray-color-100;
+  }
+
+  .notifItem {
+    display: flex;
+    padding: 1rem;
+    gap: 1rem;
+
+    .notifUser {
+      position: relative;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      padding: 1rem;
+      justify-content: center;
+      height: 50px;
+      width: 50px;
+      background-color: pink;
+      border-radius: 50%;
 
-      h2 {
-         font-size: 1.2rem;
-         font-weight: 500;
+      .notifCircle {
+        position: absolute;
+        height: 16px;
+        width: 16px;
+        border-radius: 50%;
+        border: 2px solid $light-primary-background;
+        background-color: $light-green-color-300;
+        top: 0;
+        left: 0;
       }
 
       p {
-         font-size: 0.9rem;
+        color: #c7334b;
+        font-size: 1.3rem;
       }
-   }
+    }
 
-   .notifItem:not(:last-of-type) {
-      border-bottom: 1px solid $light-gray-color-100;
-   }
-
-   .notifItem {
+    .notifContent {
       display: flex;
-      padding: 1rem;
-      gap: 1rem;
+      flex-direction: column;
+      gap: 0.5rem;
+      max-width: 32ch;
 
-      .notifUser {
-         position: relative;
-         display: flex;
-         align-items: center;
-         justify-content: center;
-         height: 50px;
-         width: 50px;
-         background-color: pink;
-         border-radius: 50%;
-
-         .notifCircle {
-            position: absolute;
-            height: 16px;
-            width: 16px;
-            border-radius: 50%;
-            border: 2px solid $light-primary-background;
-            background-color: $light-green-color-300;
-            top: 0;
-            left: 0;
-         }
-
-         p {
-            color: #c7334b;
-            font-size: 1.3rem;
-         }
+      .status {
+        font-size: 0.8rem;
+        opacity: 0.5;
       }
-
-      .notifContent {
-         display: flex;
-         flex-direction: column;
-         gap: 0.5rem;
-         max-width: 32ch;
-
-         .status {
-            font-size: 0.8rem;
-            opacity: 0.5;
-         }
-      }
-   }
+    }
+  }
 }
