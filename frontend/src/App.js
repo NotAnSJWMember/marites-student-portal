@@ -18,6 +18,7 @@ import Enrollment from "pages/Dashboard/Admin/pages/Enrollment";
 import Curriculum from "pages/Dashboard/Admin/pages/Curriculum";
 import AcademicPlanner from "pages/Dashboard/Admin/pages/AcademicPlanner";
 import UserManagement from "./pages/Dashboard/Admin/pages/UserManagement";
+import Courses from "pages/Dashboard/Student/pages/Courses";
 
 import "./App.scss";
 
@@ -69,10 +70,15 @@ function App() {
               element={<PrivateRoute element={<StudentDashboard />} roles={["student"]} />}
             />
 
+            <Route
+              path="/student/dashboard/courses"
+              element={<PrivateRoute element={<Courses />} roles={["student"]} />}
+            />
+
             {/* Error Routes */}
             <Route path="/404" element={<ErrorPage errorCode={404} />} />
-            <Route path="/401" element={<ErrorPage errorCode={401} />} />
-            <Route path="/403" element={<ErrorPage errorCode={403} />} />
+            <Route path="/unauthorized" element={<ErrorPage errorCode={401} />} />
+            <Route path="/forbidden" element={<ErrorPage errorCode={403} />} />
             <Route path="/500" element={<ErrorPage errorCode={500} />} />
 
             {/* Default fallback page */}

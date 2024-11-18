@@ -8,9 +8,9 @@
 
   .content {
     display: grid;
-    border: 1px solid $light-gray-color;
     width: 27rem;
     gap: 1.7rem;
+    border: 1px solid $light-gray-color;
 
     .code {
       font-size: 4rem;

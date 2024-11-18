@@ -36,12 +36,14 @@ export class EnrollmentController {
       body: {
          courseIds: Types.ObjectId[];
          sectionIds: Types.ObjectId[];
+         courseTypes: string[];
          studentId: string;
       },
    ) {
       return this.enrollmentService.batchEnroll(
          body.courseIds,
          body.sectionIds,
+         body.courseTypes,
          body.studentId,
       );
    }

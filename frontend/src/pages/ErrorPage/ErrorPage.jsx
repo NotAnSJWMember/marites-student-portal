@@ -1,11 +1,10 @@
 import React from "react";
 import styles from "./ErrorPage.module.scss";
 import { Helmet } from "react-helmet-async";
+import { useNavigate } from "react-router-dom";
 
 const ErrorPage = ({ errorCode }) => {
-  const snapBackToReality = () => {
-    window.history.back();
-  };
+  const navigate = useNavigate();
 
   let label = "";
   let message = "";
@@ -15,7 +14,7 @@ const ErrorPage = ({ errorCode }) => {
       label = "You are not authorized to view this page. Please log in.";
       break;
     case 403:
-      label = "You do not have permission to access this page.";
+      label = "You do not have permission to access this page";
       break;
     case 500:
       label = "Oops, something went wrong on our end. Please try again later.";
@@ -37,14 +36,10 @@ const ErrorPage = ({ errorCode }) => {
       <section className={styles.content}>
         <div>
           <h1 className={styles.code}>{errorCode}</h1>
-          <h2 className={styles.label}>{label} :(</h2>
+          <h2 className={styles.label}>{`${label} :(`}</h2>
         </div>
         <p className={styles.message}>{message}</p>
-        <button
-          type="button"
-          className={styles.primaryBtn}
-          onClick={() => snapBackToReality()}
-        >
+        <button type="button" className={styles.primaryBtn} onClick={() => navigate("/login")}>
           Snap back to reality
         </button>
       </section>

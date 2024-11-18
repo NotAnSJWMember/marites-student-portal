@@ -16,19 +16,22 @@ export class Enrollment extends Document {
    @Prop({ required: true, type: Types.ObjectId, ref: 'Schedule' })
    scheduleId: Types.ObjectId;
 
+   @Prop({ required: true, enum: ['core', 'elective'] })
+   type: string;
+
    @Prop({ required: true })
    studentId: string;
 
-   @Prop({ default: 0 })
+   @Prop({ default: 1.0, min: 1.0, max: 5.0 })
    prelim: number;
 
-   @Prop({ default: 0 })
+   @Prop({ default: 1.0, min: 1.0, max: 5.0 })
    midterm: number;
 
-   @Prop({ default: 0 })
+   @Prop({ default: 1.0, min: 1.0, max: 5.0 })
    prefinal: number;
 
-   @Prop({ default: 0 })
+   @Prop({ default: 1.0, min: 1.0, max: 5.0 })
    final: number;
 
    @Prop({ required: true })

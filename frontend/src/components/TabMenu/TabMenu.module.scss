@@ -41,6 +41,7 @@
 }
 
 .tabContent {
+   display: grid;
    margin-top: 1rem;
-   flex: 1;
+   gap: 5px;
 }

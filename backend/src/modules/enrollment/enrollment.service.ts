@@ -72,10 +72,16 @@ export class EnrollmentService {
    async batchEnroll(
       courseIds: Types.ObjectId[],
       sectionIds: Types.ObjectId[],
+      courseTypes: string[],
       studentId: string,
    ): Promise<Enrollment[]> {
-      if (courseIds.length !== sectionIds.length) {
-         throw new Error('Mismatch between courseIds and sectionIds.');
+      if (
+         courseIds.length !== sectionIds.length ||
+         courseIds.length !== courseTypes.length
+      ) {
+         throw new Error(
+            'Mismatch between courseIds, sectionIds, and courseTypes.',
+         );
       }
 
       const enrollments: Enrollment[] = [];
@@ -88,6 +94,7 @@ export class EnrollmentService {
          for (let i = 0; i < courseIds.length; i++) {
             const courseId = courseIds[i];
             const sectionId = sectionIds[i];
+            const courseType = courseTypes[i];
 
             const section = await this.sectionModel
                .findById(sectionId)
@@ -119,6 +126,7 @@ export class EnrollmentService {
                studentId,
                status: Status.ENROLLED,
                remarks: 'Enrolled in course',
+               type: courseType,
             });
 
             await enrollment.save({ session });

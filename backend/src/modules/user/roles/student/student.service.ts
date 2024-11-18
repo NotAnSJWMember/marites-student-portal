@@ -54,14 +54,23 @@ export class StudentService {
    }
 
    async findOne(userId: string): Promise<Student> {
-      this.logger.log(`Fetching user with Object ID: ${userId}`);
-      const user = await this.studentModel.findOne({ userId }).exec();
-      if (user) {
-         this.logger.log(`Found user: ${user}`);
-      } else {
-         this.logger.warn(`User with Object ID: ${userId} not found.`);
+      this.logger.log(`Fetching user: ${userId}`);
+
+      this.logger.log(`Trying their username...`);
+      let student = await this.findByUsername(userId);
+
+      if (!student) {
+         this.logger.log('Username not found, trying their ID...');
+         student = await this.findByUserId(userId);
       }
-      return user;
+
+      if (student) {
+         this.logger.log(`Found user: ${student}`);
+      } else {
+         this.logger.warn(`User ${userId} not found.`);
+      }
+
+      return student;
    }
 
    async findByUserId(userId: string): Promise<Student | null> {

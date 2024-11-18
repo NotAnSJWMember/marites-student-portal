@@ -3,7 +3,7 @@ import React from "react";
 const styles = {
    select: {
       width: "100%",
-      borderRadius: "0.5rem",
+      borderRadius: "0.4rem",
       border: "1px solid #ccc",
    },
 };

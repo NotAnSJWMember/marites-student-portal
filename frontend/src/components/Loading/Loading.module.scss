@@ -5,8 +5,9 @@
 .ldsRing {
    display: inline-block;
    position: relative;
-   width: 20px;
-   height: 20px;
+   bottom: 18.5px;
+   height: max-content;
+   width: 25px;
 }
 .ldsRing div {
    box-sizing: border-box;

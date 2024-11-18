@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useMemo, useState } from "react";
 import styles from "./Enrollment.module.scss";
 import { TbClock, TbMapPin, TbUser } from "react-icons/tb";
@@ -23,8 +22,10 @@ import { debounce } from "lodash";
 const Enrollment = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedStudent, setSelectedStudent] = useState(null);
+
   const [studentCourses, setStudentCourses] = useState({ core: [], elective: [] });
   const [selectedCourses, setSelectedCourses] = useState({ core: [], elective: [] });
+
   const [selectedSections, setSelectedSections] = useState({});
   const [currentTimelineStep, setCurrentTimelineStep] = useState(0);
   const [currentTimelineCourse, setCurrentTimelineCourse] = useState(null);
@@ -81,7 +82,6 @@ const Enrollment = () => {
   );
 
   const allSelectedCourses = [...selectedCourses.core, ...selectedCourses.elective];
-
   const allSectionsSelected = allSelectedCourses.every(
     (courseId) => selectedSections[courseId] !== undefined
   );
@@ -204,9 +204,20 @@ const Enrollment = () => {
     const courseIds = Object.keys(selectedSections);
     const sectionIds = Object.values(selectedSections);
 
+    const courseTypes = courseIds.map((courseId) => {
+      if (selectedCourses.core.includes(courseId)) {
+        return "core";
+      } else if (selectedCourses.elective.includes(courseId)) {
+        return "elective";
+      } else {
+        return "unknown";
+      }
+    });
+
     const body = {
-      courseIds: courseIds,
-      sectionIds: sectionIds,
+      courseIds,
+      sectionIds,
+      courseTypes,
       studentId: selectedStudent.userId,
     };
 

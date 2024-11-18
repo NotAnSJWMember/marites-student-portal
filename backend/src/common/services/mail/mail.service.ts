@@ -22,8 +22,8 @@ export class MailService {
       const mailOptions = {
          from: `Caenar <kaiserlaconfiture@gmail.com>`,
          to: emailTo,
-         subject: 'Reset your Marites account password',
-         text: 'Someone (hopefully you) has requested a password reset...',
+         subject: 'Reset your Dr. AMMC account password',
+         text: 'Someone (hopefully you) has requested a password reset for your Marites account. Follow the link below to set a new password before the link expires in 15 minutes',
          html: this.getResetEmailTemplate(resetLink),
          attachments: [
             {

@@ -8,7 +8,7 @@ const PrivateRoute = ({ element, roles }) => {
       return <Navigate to="/login" />;
    }
 
-   if (roles && !roles.includes(user.role)) {
+   if (!roles) {
       return <Navigate to="/unauthorized" />;
    }
 

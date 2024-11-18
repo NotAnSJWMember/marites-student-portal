@@ -4,6 +4,7 @@ import {
    IsNumber,
    IsBoolean,
    IsEnum,
+   IsOptional,
 } from 'class-validator';
 import { Types } from 'mongoose';
 
@@ -15,22 +16,26 @@ export class CreateEnrollmentDto {
    studentId: string;
 
    @IsNotEmpty()
+   @IsEnum(['core', 'elective'])
+   type: string;
+
+   @IsOptional()
    @IsNumber()
    prelim: number;
 
-   @IsNotEmpty()
+   @IsOptional()
    @IsNumber()
    midterm: number;
 
-   @IsNotEmpty()
+   @IsOptional()
    @IsNumber()
    prefinal: number;
 
-   @IsNotEmpty()
+   @IsOptional()
    @IsNumber()
    final: number;
 
-   @IsNotEmpty()
+   @IsOptional()
    @IsString()
    remarks: string;
 
@@ -39,7 +44,7 @@ export class CreateEnrollmentDto {
    @IsEnum(['Enrolled', 'Completed', 'NC', 'INC'])
    status: string[];
 
-   @IsNotEmpty()
+   @IsOptional()
    @IsBoolean()
    dropped: boolean;
 }
