@@ -114,9 +114,7 @@ export class UserService {
    async findByUsername(username: string): Promise<User> {
       this.logger.log(`Searching for user with username: ${username}`);
       const user = await this.userModel.findOne({ username }).exec();
-      if (user) {
-         this.logger.log(`Found user: ${user}`);
-      } else {
+      if (!user) {
          this.logger.warn(`No user found with username: ${username}`);
       }
       return user;
@@ -125,9 +123,7 @@ export class UserService {
    async findByUserId(userId: string): Promise<User> {
       this.logger.log(`Searching for user with user id: ${userId}`);
       const user = await this.userModel.findOne({ userId }).exec();
-      if (user) {
-         this.logger.log(`Found user: ${user}`);
-      } else {
+      if (!user) {
          this.logger.warn(`No user found with user id: ${userId}`);
       }
       return user;

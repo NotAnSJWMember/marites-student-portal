@@ -40,8 +40,8 @@
       setPopupVisibleNotif(false);
     };
 
-    const { user: userData, logout } = useAuth();
-    const { data: user } = useFetchData(`user/${userData.userId}`);
+    const { user: loggedInUser, logout } = useAuth();
+    const { data: user } = useFetchData(`user/${loggedInUser.userId}`, {fetchOnMount: false});
 
     return (
       user && (

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useMemo, useState } from "react";
 import styles from "./Enrollment.module.scss";
 import { TbClock, TbMapPin, TbUser } from "react-icons/tb";

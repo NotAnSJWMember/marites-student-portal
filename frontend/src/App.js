@@ -1,5 +1,4 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { RefetchDataProvider } from "hooks/contexts/useRefetchData";
 import { HelmetProvider } from "react-helmet-async";
 
 import PrivateRoute from "./components/PrivateRoute";
@@ -25,7 +24,6 @@ import "./App.scss";
 function App() {
   return (
     <HelmetProvider>
-      <RefetchDataProvider>
         <Router>
           <Routes>
             {/* Main Routes */}
@@ -85,7 +83,6 @@ function App() {
             <Route path="*" element={<ErrorPage errorCode={404} />} />
           </Routes>
         </Router>
-      </RefetchDataProvider>
     </HelmetProvider>
   );
 }
