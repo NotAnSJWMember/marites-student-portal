@@ -3,6 +3,10 @@
 .contentDivider {
   grid-template-columns: 35% 1fr;
   height: 100%;
+
+  .mainContent {
+    overflow: auto;
+  }
 }
 
 .courseCard {

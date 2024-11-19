@@ -35,7 +35,7 @@ const Courses = () => {
     return [core, elective];
   }, [studentEnrollments]);
 
-  const CourseCard = ({ courseId }) => {
+  const CourseCard = ({ courseId, type }) => {
     const course = useMemo(() => findDataById(courses, courseId), [courseId]);
     const section = useMemo(() => sections.find((s) => s.courseId === courseId), [courseId]);
     const instructor = useMemo(
@@ -43,12 +43,17 @@ const Courses = () => {
       [section]
     );
     if (!course) return null;
+
     return (
       <div key={course._id} className={styles.courseCard}>
         <div className={styles.courseInfo}>
           <h2 className={styles.title}>{course.description}</h2>
           <p className={styles.desc}>
-            {instructor?.firstName} {instructor?.lastName}
+            {type !== "all"
+              ? `${instructor?.firstName} ${instructor?.lastName}`
+              : coreCourses.some((course) => course.courseId === courseId)
+              ? "Core"
+              : "Elective"}
           </p>
         </div>
         <h2 className={styles.badge}>{course.code}</h2>
@@ -56,16 +61,19 @@ const Courses = () => {
     );
   };
 
-  const CourseView = ({ data }) => (
+  const CourseView = ({ data, type }) => (
     <>
       {data.map((course) => (
-        <CourseCard key={course.courseId} courseId={course.courseId} />
+        <CourseCard key={course.courseId} courseId={course.courseId} type={type} />
       ))}
     </>
   );
 
   const tabs = [
-    { label: "All", content: "Coming Soon" },
+    {
+      label: "All",
+      content: <CourseView data={[...coreCourses, ...electiveCourses]} type="all" />,
+    },
     { label: "Core", content: <CourseView data={coreCourses} /> },
     { label: "Elective", content: <CourseView data={electiveCourses} /> },
   ];
