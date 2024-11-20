@@ -2,7 +2,13 @@ import React, { useMemo, useState } from "react";
 import styles from "./UserTable.module.scss";
 import { TbArrowLeft, TbArrowRight } from "react-icons/tb";
 
-const UserTable = ({ data, headers, content, isClickable = false, clickableAction }) => {
+const UserTable = ({
+  data,
+  headers,
+  content,
+  isClickable = false,
+  clickableAction,
+}) => {
   const [currentPage, setCurrentPage] = useState(1);
 
   const itemsPerPage = 7;
@@ -38,12 +44,18 @@ const UserTable = ({ data, headers, content, isClickable = false, clickableActio
             >
               {content(data)}
             </div>
-            {index !== currentData.length - 1 && <div className={styles.line}></div>}
+            {index !== currentData.length - 1 && (
+              <div className={styles.line}></div>
+            )}
           </div>
         ))}
       </div>
       <div className={styles.pagination}>
-        <TbArrowLeft className={styles.iconBtn} onClick={handlePreviousPage} size={16} />
+        <TbArrowLeft
+          className={styles.iconBtn}
+          onClick={handlePreviousPage}
+          size={16}
+        />
         {[...Array(totalPages)].map((_, index) => (
           <button
             key={`button-${index}`}
@@ -54,7 +66,11 @@ const UserTable = ({ data, headers, content, isClickable = false, clickableActio
             {index + 1}
           </button>
         ))}
-        <TbArrowRight className={styles.iconBtn} onClick={handleNextPage} size={16} />
+        <TbArrowRight
+          className={styles.iconBtn}
+          onClick={handleNextPage}
+          size={16}
+        />
       </div>
     </div>
   );

@@ -39,6 +39,12 @@
   }
 }
 
+.card {
+  border-radius: $small-radius;
+  border: 1px solid $light-gray-color-100;
+  padding: 1rem;
+}
+
 .badge {
   font-size: 0.8rem;
   border: 1px solid $light-gray-color;
@@ -168,6 +174,12 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 0.7rem;
+}
+
+.alignCenter {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .spaceBetween {

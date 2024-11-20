@@ -39,7 +39,15 @@ const ErrorPage = ({ errorCode }) => {
           <h2 className={styles.label}>{`${label} :(`}</h2>
         </div>
         <p className={styles.message}>{message}</p>
-        <button type="button" className={styles.primaryBtn} onClick={() => navigate("/login")}>
+        <button
+          type="button"
+          className={styles.primaryBtn}
+          onClick={
+            errorCode === 404
+              ? () => window.history.back()
+              : () => navigate("/login")
+          }
+        >
           Snap back to reality
         </button>
       </section>

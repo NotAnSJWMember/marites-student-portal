@@ -17,6 +17,7 @@
   padding: 0.8rem 1rem;
   gap: 1rem;
   border-radius: $small-radius;
+  border: 1px solid transparent;
   transition: 300ms $trans-fast;
 
   .courseInfo {
@@ -33,11 +34,65 @@
   &:hover {
     background-color: $light-gray-color-100;
   }
+
+  &.selected {
+    border: 1px solid $light-yellow-color-300;
+    background-color: $light-yellow-color-100;
+
+    .badge {
+      border: 1px solid $light-yellow-color-300;
+    }
+  }
 }
 
-.courseView, .courseContent {
+.courseView,
+.courseContent {
   display: flex;
   flex-direction: column;
   gap: 1rem;
   height: 100%;
+  overflow: auto;
+
+  .card {
+    display: grid;
+    gap: 0.5rem;
+
+    .title {
+      margin: 0;
+    }
+  }
+}
+
+.table .line {
+  margin: 10px 0;
+}
+
+.tableHeader,
+.tableItem {
+  display: grid;
+  grid-template-columns: 30% 20% 1fr;
+  justify-items: center;
+  align-items: center;
+
+  .gradeHeader {
+    display: grid;
+    grid-template-columns: repeat(4, 50px);
+    justify-items: center;
+    gap: 35px;
+    flex: 1;
+  }
+}
+
+.tableContent {
+  display: grid;
+}
+
+.tableItem {
+  padding: 0.5rem;
+
+  h3 {
+    font-weight: 600;
+    font-size: 1rem;
+    text-align: center;
+  }
 }

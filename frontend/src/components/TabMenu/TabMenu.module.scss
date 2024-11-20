@@ -1,9 +1,9 @@
 @import "../../styles/global.scss";
 
 .tabMenu {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
+  display: grid;
+  grid-template-rows: max-content;
+  justify-items: start;
   overflow: hidden;
 }
 
@@ -11,6 +11,8 @@
   display: flex;
   position: relative;
   border-bottom: 2px solid #ddd;
+  width: 100%;
+
 }
 
 .tab {
@@ -43,6 +45,7 @@
 
 .tabContent {
   display: grid;
+  width: 100%;
   margin-top: 1rem;
   gap: 5px;
   overflow: auto;

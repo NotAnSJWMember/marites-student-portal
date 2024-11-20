@@ -26,7 +26,7 @@ export const useDataContext = (endpoint) => {
   }
 
   return {
-    dataState: data || {},
+    dataState: data || [],
     loadingState: loading || false,
     errorState: error || null,
   };

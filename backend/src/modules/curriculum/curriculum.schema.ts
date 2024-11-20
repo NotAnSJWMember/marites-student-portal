@@ -7,7 +7,7 @@ export class Curriculum extends Document {
    programId: Types.ObjectId;
 
    @Prop({ required: true, type: [Types.ObjectId], ref: 'Course' })
-   courses: Types.ObjectId[];
+   coreCourses: Types.ObjectId[];
 
    @Prop({ type: [Types.ObjectId], ref: 'Course', default: [] })
    electiveCourses: Types.ObjectId[];
