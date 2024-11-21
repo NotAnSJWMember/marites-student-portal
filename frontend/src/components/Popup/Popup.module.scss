@@ -2,14 +2,15 @@
 
 .popupContent {
    position: fixed;
-   z-index: 99;
-   border: 1px solid $light-gray-color;
+   display: grid;
+   gap: 1rem;
    background: $light-primary-background;
-   border-radius: 0.5rem;
-   transform: scale(98%);
    box-shadow: $light-box-shadow-gray;
+   border: 1px solid $light-gray-color;
+   border-radius: 0.5rem;
    opacity: 0;
-   transition: 300ms $trans-smooth;
+   z-index: 99;
+   transition: 150ms $trans-smooth;
 
    &.center {
       top: 50%;
@@ -44,5 +45,4 @@
 
 .show {
    opacity: 1;
-   transform: scale(100%);
 }

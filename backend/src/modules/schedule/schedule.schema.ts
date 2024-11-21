@@ -13,7 +13,7 @@ export class Schedule extends Document {
    studentId: string;
 
    @Prop({ required: true })
-   instructor: string;
+   instructorId: string;
 
    @Prop({ required: true })
    startTime: string;

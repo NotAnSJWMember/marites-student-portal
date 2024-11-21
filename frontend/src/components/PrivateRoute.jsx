@@ -12,7 +12,7 @@ const PrivateRoute = ({ element, roles }) => {
     return <Navigate to="/login" />;
   }
 
-  if (!roles) {
+  if (!roles || !roles.includes(user.role)) {
     console.warn("Unauthorized access to route.");
     return <Navigate to="/unauthorized" />;
   }

@@ -4,7 +4,14 @@ import { getApiUrl } from "utils/api";
 
 const DataContext = createContext();
 
-export const useDataContext = (endpoint) => {
+const getToken = () => {
+  return localStorage.getItem("token");
+};
+
+let endpointId = null;
+let url = null;
+
+export const useDataContext = (endpoint, id = null) => {
   const context = useContext(DataContext);
 
   if (!context) {
@@ -17,12 +24,13 @@ export const useDataContext = (endpoint) => {
     throw new Error("Data, loading or error state is missing from the context");
   }
 
-  const data = dataState[endpoint];
-  const loading = loadingState[endpoint];
-  const error = errorState[endpoint];
+  const data = id ? dataState[`${endpoint}_${id}`] : dataState[endpoint];
+  const loading = id ? loadingState[`${endpoint}_${id}`] : loadingState[endpoint];
+  const error = id ? errorState[`${endpoint}_${id}`] : errorState[endpoint];
 
-  if (!data) {
-    console.log("Data has not been loaded yet for this endpoint.");
+  if (id) {
+    url = endpoint;
+    endpointId = id;
   }
 
   return {
@@ -37,43 +45,63 @@ export const DataProvider = ({ children }) => {
   const [loadingState, setLoadingState] = useState({});
   const [errorState, setErrorState] = useState({});
 
-  const fetchData = async (endpoint) => {
+  const fetchData = async (endpoint, id = null) => {
+    const token = getToken();
+
+    let url = `${getApiUrl()}/${endpoint}`;
+    if (id) {
+      url = `${url}/${id}`;
+    }
+
     try {
-      const response = await axios.get(`${getApiUrl()}/${endpoint}`);
+      setLoadingState((prev) => ({
+        ...prev,
+        [id ? `${endpoint}_${id}` : endpoint]: true,
+      }));
+
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       setDataState((prev) => ({
         ...prev,
-        [endpoint]: response.data,
+        [id ? `${endpoint}_${id}` : endpoint]: response.data,
       }));
     } catch (error) {
       setErrorState((prev) => ({
         ...prev,
-        [endpoint]: error.message || "Error fetching data",
+        [id ? `${endpoint}_${id}` : endpoint]: error.message || "Error fetching data",
       }));
     } finally {
       setLoadingState((prev) => ({
         ...prev,
-        [endpoint]: false,
+        [id ? `${endpoint}_${id}` : endpoint]: false,
       }));
     }
   };
 
   useEffect(() => {
     const endpoints = [
-      "course",
       "student",
       "instructor",
-      "section",
       "enrollment",
       "curriculum",
+      "section",
+      "course",
       "program",
+      "schedule",
     ];
 
-    endpoints.forEach((endpoint) => {
-      if (!dataState[endpoint]) {
-        fetchData(endpoint);
+    if (!dataState[endpoints]) {
+      if (endpointId) {
+        fetchData(url, endpointId);
       }
-    });
+      endpoints.forEach((endpoint) => {
+        fetchData(endpoint);
+      });
+    }
   }, []);
 
   return (

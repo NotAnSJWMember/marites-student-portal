@@ -49,82 +49,16 @@ export class ProgramService {
    async createDummyPrograms(): Promise<void> {
       const programs = [
          {
-            description: 'Bachelor of Science in Information Systems',
-            code: 'BSIS',
+            description: 'Bachelor of Science in Information Technology',
+            code: 'BSIT',
             duration: 4,
-            department: 'Engineering',
+            department: 'Computer Studies',
          },
          {
-            description: 'Bachelor of Science in Accountancy',
-            code: 'BSA',
-            duration: 5,
-            department: 'Business',
-         },
-         {
-            description: 'Bachelor of Science in Business Administration',
-            code: 'BSBA',
+            description: 'Bachelor of Science in Computer Science',
+            code: 'BSCS',
             duration: 4,
-            department: 'Business',
-         },
-         {
-            description: 'Bachelor of Science in Civil Engineering',
-            code: 'BSCE',
-            duration: 5,
-            department: 'Engineering',
-         },
-         {
-            description: 'Bachelor of Science in Mechanical Engineering',
-            code: 'BSME',
-            duration: 5,
-            department: 'Engineering',
-         },
-         {
-            description: 'Bachelor of Science in Nursing',
-            code: 'BSN',
-            duration: 4,
-            department: 'Health',
-         },
-         {
-            description: 'Bachelor of Science in Psychology',
-            code: 'BSPsych',
-            duration: 4,
-            department: 'Health',
-         },
-         {
-            description: 'Bachelor of Science in Biology',
-            code: 'BSBio',
-            duration: 4,
-            department: 'Science',
-         },
-         {
-            description: 'Bachelor of Science in Architecture',
-            code: 'BSArch',
-            duration: 5,
-            department: 'Engineering',
-         },
-         {
-            description: 'Bachelor of Science in Education',
-            code: 'BSEd',
-            duration: 4,
-            department: 'Education',
-         },
-         {
-            description: 'Bachelor of Arts in Communication',
-            code: 'BACOMM',
-            duration: 4,
-            department: 'Arts',
-         },
-         {
-            description: 'Bachelor of Science in Hospitality Management',
-            code: 'BSHM',
-            duration: 4,
-            department: 'Business',
-         },
-         {
-            description: 'Bachelor of Science in Tourism Management',
-            code: 'BSTM',
-            duration: 4,
-            department: 'Business',
+            department: 'Computer Studies',
          },
       ];
 

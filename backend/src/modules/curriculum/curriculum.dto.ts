@@ -12,20 +12,20 @@ export class CreateCurriculumDto {
    programId: string;
 
    @IsNotEmpty()
-   @IsNumber()
-   yearLevel: number;
-
-   @IsNotEmpty()
    @IsArray()
    @IsMongoId({ each: true })
-   courses: string[];
+   coreCourses: string[];
 
    @IsOptional()
    @IsArray()
    @IsMongoId({ each: true })
    electiveCourses?: string[];
 
-   @IsString()
    @IsNotEmpty()
-   semester: string;
+   @IsNumber()
+   yearLevel: number;
+
+   @IsNotEmpty()
+   @IsNumber()
+   semester: number;
 }

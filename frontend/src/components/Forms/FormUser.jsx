@@ -1,52 +1,35 @@
 import React, { useEffect } from "react";
-
-import UserIcon from "components/ui/UserIcon/UserIcon";
-import { FormInput, FormSelect } from "components/ui/Form";
-import { useTogglePassword } from "hooks";
-import { useForm } from "react-hook-form";
-
 import styles from "./FormUser.module.scss";
-import userIcon from "assets/images/profile.jpg";
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
 import { TbCloudDownload } from "react-icons/tb";
+
+import UserIcon from "components/ui/UserIcon/UserIcon";
+import { FormInput, FormPassword, FormSelect } from "components/ui/Form";
 import { FormStudent } from "./FormStudent";
-import { capitalize } from "lodash";
 
-export const FormUser = ({
-  role,
-  setShowPopup,
-  createAccount,
-  closePopup,
-  onNext,
-  isRegister,
-}) => {
-  const [showPassword, togglePasswordVisibility] = useTogglePassword();
+import { useForm } from "react-hook-form";
+import IconSizes from "constants/IconSizes";
+import { startCase } from "lodash";
 
-  const { watch, setValue, register, handleSubmit, reset } = useForm();
-
-  let firstName = watch("firstName");
-  let lastName = watch("lastName");
-
-  useEffect(() => {
-    const capitalizedFirstName = capitalize(firstName);
-    const capitalizedLastName = capitalize(lastName);
-
-    setValue("firstName", capitalizedFirstName);
-    setValue("lastName", capitalizedLastName);
-  }, [firstName, lastName, setValue]);
+export const FormUser = ({ role, setShowPopup, closePopup, isRegister, createAccount }) => {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm();
 
   const onCreateSubmit = async (data) => {
     const yearLevel = parseInt(data.yearLevel);
-    const birthDateString = data.birthDate;
-    const birthDate = new Date(birthDateString);
+    const birthDate = new Date(data.birthDate);
+    const firstName = startCase(data.firstName);
+    const lastName = startCase(data.lastName);
 
-    const userData = { ...data, birthDate, yearLevel };
+    const userData = { ...data, yearLevel, birthDate, firstName, lastName };
+
     const response = await createAccount(userData, role.toString(), reset);
-
     if (response.ok) setShowPopup(true);
   };
-
-  const MEDIUM_ICON_SIZE = 22;
 
   return (
     <form
@@ -62,14 +45,27 @@ export const FormUser = ({
             name="firstName"
             placeholder="First name"
             register={register}
+            errors={errors}
           />
-          <FormInput type="text" name="lastName" placeholder="Last name" register={register} />
+          <FormInput
+            type="text"
+            name="lastName"
+            placeholder="Last name"
+            register={register}
+            errors={errors}
+          />
         </div>
       </div>
       <div className={styles.line}></div>
       <div className={styles.twoColumn}>
         <h4>Birthdate</h4>
-        <FormInput type="date" name="birthDate" register={register} />
+        <FormInput
+          type="date"
+          name="birthDate"
+          placeholder="Birth date"
+          register={register}
+          errors={errors}
+        />
       </div>
       <div className={styles.line}></div>
       <div className={styles.twoColumn}>
@@ -82,28 +78,27 @@ export const FormUser = ({
             { value: "Female", label: "Female" },
           ]}
           register={register}
+          errors={errors}
         />
       </div>
       <div className={styles.line}></div>
       <div className={styles.twoColumn}>
         <h4>Login</h4>
         <div className={styles.twoColumn}>
-          <FormInput type="text" name="username" placeholder="Username" register={register} />
+          <FormInput
+            type="text"
+            name="username"
+            placeholder="Username"
+            register={register}
+            errors={errors}
+          />
           <div className={styles.formItem}>
-            <div className={styles.inputMerge}>
-              <input
-                placeholder="Password"
-                type={showPassword ? "text" : "password"}
-                {...register("password")}
-              />
-              <span className={styles.inputIcon} onClick={togglePasswordVisibility}>
-                {showPassword ? (
-                  <IoEyeOffOutline color="gray" size={20} />
-                ) : (
-                  <IoEyeOutline color="gray" size={20} />
-                )}
-              </span>
-            </div>
+            <FormPassword
+              name="password"
+              placeholder="Password"
+              register={register}
+              errors={errors}
+            />
           </div>
         </div>
       </div>
@@ -116,17 +111,15 @@ export const FormUser = ({
             name="email"
             placeholder="Email address"
             register={register}
+            errors={errors}
           />
           <div className={styles.formItem}>
-            <input
-              placeholder="12345678910"
+            <FormInput
               type="tel"
-              {...register("phoneNum", {
-                pattern: {
-                  value: /^\+?\d{1,3}?\s?\d{10}$/,
-                  message: "Phone number must be 10 digits",
-                },
-              })}
+              name="phoneNum"
+              placeholder="Phone number"
+              register={register}
+              errors={errors}
             />
           </div>
         </div>
@@ -135,10 +128,14 @@ export const FormUser = ({
       <div className={styles.twoColumn}>
         <h4>Profile Photo</h4>
         <div className={styles.changePhotoContainer}>
-          <UserIcon image={userIcon} desc="New user's profile photo" size={80} />
+          <UserIcon
+            image={"/images/default-user-photo.png"}
+            desc="New user's profile photo"
+            size={80}
+          />
           <div className={styles.changePhoto}>
             <button type="button" className={styles.iconBtn}>
-              <TbCloudDownload size={MEDIUM_ICON_SIZE} />
+              <TbCloudDownload size={IconSizes.MEDIUM} />
             </button>
             <p>
               <span>Click to upload</span> or drag and drop <br />
@@ -148,26 +145,18 @@ export const FormUser = ({
         </div>
       </div>
       <div className={styles.line}></div>
-      {role === "student" && <FormStudent register={register} />}
+      {role === "student" && <FormStudent register={register} errors={errors} />}
       <div className={styles.buttonContainer}>
         {isRegister ? (
           <a href="login" className={styles.ctaAnchor}>
             Already have an account?
           </a>
         ) : (
-          <button
-            onClick={closePopup}
-            type="button"
-            className={`${styles.cancelBtn} ${styles.ctaBtn}`}
-          >
+          <button onClick={closePopup} type="button" className={styles.secondaryBtn}>
             Cancel
           </button>
         )}
-        <button
-          type="submit"
-          onClick={onNext}
-          className={`${styles.primaryBtn} ${styles.ctaBtn}`}
-        >
+        <button type="submit" className={styles.primaryBtn}>
           Create account
         </button>
       </div>

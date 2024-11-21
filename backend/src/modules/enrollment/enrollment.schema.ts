@@ -22,6 +22,9 @@ export class Enrollment extends Document {
    @Prop({ required: true, enum: ['core', 'elective'] })
    type: string;
 
+   @Prop({ required: true, min: 1, max: 2 })
+   semester: number;
+
    @Prop({ default: 0.0, min: 0.0, max: 5.0 })
    prelim: number;
 

@@ -19,6 +19,7 @@ import usePostData from "hooks/usePostData";
 import { usePopupAlert } from "hooks";
 import { format } from "date-fns";
 import { debounce } from "lodash";
+import { useDataContext } from "hooks/contexts/DataContext";
 
 const Enrollment = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -37,14 +38,15 @@ const Enrollment = () => {
   const [currentTimelineStep, setCurrentTimelineStep] = useState(0);
   const [currentTimelineCourse, setCurrentTimelineCourse] = useState(null);
 
-  const { data: students } = useFetchData("student");
-  const { data: instructors } = useFetchData("instructor");
-  const { data: enrollments } = useFetchData("enrollment");
-  const { data: programs } = useFetchData("program");
-  const { data: courses } = useFetchData("course");
-  const { data: curriculums } = useFetchData("curriculum");
-  const { data: sections } = useFetchData("section");
-  const { popupState, showPopup, showError } = usePopupAlert();
+  const { dataState: students } = useDataContext("student");
+  const { dataState: instructors } = useDataContext("instructor");
+  const { dataState: enrollments } = useDataContext("enrollment");
+  const { dataState: programs } = useDataContext("program");
+  const { dataState: courses } = useDataContext("course");
+  const { dataState: curriculums } = useDataContext("curriculum");
+  const { dataState: sections } = useDataContext("section");
+
+  const { popupState, showPopup, showError, showSuccess } = usePopupAlert();
   const { postData } = usePostData();
 
   const steps = [
@@ -57,7 +59,6 @@ const Enrollment = () => {
   const groupedEnrollments = Object.values(
     enrollments.reduce((acc, enrollment) => {
       const { studentId, courseId, createdAt } = enrollment;
-
       if (!acc[studentId]) {
         acc[studentId] = {
           studentId,
@@ -65,7 +66,6 @@ const Enrollment = () => {
           createdAt,
         };
       }
-
       acc[studentId].courses.push(courseId);
       return acc;
     }, {})
@@ -79,23 +79,16 @@ const Enrollment = () => {
   }, [courses]);
 
   const studentProgram = useMemo(
-    () =>
-      programs.find((program) => program._id === selectedStudent?.programId),
+    () => programs.find((program) => program._id === selectedStudent?.programId),
     [selectedStudent, programs]
   );
 
   const studentCurriculum = useMemo(
-    () =>
-      curriculums.find(
-        (curriculum) => curriculum._id === selectedStudent?.curriculumId
-      ),
+    () => curriculums.find((curriculum) => curriculum._id === selectedStudent?.curriculumId),
     [selectedStudent, curriculums]
   );
 
-  const allSelectedCourses = [
-    ...selectedCourses.core,
-    ...selectedCourses.elective,
-  ];
+  const allSelectedCourses = [...selectedCourses.core, ...selectedCourses.elective];
   const allSectionsSelected = allSelectedCourses.every(
     (courseId) => selectedSections[courseId] !== undefined
   );
@@ -107,7 +100,7 @@ const Enrollment = () => {
   useEffect(() => {
     if (studentCurriculum) {
       setStudentCourses({
-        core: studentCurriculum.courses,
+        core: studentCurriculum.coreCourses,
         elective: studentCurriculum.electiveCourses,
       });
     }
@@ -115,9 +108,7 @@ const Enrollment = () => {
 
   const courseSections = useMemo(() => {
     return currentTimelineCourse
-      ? sections.filter(
-          (section) => section.courseId === currentTimelineCourse?._id
-        )
+      ? sections.filter((section) => section.courseId === currentTimelineCourse?._id)
       : [];
   }, [currentTimelineCourse, sections]);
 
@@ -157,14 +148,8 @@ const Enrollment = () => {
     const nextStep = currentTimelineStep + direction;
 
     if (nextStep < 0 || nextStep >= allSelectedCourses.length) return;
-    if (
-      selectedSections[currentTimelineCourse._id] === undefined &&
-      direction === 1
-    ) {
-      return showError(
-        "No section selected",
-        "Please choose a section for the course."
-      );
+    if (selectedSections[currentTimelineCourse._id] === undefined && direction === 1) {
+      return showError("No section selected", "Please choose a section for the course.");
     }
 
     setTimelineProgress((prev) => {
@@ -206,8 +191,7 @@ const Enrollment = () => {
 
   const handleSelectAllCourses = (courseIds, type) => {
     setSelectedCourses((prevState) => {
-      const updatedCourses =
-        prevState[type].length === courseIds.length ? [] : courseIds;
+      const updatedCourses = prevState[type].length === courseIds.length ? [] : courseIds;
 
       return {
         ...prevState,
@@ -242,18 +226,16 @@ const Enrollment = () => {
       sectionIds,
       courseTypes,
       studentId: selectedStudent.userId,
+      semester: studentCurriculum.semester,
     };
 
     await postData(body, "enrollment/batch-enroll");
+    showSuccess("Success!", `${selectedStudent.firstName} has been succesfully enrolled.`);
   };
 
   const renderStudentData = (data) => {
-    const student = students.find(
-      (student) => student.userId === data.studentId
-    );
-    const program = programs.find(
-      (program) => program._id === student?.programId
-    );
+    const student = students.find((student) => student.userId === data.studentId);
+    const program = programs.find((program) => program._id === student?.programId);
 
     return (
       student && (
@@ -261,9 +243,7 @@ const Enrollment = () => {
           <div className={styles.userContainer}>
             <UserIcon image={student.userPhoto} size={48} />
             <div className={styles.userInfo}>
-              <h4
-                className={styles.title}
-              >{`${student.firstName} ${student.lastName}`}</h4>
+              <h4 className={styles.title}>{`${student.firstName} ${student.lastName}`}</h4>
               <p className={styles.desc}>{student.email}</p>
             </div>
           </div>
@@ -275,9 +255,7 @@ const Enrollment = () => {
               ? `${data.courses.length} courses enrolled`
               : "No courses enrolled"}
           </p>
-          <p className={styles.createdAt}>
-            {formatDate(student.enrollmentDate)}
-          </p>
+          <p className={styles.createdAt}>{formatDate(student.enrollmentDate)}</p>
         </>
       )
     );
@@ -292,9 +270,7 @@ const Enrollment = () => {
           <div className={styles.userContainer}>
             <UserIcon image={data.userPhoto} size={48} />
             <div className={styles.userInfo}>
-              <h4
-                className={styles.title}
-              >{`${data.firstName} ${data.lastName}`}</h4>
+              <h4 className={styles.title}>{`${data.firstName} ${data.lastName}`}</h4>
               <p className={styles.desc}>{data.email}</p>
             </div>
           </div>
@@ -317,9 +293,7 @@ const Enrollment = () => {
     <div className={styles.popupWrapper}>
       <button className={styles.iconCta}>Edit details</button>
       <button className={styles.iconCta}>Export details</button>
-      <button className={`${styles.deleteBtn} ${styles.iconCta}`}>
-        Delete user
-      </button>
+      <button className={`${styles.deleteBtn} ${styles.iconCta}`}>Delete user</button>
     </div>
   );
 
@@ -365,9 +339,7 @@ const Enrollment = () => {
             className={styles.primaryBtn}
             onClick={() => handleSelectAllCourses(data, type)}
           >
-            {selectedCourses?.length === data?.length
-              ? "Deselect all"
-              : "Select all"}
+            {selectedCourses?.length === data?.length ? "Deselect all" : "Select all"}
           </button>
         </div>
         <div className={styles.courseContainer}>
@@ -378,9 +350,7 @@ const Enrollment = () => {
               <div
                 key={course._id}
                 className={`${styles.courseCard} ${
-                  selectedCourses[type].includes(course._id)
-                    ? styles.selected
-                    : null
+                  selectedCourses[type].includes(course._id) ? styles.selected : null
                 }`}
                 onClick={() => handleSelectCourse(course._id, type)}
               >
@@ -469,8 +439,8 @@ const Enrollment = () => {
                 <div className={styles.instructions}>
                   <h3 className={styles.title}>Instructions</h3>
                   <p className={styles.desc}>
-                    Please select the courses you'd like to enroll in. Click on
-                    each course to add it to your selection.
+                    Please select the courses you'd like to enroll in. Click on each course to
+                    add it to your selection.
                   </p>
                 </div>
                 <CourseList data={studentCourses.core} type="core" />
@@ -500,16 +470,11 @@ const Enrollment = () => {
                 <div className={styles.timelineContent}>
                   <h2>Selected Courses</h2>
                   <div className={styles.line}></div>
-                  <Timeline
-                    items={timelineItems}
-                    currentStep={currentTimelineStep}
-                  />
+                  <Timeline items={timelineItems} currentStep={currentTimelineStep} />
                 </div>
               </div>
               <div className={styles.sectionsContent}>
-                <h1>
-                  Enroll in a Section for {currentTimelineCourse?.description}
-                </h1>
+                <h1>Enroll in a Section for {currentTimelineCourse?.description}</h1>
                 <div className={styles.sectionsContainer}>
                   {courseSections.map((section) => {
                     const instructor = instructors.find(
@@ -520,9 +485,7 @@ const Enrollment = () => {
                         <div
                           key={section._id}
                           className={`${styles.sectionCard} ${
-                            selectedSections[
-                              currentTimelineCourse._id
-                            ]?.includes(section._id)
+                            selectedSections[currentTimelineCourse._id]?.includes(section._id)
                               ? styles.selected
                               : ""
                           }`}
@@ -530,12 +493,9 @@ const Enrollment = () => {
                         >
                           <div className={styles.spaceBetween}>
                             <div>
-                              <h3 className={styles.title}>
-                                {section.description}
-                              </h3>
+                              <h3 className={styles.title}>{section.description}</h3>
                               <p className={styles.desc}>
-                                {section?.capacity} out of{" "}
-                                {section?.availableSlots} enrolled
+                                {section?.capacity} out of {section?.availableSlots} enrolled
                               </p>
                             </div>
                             <span
@@ -545,9 +505,7 @@ const Enrollment = () => {
                                   : styles.redBadge
                               }`}
                             >
-                              {section?.isActive === true
-                                ? "Active"
-                                : "Inactive"}
+                              {section?.isActive === true ? "Active" : "Inactive"}
                             </span>
                           </div>
                           <div className={styles.line}></div>

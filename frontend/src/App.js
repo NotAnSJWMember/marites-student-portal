@@ -24,65 +24,70 @@ import "./App.scss";
 function App() {
   return (
     <HelmetProvider>
-        <Router>
-          <Routes>
-            {/* Main Routes */}
-            <Route path="/register" element={<Register />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
+      <Router>
+        <Routes>
+          {/* Main Routes */}
+          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
 
-            {/* Admin Routes */}
-            <Route
-              path="/admin/dashboard"
-              element={<PrivateRoute element={<AdminDashboard />} roles={["admin"]} />}
-            />
-            <Route
-              path="/admin/dashboard/user-management"
-              element={<PrivateRoute element={<UserManagement />} roles={["admin"]} />}
-            />
-            <Route
-              path="/admin/dashboard/academic-planner"
-              element={<PrivateRoute element={<AcademicPlanner />} roles={["admin"]} />}
-            />
-            <Route
-              path="/admin/dashboard/academic-planner/enrollment"
-              element={<PrivateRoute element={<Enrollment />} roles={["admin"]} />}
-            />
-            <Route
-              path="/admin/dashboard/academic-planner/curriculums"
-              element={<PrivateRoute element={<Curriculum />} roles={["admin"]} />}
-            />
+          {/* Admin Routes */}
+          <Route
+            path="/admin/dashboard"
+            element={<PrivateRoute element={<AdminDashboard />} roles={["admin"]} />}
+          />
+          <Route
+            path="/admin/dashboard/user-management"
+            element={<PrivateRoute element={<UserManagement />} roles={["admin"]} />}
+          />
+          <Route
+            path="/admin/dashboard/academic-planner"
+            element={<PrivateRoute element={<AcademicPlanner />} roles={["admin"]} />}
+          />
+          <Route
+            path="/admin/dashboard/academic-planner/enrollment"
+            element={<PrivateRoute element={<Enrollment />} roles={["admin"]} />}
+          />
+          <Route
+            path="/admin/dashboard/academic-planner/curriculums"
+            element={<PrivateRoute element={<Curriculum />} roles={["admin"]} />}
+          />
 
-            {/* Instructor Routes */}
-            <Route
-              path="/instructor/dashboard"
-              element={
-                <PrivateRoute element={<InstructorDashboard />} roles={["instructor"]} />
-              }
-            />
+          {/* Instructor Routes */}
+          <Route
+            path="/instructor/dashboard"
+            element={
+              <PrivateRoute
+                element={<InstructorDashboard />}
+                roles={["instructor", "admin"]}
+              />
+            }
+          />
 
-            {/* Student Routes */}
-            <Route
-              path="/student/dashboard"
-              element={<PrivateRoute element={<StudentDashboard />} roles={["student"]} />}
-            />
+          {/* Student Routes */}
+          <Route
+            path="/student/dashboard"
+            element={
+              <PrivateRoute element={<StudentDashboard />} roles={["student", "admin"]} />
+            }
+          />
 
-            <Route
-              path="/student/dashboard/courses"
-              element={<PrivateRoute element={<Courses />} roles={["student"]} />}
-            />
+          <Route
+            path="/student/dashboard/courses"
+            element={<PrivateRoute element={<Courses />} roles={["student", "admin"]} />}
+          />
 
-            {/* Error Routes */}
-            <Route path="/404" element={<ErrorPage errorCode={404} />} />
-            <Route path="/unauthorized" element={<ErrorPage errorCode={401} />} />
-            <Route path="/forbidden" element={<ErrorPage errorCode={403} />} />
-            <Route path="/500" element={<ErrorPage errorCode={500} />} />
+          {/* Error Routes */}
+          <Route path="/not-found" element={<ErrorPage errorCode={404} />} />
+          <Route path="/unauthorized" element={<ErrorPage errorCode={401} />} />
+          <Route path="/forbidden" element={<ErrorPage errorCode={403} />} />
+          <Route path="/server-error" element={<ErrorPage errorCode={500} />} />
 
-            {/* Default fallback page */}
-            <Route path="*" element={<ErrorPage errorCode={404} />} />
-          </Routes>
-        </Router>
+          {/* Default fallback page */}
+          <Route path="*" element={<ErrorPage errorCode={404} />} />
+        </Routes>
+      </Router>
     </HelmetProvider>
   );
 }

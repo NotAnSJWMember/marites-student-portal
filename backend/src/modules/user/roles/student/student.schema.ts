@@ -10,17 +10,17 @@ export class Student extends User {
    @Prop({ type: Types.ObjectId, ref: 'Curriculum' })
    curriculumId: Types.ObjectId;
 
-   @Prop({ default: 1, required: true, min: 1, max: 5 })
-   yearLevel: number;
-
-   @Prop({ default: 1, required: true, min: 1, max: 2 })
-   currentSemester: number;
-
    @Prop({ default: false })
    enrollmentStatus: boolean;
 
-   @Prop({ type: Date, default: Date.now() })
+   @Prop({ type: Date })
    enrollmentDate: Date;
+
+   @Prop({ required: true, default: 1, min: 1, max: 5 })
+   yearLevel: number;
+
+   @Prop({ required: true, default: 1, min: 1, max: 2 })
+   currentSemester: number;
 }
 
 export const StudentSchema = SchemaFactory.createForClass(Student);

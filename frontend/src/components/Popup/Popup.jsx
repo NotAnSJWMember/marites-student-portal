@@ -6,8 +6,8 @@ const Popup = ({
    show,
    close,
    position,
-   children,
    handleClickOutside = true,
+   children,
 }) => {
    const positionClass = styles[position];
    const [shouldRender, setShouldRender] = useState(false);

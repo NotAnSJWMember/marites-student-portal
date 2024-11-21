@@ -24,10 +24,11 @@ const Curriculum = () => {
 
   const updateState = (key, value) => setState((prev) => ({ ...prev, [key]: value }));
 
-  const { data: programs, loading: loadingPrograms } = useFetchData("program");
-  const { data: curriculums, loading: loadingCurriculums } = useFetchData("curriculum");
-  const { data: courses, loading: loadingCourses } = useFetchData("course");
-  const { data: users, loading: loadingUsers } = useFetchData("user");
+  const { data: programs } = useFetchData("program");
+  const { data: curriculums } = useFetchData("curriculum");
+  const { data: courses } = useFetchData("course");
+  const { data: users } = useFetchData("user");
+
   const { popupState, showPopup, setShowPopup, showError } = usePopupAlert();
 
   const pageLabels = {
@@ -89,9 +90,6 @@ const Curriculum = () => {
     updateState("currentMode", mode);
     handleNextStep();
   };
-
-  const isLoading = loadingPrograms || loadingCurriculums || loadingUsers || loadingCourses;
-  if (isLoading) return <Loading />;
 
   const YearCard = ({ yearIndex }) => (
     <div className={styles.curriculumCard}>
@@ -196,7 +194,7 @@ const Curriculum = () => {
                     {
                       title: "Core courses",
                       desc: "Mandatory courses essential to the field.",
-                      data: curriculum.courses,
+                      data: curriculum.coreCourses,
                     },
                     {
                       title: "Elective courses",

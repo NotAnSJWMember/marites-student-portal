@@ -37,6 +37,12 @@
    color: $light-gray-color-600;
 }
 
+.userPopup {
+   display: grid;
+   gap: 1rem;
+   padding: 1.5rem;
+}
+
 .popupWrapper {
    padding: 0.5rem;
 

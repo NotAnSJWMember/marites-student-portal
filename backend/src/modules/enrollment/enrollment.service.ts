@@ -74,6 +74,7 @@ export class EnrollmentService {
       sectionIds: Types.ObjectId[],
       courseTypes: string[],
       studentId: string,
+      semester: number,
    ): Promise<Enrollment[]> {
       if (
          courseIds.length !== sectionIds.length ||
@@ -109,7 +110,7 @@ export class EnrollmentService {
                courseId,
                sectionId,
                studentId,
-               instructor: section.instructorId,
+               instructorId: section.instructorId,
                startTime: section.startTime,
                endTime: section.endTime,
                roomCode: section.roomCode,
@@ -124,6 +125,7 @@ export class EnrollmentService {
                courseId,
                scheduleId: savedSchedule._id,
                studentId,
+               semester,
                status: Status.ENROLLED,
                remarks: 'Enrolled in course',
                type: courseType,
@@ -134,7 +136,12 @@ export class EnrollmentService {
             // Update student status
             await this.studentModel.updateOne(
                { userId: studentId },
-               { $set: { enrollmentStatus: true } },
+               {
+                  $set: {
+                     enrollmentStatus: true,
+                     enrollmentDate: Date.now(),
+                  },
+               },
                { session },
             );
 
