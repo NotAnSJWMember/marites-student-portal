@@ -37,7 +37,7 @@ const TimeTable = ({ schedules }) => {
   const startHour = earliestTime.getHours();
   const endHour = latestTime.getHours();
 
-  const calculateHeight = (course, startTime, endTime) => {
+  const calculateHeight = (startTime, endTime) => {
     const start = parse(startTime, "hh:mm a", new Date());
     const end = parse(endTime, "hh:mm a", new Date());
 
@@ -59,10 +59,7 @@ const TimeTable = ({ schedules }) => {
         </div>
 
         {/* Body: Time slots and schedules */}
-        <div
-          className={styles.body}
-          style={{ gridTemplateRows: `repeat(${startHour + 1}, 40px)` }}
-        >
+        <div className={styles.body}>
           {Array.from({ length: endHour - startHour + 1 }, (_, i) => i + startHour).map(
             (hour) =>
               [0, 30].map((minute) => {
@@ -92,7 +89,6 @@ const TimeTable = ({ schedules }) => {
                               className={styles.sched}
                               style={{
                                 height: `${calculateHeight(
-                                  course,
                                   schedule.startTime,
                                   schedule.endTime
                                 )}px`,

@@ -20,6 +20,7 @@ import { usePopupAlert } from "hooks";
 import { format } from "date-fns";
 import { debounce } from "lodash";
 import { useDataContext } from "hooks/contexts/DataContext";
+import Loading from "components/Loading/Loading";
 
 const Enrollment = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -47,7 +48,7 @@ const Enrollment = () => {
   const { dataState: sections } = useDataContext("section");
 
   const { popupState, showPopup, showError, showSuccess } = usePopupAlert();
-  const { postData } = usePostData();
+  const { postData, loading } = usePostData();
 
   const steps = [
     "Enrollment",
@@ -556,12 +557,18 @@ const Enrollment = () => {
                     type="button"
                     className={styles.primaryBtn}
                     onClick={
-                      allSectionsSelected
+                      allSectionsSelected &&
+                      currentTimelineStep === allSelectedCourses.length - 1
                         ? () => handleEnrollStudent()
                         : () => handleTimelineNavigation(1)
                     }
+                    disabled={loading}
                   >
-                    {allSectionsSelected ? "Enroll Student" : "Next course"}
+                    {allSectionsSelected &&
+                    currentTimelineStep === allSelectedCourses.length - 1
+                      ? "Enroll Student"
+                      : "Next course"}
+                    {loading && <Loading />}
                   </button>
                 </div>
               </div>
