@@ -20,6 +20,7 @@ import UserManagement from "./pages/Dashboard/Admin/pages/UserManagement";
 import Courses from "pages/Dashboard/Student/pages/Courses";
 
 import "./App.scss";
+import Home from "pages/Home/Home";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
       <Router>
         <Routes>
           {/* Main Routes */}
+          <Route path="/" element={<Home />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
