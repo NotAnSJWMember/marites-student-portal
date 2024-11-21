@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./Courses.module.scss";
 
 import Layout from "components/Layout/Layout";
@@ -12,13 +12,14 @@ import { findDataById } from "utils/findDataById";
 import { findDataByUserId } from "utils/findDataByUserId";
 import { findDataByCourseId } from "utils/findDataByCourseId";
 import TimeTable from "components/Table/TimeTable";
+import useFetchData from "hooks/useFetchData";
 
 const Courses = () => {
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const { user: session } = useAuth();
-  const { dataState: student } = useDataContext("student", session.userId);
+  const { data: student } = useFetchData(`student/${session.userId}`);
 
   const { dataState: enrollments } = useDataContext("enrollment");
   const { dataState: schedules } = useDataContext("schedule");
@@ -27,19 +28,15 @@ const Courses = () => {
   const { dataState: instructors } = useDataContext("instructor");
 
   useEffect(() => {
-    if (student && enrollments && instructors && sections && courses) {
+    if (student && enrollments && schedules && courses && sections && instructors) {
       setLoading(false);
-    } else {
-      setLoading(true);
     }
-  }, [student, enrollments, instructors, sections, courses]);
+  }, [student, enrollments, schedules, courses, sections, instructors]);
 
   const studentEnrollments = enrollments?.filter((e) => e.studentId === student?.userId);
-
   const studentSchedules = schedules?.filter((s) =>
     studentEnrollments?.some((e) => e.scheduleId === s._id)
   );
-
   const [coreCourses, electiveCourses] = studentEnrollments.reduce(
     (acc, enrollment) => {
       enrollment.type === "core" ? acc[0].push(enrollment) : acc[1].push(enrollment);
@@ -47,7 +44,6 @@ const Courses = () => {
     },
     [[], []]
   );
-
   const allCourses = [...coreCourses, ...electiveCourses];
 
   const handleSelectCourse = (courseId) => {
@@ -143,7 +139,9 @@ const Courses = () => {
             return (
               course && (
                 <div key={enrollment._id} className={styles.tableItem}>
-                  <p><strong>{course.description}</strong></p>
+                  <p>
+                    <strong>{course.description}</strong>
+                  </p>
                   <p>{instructorName}</p>
                   <div className={styles.gradeHeader}>
                     <p>{checkAndFormatGrade(enrollment.prelim)}</p>
@@ -177,57 +175,61 @@ const Courses = () => {
     { label: "1st Semester", content: <GradeView semester={1} /> },
     { label: "2nd Semester", content: <GradeView semester={2} /> },
   ];
-
   return (
     <Layout role="student" pageName="Courses">
-      {allCourses.length !== 0 ? (
+      {!loading ? (
         <>
-          <div className={styles.contentDivider}>
-            <aside className={styles.sideContent}>
-              <section className={styles.courseView}>
-                <div className={styles.alignCenter}>
-                  <h1>Courses</h1>
-                  <p className={styles.badge}>
-                    <strong>{studentEnrollments.length}</strong>
-                  </p>
-                </div>
-                <TabMenu tabs={tabs} />
-              </section>
-            </aside>
-            <main className={styles.mainContent}>
-              <section className={styles.courseContent}>
-                {selectedCourse ? (
-                  <ContentView />
-                ) : (
-                  <div className={styles.description}>
-                    <h2 className={styles.title}>Overview</h2>
-                    <p className={styles.desc}>
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempora illo
-                      nam, minus dolore modi beatae dolorem vitae molestiae libero consectetur.
+          {studentEnrollments.length !== 0 ? (
+            <div className={styles.contentDivider}>
+              <aside className={styles.sideContent}>
+                <section className={styles.courseView}>
+                  <div className={styles.alignCenter}>
+                    <h1>Courses</h1>
+                    <p className={styles.badge}>
+                      <strong>{studentEnrollments.length}</strong>
                     </p>
                   </div>
-                )}
-              </section>
-              <section className={styles.card}>
-                <h3 className={styles.title}>Grades</h3>
-                <TabMenu tabs={allCoursesTabs} />
-              </section>
-              <section className={styles.card}>
-                <h3 className={styles.title}>Schedule</h3>
-                <TimeTable schedules={studentSchedules} />
+                  <TabMenu tabs={tabs} />
+                </section>
+              </aside>
+              <main className={styles.mainContent}>
+                <section className={styles.courseContent}>
+                  {selectedCourse ? (
+                    <ContentView />
+                  ) : (
+                    <div className={styles.description}>
+                      <h2 className={styles.title}>Overview</h2>
+                      <p className={styles.desc}>
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempora illo
+                        nam, minus dolore modi beatae dolorem vitae molestiae libero
+                        consectetur.
+                      </p>
+                    </div>
+                  )}
+                </section>
+                <section className={styles.card}>
+                  <h3 className={styles.title}>Grades</h3>
+                  <TabMenu tabs={allCoursesTabs} />
+                </section>
+                <section className={styles.card}>
+                  <h3 className={styles.title}>Schedule</h3>
+                  <TimeTable schedules={studentSchedules} />
+                </section>
+              </main>
+            </div>
+          ) : (
+            <main className={styles.mainContent}>
+              <section className={styles.emptyContent}>
+                <div className={styles.info}>
+                  <h1 className={styles.title}>Oh snap!</h1>
+                  <p className={styles.desc}>It looks like you haven't been enrolled yet.</p>
+                </div>
               </section>
             </main>
-          </div>
+          )}
         </>
       ) : (
-        <main className={styles.mainContent}>
-          <section className={styles.emptyContent}>
-            <div className={styles.info}>
-              <h1 className={styles.title}>Oh snap!</h1>
-              <p className={styles.desc}>It looks like you haven't been enrolled yet.</p>
-            </div>
-          </section>
-        </main>
+        <Loading />
       )}
     </Layout>
   );

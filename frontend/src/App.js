@@ -4,6 +4,7 @@ import { HelmetProvider } from "react-helmet-async";
 import PrivateRoute from "./components/PrivateRoute";
 import ErrorPage from "pages/ErrorPage/ErrorPage";
 
+import Home from "pages/Home/Home";
 import Login from "./pages/Login/Login";
 import Register from "./pages/Register/Register";
 import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
@@ -18,9 +19,13 @@ import Curriculum from "pages/Dashboard/Admin/pages/Curriculum";
 import AcademicPlanner from "pages/Dashboard/Admin/pages/AcademicPlanner";
 import UserManagement from "./pages/Dashboard/Admin/pages/UserManagement";
 import Courses from "pages/Dashboard/Student/pages/Courses";
+import Schedule from "pages/Dashboard/Student/pages/Schedule";
+import Finance from "pages/Dashboard/Student/pages/Finance";
+import Examboard from "pages/Dashboard/Student/pages/Examboard";
+import Announcements from "pages/Dashboard/Student/pages/Announcements";
+import Assignments from "pages/Dashboard/Student/pages/Assignments";
 
 import "./App.scss";
-import Home from "pages/Home/Home";
 
 function App() {
   return (
@@ -74,7 +79,26 @@ function App() {
               <PrivateRoute element={<StudentDashboard />} roles={["student", "admin"]} />
             }
           />
-
+          <Route
+            path="/student/dashboard/assignments"
+            element={<PrivateRoute element={<Assignments />} roles={["student", "admin"]} />}
+          />
+          <Route
+            path="/student/dashboard/announcements"
+            element={<PrivateRoute element={<Announcements />} roles={["student", "admin"]} />}
+          />
+          <Route
+            path="/student/dashboard/examboard"
+            element={<PrivateRoute element={<Examboard />} roles={["student", "admin"]} />}
+          />
+          <Route
+            path="/student/dashboard/schedule"
+            element={<PrivateRoute element={<Schedule />} roles={["student", "admin"]} />}
+          />
+          <Route
+            path="/student/dashboard/finance"
+            element={<PrivateRoute element={<Finance />} roles={["student", "admin"]} />}
+          />
           <Route
             path="/student/dashboard/courses"
             element={<PrivateRoute element={<Courses />} roles={["student", "admin"]} />}

@@ -15,6 +15,7 @@
   .header {
     display: grid;
     grid-template-columns: 100px repeat(6, 1fr);
+    
     grid-column: span 7;
     text-align: center;
     border-bottom: 1px solid $light-gray-color-100;
@@ -29,7 +30,7 @@
     position: relative;
     display: grid;
     grid-template-columns: 100px repeat(6, 1fr);
-    grid-template-rows: repeat(22 , 40px);
+    grid-template-rows: repeat(auto-fill , 40px);
     grid-column: span 7;
     gap: 0 7px;
   }
@@ -38,6 +39,7 @@
 .timeSlot {
   display: grid;
   grid-template-columns: 100px repeat(6, 1fr);
+  grid-template-rows: repeat(auto-fill , 40px);
   gap: 7px;
   grid-column: span 7;
 
