@@ -5,7 +5,6 @@ import { Student } from './student.schema';
 import { UserService } from '../../user.service';
 import { CreateStudentDto } from './student.dto';
 import { CurriculumService } from 'src/modules/curriculum/curriculum.service';
-import { User } from '../../user.schema';
 
 @Injectable()
 export class StudentService {
@@ -13,7 +12,6 @@ export class StudentService {
 
    constructor(
       @InjectModel(Student.name) private studentModel: Model<Student>,
-      @InjectModel(User.name) private userModel: Model<User>,
       private userService: UserService,
       private curriculumService: CurriculumService,
    ) {}
@@ -48,9 +46,11 @@ export class StudentService {
 
    async findAll(): Promise<Student[]> {
       this.logger.log('Fetching all users...');
-      const users = await this.studentModel.find().exec();
-      this.logger.log(`Fetched ${users.length} users.`);
-      return users;
+
+      const students = await this.studentModel.find().exec();
+      this.logger.log(`Fetched ${students.length} users.`);
+
+      return students;
    }
 
    async findOne(userId: string): Promise<Student> {
@@ -73,14 +73,6 @@ export class StudentService {
       return student;
    }
 
-   async findByUserId(userId: string): Promise<Student | null> {
-      return this.studentModel.findOne({ userId }).exec();
-   }
-
-   async findByUsername(username: string): Promise<Student | null> {
-      return this.studentModel.findOne({ username }).exec();
-   }
-
    async update(
       id: string,
       userData: Partial<CreateStudentDto>,
@@ -92,5 +84,13 @@ export class StudentService {
 
    async delete(userId: string): Promise<void> {
       await this.userService.delete(userId);
+   }
+
+   async findByUserId(userId: string): Promise<Student | null> {
+      return this.studentModel.findOne({ userId }).exec();
+   }
+
+   async findByUsername(username: string): Promise<Student | null> {
+      return this.studentModel.findOne({ username }).exec();
    }
 }

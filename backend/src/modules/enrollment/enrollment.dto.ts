@@ -9,42 +9,51 @@ import {
 import { Types } from 'mongoose';
 
 export class CreateEnrollmentDto {
+   @IsNotEmpty()
    @IsString()
    courseId: Types.ObjectId;
 
    @IsNotEmpty()
+   @IsString()
    studentId: string;
 
    @IsNotEmpty()
    @IsEnum(['core', 'elective'])
    type: string;
 
-   @IsOptional()
-   @IsNumber()
-   prelim: number;
-
-   @IsOptional()
-   @IsNumber()
-   midterm: number;
-
-   @IsOptional()
-   @IsNumber()
-   prefinal: number;
-
-   @IsOptional()
-   @IsNumber()
-   final: number;
-
-   @IsOptional()
-   @IsString()
-   remarks: string;
-
    @IsNotEmpty()
    @IsString()
+   schoolYear: string;
+
+   @IsNotEmpty()
+   @IsNumber()
+   semester: number;
+
+   @IsOptional()
+   @IsNumber()
+   prelim?: number;
+
+   @IsOptional()
+   @IsNumber()
+   midterm?: number;
+
+   @IsOptional()
+   @IsNumber()
+   prefinal?: number;
+
+   @IsOptional()
+   @IsNumber()
+   final?: number;
+
+   @IsOptional()
+   @IsString()
+   remarks?: string;
+
+   @IsNotEmpty()
    @IsEnum(['Enrolled', 'Completed', 'NC', 'INC'])
-   status: string[];
+   status: string;
 
    @IsOptional()
    @IsBoolean()
-   dropped: boolean;
+   dropped?: boolean;
 }

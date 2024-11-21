@@ -14,13 +14,14 @@ import Timeline from "components/Timeline/Timeline";
 import PopupAlert from "components/Popup/PopupAlert";
 
 import IconSizes from "constants/IconSizes";
-import useFetchData from "hooks/useFetchData";
 import usePostData from "hooks/usePostData";
 import { usePopupAlert } from "hooks";
 import { format } from "date-fns";
 import { debounce } from "lodash";
 import { useDataContext } from "hooks/contexts/DataContext";
 import Loading from "components/Loading/Loading";
+import { findDataByUserId } from "utils/findDataByUserId";
+import { findDataById } from "utils/findDataById";
 
 const Enrollment = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -222,12 +223,26 @@ const Enrollment = () => {
       }
     });
 
+    const studentProgram = programs ? findDataById(programs, selectedStudent.programId) : null;
+
+    const fee = studentProgram.fees.find(
+      (item) => item.semester === studentCurriculum.semester
+    );
+
+    const tuitionFee = {
+      amount: 0,
+      totalDue: fee.tuitionFee,
+      discounts: [],
+    };
+
     const body = {
       courseIds,
       sectionIds,
       courseTypes,
+      schoolYear: "2024-2025",
       studentId: selectedStudent.userId,
       semester: studentCurriculum.semester,
+      tuitionFee,
     };
 
     await postData(body, "enrollment/batch-enroll");

@@ -19,8 +19,11 @@ export class Student extends User {
    @Prop({ required: true, default: 1, min: 1, max: 5 })
    yearLevel: number;
 
-   @Prop({ required: true, default: 1, min: 1, max: 2 })
+   @Prop({ default: 1, min: 1, max: 2 })
    currentSemester: number;
+
+   @Prop({ type: [{ type: Types.ObjectId, ref: 'Finance' }] })
+   financeRecords: Types.ObjectId[];
 }
 
 export const StudentSchema = SchemaFactory.createForClass(Student);

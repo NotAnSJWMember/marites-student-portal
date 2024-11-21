@@ -35,8 +35,8 @@ export const FormInput = ({ type, name, placeholder, register, errors, ...props 
           required: `${placeholder} is required`,
           ...(type === "tel" && {
             pattern: {
-              value: /^[0-9]{10}$/, 
-              message: "Phone number must be exactly 10 digits",
+              value: /^[0-9]{11}$/, 
+              message: "Phone number must be exactly 11 digits",
             },
           }),
         })}

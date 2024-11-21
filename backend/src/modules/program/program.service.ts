@@ -64,4 +64,49 @@ export class ProgramService {
 
       await this.programModel.insertMany(programs);
    }
+
+   async createMiscFees(): Promise<void> {
+      const miscellaneousFees = [
+         {
+            feeType: 'Library Fee',
+            amount: 500,
+            description:
+               'Fee for accessing the library resources and borrowing books',
+            _id: new Types.ObjectId(),
+         },
+         {
+            feeType: 'Laboratory Fee',
+            amount: 1500,
+            description:
+               'Fee for using the laboratory facilities for hands-on practice',
+            _id: new Types.ObjectId(),
+         },
+         {
+            feeType: 'Activity Fee',
+            amount: 800,
+            description: 'Fee for student activities and campus events',
+            _id: new Types.ObjectId(),
+         },
+         {
+            feeType: 'Technology Fee',
+            amount: 1000,
+            description:
+               'Fee for maintaining and upgrading technology on campus',
+            _id: new Types.ObjectId(),
+         },
+         {
+            feeType: 'Student Health Fee',
+            amount: 300,
+            description:
+               'Fee for health services and medical assistance on campus',
+            _id: new Types.ObjectId(),
+         },
+      ];
+
+      const id = '672ee7ad7c40b8f5027d6741';
+      await this.programModel.updateOne(
+         { _id: id },
+         { $set: { miscellaneousFees: miscellaneousFees } },
+      );
+   }
 }

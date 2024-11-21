@@ -96,6 +96,7 @@ export const DataProvider = ({ children }) => {
       "course",
       "program",
       "schedule",
+      "finance",  
     ];
 
     if (!dataState[endpoints]) {

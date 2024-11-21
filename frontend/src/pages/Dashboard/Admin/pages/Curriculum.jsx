@@ -134,6 +134,12 @@ const Curriculum = () => {
         <section className={styles.wrapper}>
           {state.currentStep === 1 && (
             <>
+              {!state.curriculumData.length && state.selectedProgram && (
+                <MessageWarning
+                  title="This program does not have a curriculum!"
+                  message="Create one by proceeding to the next step."
+                />
+              )}
               <div className={styles.selectProgram}>
                 <div className={styles.programsList}>
                   {programs.map((program) => (
@@ -150,16 +156,7 @@ const Curriculum = () => {
                   ))}
                 </div>
               </div>
-              {!state.curriculumData.length && state.selectedProgram && (
-                <MessageWarning
-                  title="This program does not have a curriculum!"
-                  message="Create one by proceeding to the next step."
-                />
-              )}
-              <button
-                onClick={handleNextStep}
-                className={`${styles.primaryBtn} ${styles.ctaBtn}`}
-              >
+              <button onClick={handleNextStep} className={styles.primaryBtn}>
                 Next step
               </button>
             </>

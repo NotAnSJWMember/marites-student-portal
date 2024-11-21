@@ -6,9 +6,9 @@ import { getApiUrl } from "utils/api";
 
 const useDeleteData = (endpoint) => {
    const { error, fetchData } = useFetchData(endpoint);
-
    const { setShowPopup, showError, showSuccess, ...popupProps } =
       usePopupAlert();
+
    const [loadingDelete, setLoadingDelete] = useState(false);
 
    const deleteData = useCallback(

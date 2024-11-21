@@ -14,6 +14,7 @@ import useFetchData from "hooks/useFetchData";
 import useDeleteData from "hooks/useDeleteData";
 import { useRegister } from "hooks";
 import { format, formatDistanceToNow } from "date-fns";
+import { capitalize } from "lodash";
 
 const UserManagement = () => {
   const [shouldRefetch, setShouldRefetch] = useState(false);
@@ -29,7 +30,8 @@ const UserManagement = () => {
   } = useDeleteData("user");
   const {
     popupState: createState,
-    setShowPopup: setShowCreatePopup,
+    showPopup: showCreatePopup,
+    loading,
     createAccount,
   } = useRegister();
 
@@ -58,7 +60,7 @@ const UserManagement = () => {
             <p className={styles.desc}>{data.email}</p>
           </div>
         </div>
-        <p className={styles.role}>{data.role}</p>
+        <p>{capitalize(data.role)}</p>
         <p className={styles.lastActive}>
           {formatDistanceToNow(data.lastActive, { addSuffix: true })}
         </p>
@@ -109,6 +111,7 @@ const UserManagement = () => {
           </div>
         </section>
       </main>
+
       <Popup
         show={showUserPopup}
         close={handleShowCreatePopup}
@@ -119,12 +122,13 @@ const UserManagement = () => {
           <h2>Create a user</h2>
           <FormUser
             role="student"
-            setShowPopup={setShowCreatePopup}
+            loading={loading}
             createAccount={createAccount}
             closePopup={handleShowCreatePopup}
           />
         </div>
       </Popup>
+
       <PopupAlert
         icon={deleteState.icon}
         border={deleteState.border}
@@ -132,6 +136,15 @@ const UserManagement = () => {
         title={deleteState.title}
         message={deleteState.message}
         show={showDeletePopup}
+      />
+
+      <PopupAlert
+        icon={createState.icon}
+        border={createState.border}
+        color={createState.color}
+        title={createState.title}
+        message={createState.message}
+        show={showCreatePopup}
       />
     </Layout>
   );

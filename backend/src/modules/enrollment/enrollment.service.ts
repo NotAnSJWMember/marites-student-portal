@@ -7,6 +7,8 @@ import { Course } from '../course/course.schema';
 import { Section } from '../section/section.schema';
 import { Schedule } from '../schedule/schedule.schema';
 import { Student } from '../user/roles/student/student.schema';
+import { Finance } from '../finance/finance.schema';
+import { Program } from '../program/program.schema';
 
 @Injectable()
 export class EnrollmentService {
@@ -19,62 +21,18 @@ export class EnrollmentService {
       @InjectModel(Section.name) private sectionModel: Model<Section>,
       @InjectModel(Schedule.name) private scheduleModel: Model<Schedule>,
       @InjectModel(Student.name) private studentModel: Model<Student>,
+      @InjectModel(Finance.name) private financeModel: Model<Finance>,
+      @InjectModel(Program.name) private programModel: Model<Program>,
    ) {}
-
-   async enroll(
-      courseId: Types.ObjectId,
-      studentId: string,
-   ): Promise<Enrollment> {
-      const hasPrerequisites = await this.checkPrerequisites(
-         courseId,
-         studentId,
-      );
-      if (!hasPrerequisites) {
-         throw new Error(
-            'Student has not completed the prerequisites for this course.',
-         );
-      }
-
-      const enrollment = new this.enrollmentModel({
-         courseId,
-         studentId,
-         status: Status.ENROLLED,
-         remarks: 'Enrolled in course',
-      });
-
-      await enrollment.save();
-
-      const section = await this.sectionModel.findOne({
-         courseId,
-      });
-
-      if (!section) {
-         throw new Error('Section not found');
-      }
-
-      const schedule = new this.scheduleModel({
-         courseId,
-         sectionId: section._id,
-         studentId,
-         instructor: section.instructorId,
-         startTime: section.startTime,
-         endTime: section.endTime,
-         roomCode: section.roomCode,
-         days: section.days,
-         description: section.description,
-      });
-
-      await schedule.save();
-
-      return enrollment;
-   }
 
    async batchEnroll(
       courseIds: Types.ObjectId[],
       sectionIds: Types.ObjectId[],
       courseTypes: string[],
       studentId: string,
+      schoolYear: string,
       semester: number,
+      tuitionFee: { totalDue: number; discounts: { amount: number }[] },
    ): Promise<Enrollment[]> {
       if (
          courseIds.length !== sectionIds.length ||
@@ -92,6 +50,20 @@ export class EnrollmentService {
       session.startTransaction();
 
       try {
+         const finance = new this.financeModel({
+            studentId,
+            tuitionFee,
+            outstandingBalance: this.calculateOutstandingBalance(tuitionFee),
+            paymentStatus: {
+               status: 'unpaid',
+               lastUpdated: new Date(),
+            },
+            schoolYear,
+            semester,
+         });
+
+         const savedFinance = await finance.save({ session });
+
          for (let i = 0; i < courseIds.length; i++) {
             const courseId = courseIds[i];
             const sectionId = sectionIds[i];
@@ -100,12 +72,12 @@ export class EnrollmentService {
             const section = await this.sectionModel
                .findById(sectionId)
                .session(session);
+
             if (!section) {
                errors.push(`Section not found for course ${courseId}`);
                continue;
             }
 
-            // Create schedule
             const schedule = new this.scheduleModel({
                courseId,
                sectionId,
@@ -120,11 +92,11 @@ export class EnrollmentService {
 
             const savedSchedule = await schedule.save({ session });
 
-            // Create enrollment
             const enrollment = new this.enrollmentModel({
                courseId,
                scheduleId: savedSchedule._id,
                studentId,
+               schoolYear,
                semester,
                status: Status.ENROLLED,
                remarks: 'Enrolled in course',
@@ -133,13 +105,13 @@ export class EnrollmentService {
 
             await enrollment.save({ session });
 
-            // Update student status
             await this.studentModel.updateOne(
                { userId: studentId },
                {
                   $set: {
                      enrollmentStatus: true,
                      enrollmentDate: Date.now(),
+                     financeRecords: [savedFinance._id],
                   },
                },
                { session },
@@ -165,11 +137,6 @@ export class EnrollmentService {
       return enrollments;
    }
 
-   async create(createEnrollmentDto: CreateEnrollmentDto): Promise<Enrollment> {
-      const newEnrollment = new this.enrollmentModel(createEnrollmentDto);
-      return newEnrollment.save();
-   }
-
    async findAll(): Promise<Enrollment[]> {
       return this.enrollmentModel.find().exec();
    }
@@ -191,8 +158,19 @@ export class EnrollmentService {
       return this.enrollmentModel.findByIdAndDelete(id).exec();
    }
 
-   async findEnrollmentsByStudent(studentId: string): Promise<Enrollment[]> {
-      return await this.enrollmentModel.find({ studentId }).lean();
+   private calculateOutstandingBalance(tuitionFee: {
+      totalDue: number;
+      discounts: { amount: number }[];
+   }): number {
+      let outstandingBalance = tuitionFee.totalDue;
+      if (tuitionFee.discounts && tuitionFee.discounts.length > 0) {
+         const totalDiscount = tuitionFee.discounts.reduce(
+            (sum, discount) => sum + discount.amount,
+            0,
+         );
+         outstandingBalance = tuitionFee.totalDue - totalDiscount;
+      }
+      return outstandingBalance;
    }
 
    async checkPrerequisites(
@@ -226,5 +204,25 @@ export class EnrollmentService {
          .exec();
 
       return enrollments.map((enrollment) => enrollment.courseId);
+   }
+
+   async seedTuition(): Promise<void> {
+      const fees = [
+         {
+            schoolYear: '2024-2025',
+            semester: 1,
+            tuitionFee: 30000,
+         },
+         {
+            schoolYear: '2024-2025',
+            semester: 2,
+            tuitionFee: 32000,
+         },
+      ];
+
+      await this.programModel.updateOne(
+         { _id: '672ee7ad7c40b8f5027d6741' },
+         { $set: { fees: fees } },
+      );
    }
 }

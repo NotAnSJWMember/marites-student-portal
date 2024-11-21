@@ -1,1 +1,109 @@
-@import '../../../../styles/global.scss';
+@import "../../../../styles/global.scss";
+
+.mainContent {
+  display: grid;
+  grid-template-columns: 40% 1fr;
+}
+
+.cardWrapper {
+  display: grid;
+  grid-template-rows: max-content 1fr;
+  gap: 1rem;
+
+  section {
+    flex: 1;
+  }
+}
+
+.balanceCard {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  .title {
+    margin-bottom: 0.3rem;
+  }
+
+  .desc {
+    margin-top: 10px;
+    line-height: 1.2rem;
+    font-size: 0.9rem;
+  }
+
+  .line {
+    margin-top: 1rem;
+  }
+
+  .badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .balance {
+    font-size: 4rem;
+    font-weight: 700;
+  }
+}
+
+.overviewCard {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  overflow: auto;
+
+  .info {
+    .title {
+      margin-bottom: 0.5rem;
+    }
+  }
+
+  .wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 1.7rem;
+  }
+
+  .title {
+    margin: 0;
+  }
+
+  .fees,
+  .discounts {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .fees {
+    .feeContainer {
+      margin-top: 0.4rem;
+    }
+    
+    .desc {
+      font-size: 0.9rem;
+    }
+
+    .line {
+      margin: 0.8rem 0;
+    }
+
+    .spaceBetween {
+      align-items: start;
+    }
+  }
+}
+
+.ledgerCard {
+  .tableWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    .tableHeader {
+      display: grid;
+      grid-template-columns: 50px repeat(3, 10px) 100px 1fr;
+      grid-template-columns: repeat(6, 1fr);
+    }
+  }
+}

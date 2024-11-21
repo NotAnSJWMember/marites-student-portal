@@ -1,5 +1,4 @@
 import {
-   BadRequestException,
    Body,
    Controller,
    Delete,
@@ -17,19 +16,6 @@ import { CreateEnrollmentDto } from './enrollment.dto';
 export class EnrollmentController {
    constructor(private readonly enrollmentService: EnrollmentService) {}
 
-   @Post('/enroll')
-   async enroll(@Body() courseId: Types.ObjectId, studentId: string) {
-      try {
-         const student = await this.enrollmentService.enroll(
-            courseId,
-            studentId,
-         );
-         return { success: true, data: student };
-      } catch (error) {
-         throw new BadRequestException(error.message);
-      }
-   }
-
    @Post('/batch-enroll')
    async batchEnroll(
       @Body()
@@ -38,7 +24,9 @@ export class EnrollmentController {
          sectionIds: Types.ObjectId[];
          courseTypes: string[];
          studentId: string;
+         schoolYear: string;
          semester: number;
+         tuitionFee: { totalDue: number; discounts: { amount: number }[] };
       },
    ) {
       return this.enrollmentService.batchEnroll(
@@ -46,7 +34,9 @@ export class EnrollmentController {
          body.sectionIds,
          body.courseTypes,
          body.studentId,
+         body.schoolYear,
          body.semester,
+         body.tuitionFee,
       );
    }
 
@@ -71,5 +61,10 @@ export class EnrollmentController {
    @Delete(':id')
    async delete(@Param('id') id: Types.ObjectId): Promise<Enrollment> {
       return this.enrollmentService.delete(id);
+   }
+
+   @Post('/seed')
+   async seedTuition() {
+      await this.enrollmentService.seedTuition();
    }
 }

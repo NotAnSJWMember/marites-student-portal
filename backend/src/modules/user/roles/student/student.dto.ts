@@ -1,18 +1,21 @@
 import {
+   IsArray,
    IsBoolean,
    IsDateString,
+   IsMongoId,
    IsNumber,
    IsOptional,
    IsString,
 } from 'class-validator';
 import { CreateUserDto } from '../../user.dto';
+import { Types } from 'mongoose';
 
 export class CreateStudentDto extends CreateUserDto {
    @IsString()
    programId: string;
 
-   @IsOptional()
    @IsString()
+   @IsOptional()
    curriculumId?: string;
 
    @IsNumber()
@@ -29,4 +32,9 @@ export class CreateStudentDto extends CreateUserDto {
    @IsDateString()
    @IsOptional()
    enrollmentDate?: Date;
+
+   @IsOptional()
+   @IsArray()
+   @IsMongoId({ each: true })
+   financeRecords?: Types.ObjectId[];
 }

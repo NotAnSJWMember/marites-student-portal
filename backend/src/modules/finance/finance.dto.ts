@@ -2,37 +2,93 @@ import {
    IsNotEmpty,
    IsString,
    IsNumber,
-   IsEnum,
    IsOptional,
+   IsArray,
+   ValidateNested,
    IsDate,
 } from 'class-validator';
-import { Types } from 'mongoose';
+import { Type } from 'class-transformer';
+
+class DiscountDto {
+   @IsString()
+   @IsNotEmpty()
+   type: string;
+
+   @IsNumber()
+   @IsNotEmpty()
+   amount: number;
+}
+
+class TuitionFeeDto {
+   @IsNumber()
+   @IsNotEmpty()
+   amount: number;
+
+   @IsArray()
+   @IsOptional()
+   @ValidateNested({ each: true })
+   @Type(() => DiscountDto)
+   discounts?: DiscountDto[];
+
+   @IsNumber()
+   @IsNotEmpty()
+   totalDue: number;
+}
+
+class TransactionDto {
+   @IsDate()
+   @IsNotEmpty()
+   date: Date;
+
+   @IsString()
+   @IsNotEmpty()
+   method: string;
+
+   @IsNumber()
+   @IsNotEmpty()
+   amount: number;
+
+   @IsString()
+   @IsOptional()
+   referenceNo?: string;
+}
+
+class PaymentStatusDto {
+   @IsString()
+   @IsNotEmpty()
+   status: string;
+
+   @IsDate()
+   @IsNotEmpty()
+   lastUpdated: Date;
+}
 
 export class CreateFinanceDto {
    @IsNotEmpty()
-   userId: Types.ObjectId;
+   studentId: string;
 
-   @IsNotEmpty()
    @IsString()
-   description: string;
-
    @IsNotEmpty()
-   @IsEnum(['Tuition', 'Miscellaneous', 'Others'])
-   category: string;
+   schoolYear: string;
 
-   @IsNotEmpty()
    @IsNumber()
-   amount: number;
-
    @IsNotEmpty()
-   @IsDate()
-   dueDate: Date;
+   semester: number;
 
-   @IsOptional()
-   @IsDate()
-   paidDate: Date;
+   @ValidateNested()
+   @Type(() => TuitionFeeDto)
+   tuitionFee: TuitionFeeDto;
 
+   @IsArray()
+   @ValidateNested({ each: true })
+   @Type(() => TransactionDto)
+   transactions: TransactionDto[];
+
+   @IsNumber()
    @IsNotEmpty()
-   @IsEnum(['Pending', 'Paid', 'Overdue'])
-   status: string;
+   outstandingBalance: number;
+
+   @ValidateNested()
+   @Type(() => PaymentStatusDto)
+   paymentStatus: PaymentStatusDto;
 }

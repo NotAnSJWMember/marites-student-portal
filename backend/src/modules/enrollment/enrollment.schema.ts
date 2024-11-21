@@ -22,6 +22,9 @@ export class Enrollment extends Document {
    @Prop({ required: true, enum: ['core', 'elective'] })
    type: string;
 
+   @Prop({ type: String, required: true })
+   schoolYear: string;
+
    @Prop({ required: true, min: 1, max: 2 })
    semester: number;
 
@@ -45,6 +48,12 @@ export class Enrollment extends Document {
 
    @Prop({ required: true, default: false })
    dropped: boolean;
+
+   @Prop({ type: String, required: false })
+   finalGrade?: string;
+
+   @Prop({ required: false })
+   completionDate?: Date;
 }
 
 export const EnrollmentSchema = SchemaFactory.createForClass(Enrollment);

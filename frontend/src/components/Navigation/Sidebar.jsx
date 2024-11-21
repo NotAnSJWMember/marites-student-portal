@@ -225,16 +225,6 @@ export const Sidebar = ({ role }) => {
                 </button>
               </Link>
               <Link
-                to="/admin/dashboard/reports"
-                className={styles.itemBtn}
-                onClick={() => handleTabClick("reports")}
-              >
-                <button type="button" className={activeTab === "reports" ? styles.active : ""}>
-                  <TbChartBar size={ICON_SIZE} />
-                  Reports
-                </button>
-              </Link>
-              <Link
                 to="/admin/dashboard/system-settings"
                 className={styles.itemBtn}
                 onClick={() => handleTabClick("systemSettings")}

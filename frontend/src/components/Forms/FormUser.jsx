@@ -1,17 +1,17 @@
 import React, { useEffect } from "react";
 import styles from "./FormUser.module.scss";
-import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
 import { TbCloudDownload } from "react-icons/tb";
 
+import IconSizes from "constants/IconSizes";
 import UserIcon from "components/ui/UserIcon/UserIcon";
+import Loading from "components/Loading/Loading";
 import { FormInput, FormPassword, FormSelect } from "components/ui/Form";
 import { FormStudent } from "./FormStudent";
 
 import { useForm } from "react-hook-form";
-import IconSizes from "constants/IconSizes";
 import { startCase } from "lodash";
 
-export const FormUser = ({ role, setShowPopup, closePopup, isRegister, createAccount }) => {
+export const FormUser = ({ role, loading, closePopup, createAccount, isRegister }) => {
   const {
     register,
     handleSubmit,
@@ -26,16 +26,14 @@ export const FormUser = ({ role, setShowPopup, closePopup, isRegister, createAcc
     const lastName = startCase(data.lastName);
 
     const userData = { ...data, yearLevel, birthDate, firstName, lastName };
-
     const response = await createAccount(userData, role.toString(), reset);
-    if (response.ok) setShowPopup(true);
+    if (response.ok) closePopup();
   };
 
   return (
     <form
       className={styles.formContainer}
       onSubmit={handleSubmit(onCreateSubmit)}
-      autoComplete="off"
     >
       <div className={styles.twoColumn}>
         <h4>Name</h4>
@@ -158,6 +156,7 @@ export const FormUser = ({ role, setShowPopup, closePopup, isRegister, createAcc
         )}
         <button type="submit" className={styles.primaryBtn}>
           Create account
+          {loading && <Loading />}
         </button>
       </div>
     </form>
