@@ -79,7 +79,7 @@
     .feeContainer {
       margin-top: 0.4rem;
     }
-    
+
     .desc {
       font-size: 0.9rem;
     }
@@ -95,15 +95,30 @@
 }
 
 .ledgerCard {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
   .tableWrapper {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    border: 1px solid $light-gray-color-100;
+    border-radius: $small-radius;
+
+    .tableHeader,
+    .tableItem {
+      display: grid;
+      grid-template-columns: 1fr 125px 125px 125px 160px 125px;
+    }
 
     .tableHeader {
-      display: grid;
-      grid-template-columns: 50px repeat(3, 10px) 100px 1fr;
-      grid-template-columns: repeat(6, 1fr);
+      padding: 0.8rem;
+      background-color: #fbfbfb;
+      border-bottom: 1px solid $light-gray-color-100;
+    }
+
+    .tableItem {
+      padding: 0.8rem;
     }
   }
 }

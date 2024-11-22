@@ -48,6 +48,10 @@ class TransactionDto {
    @IsNotEmpty()
    amount: number;
 
+   @IsNumber()
+   @IsNotEmpty()
+   balance: number;
+
    @IsString()
    @IsOptional()
    referenceNo?: string;

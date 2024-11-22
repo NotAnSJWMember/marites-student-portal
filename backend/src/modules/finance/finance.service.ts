@@ -134,6 +134,7 @@ export class FinanceService {
             method: 'Bank Transfer',
             amount: 5000,
             referenceNo: 'BT20241001',
+            balance: 0,
          },
          {
             _id: '674f372ef227c95464275dc2',
@@ -141,6 +142,7 @@ export class FinanceService {
             method: 'Cash Payment',
             amount: 10000,
             referenceNo: null,
+            balance: 0,
          },
          {
             _id: '674f372ef227c95464275dc3',
@@ -148,6 +150,7 @@ export class FinanceService {
             method: 'Online Payment',
             amount: 8000,
             referenceNo: 'OP20241110',
+            balance: 0,
          },
       ];
 

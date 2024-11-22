@@ -43,6 +43,7 @@ export class Finance extends Document {
             method: { type: String, required: true },
             amount: { type: Number, required: true },
             referenceNo: { type: String, required: false },
+            balance: { type: Number, required: false, default: 0 },
          },
       ],
    })
@@ -52,6 +53,7 @@ export class Finance extends Document {
       method: string;
       amount: number;
       referenceNo?: string;
+      balance?: number;
    }[];
 
    @Prop({ type: Number, required: true })

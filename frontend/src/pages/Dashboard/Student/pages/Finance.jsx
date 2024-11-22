@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./Finance.module.scss";
 import {
   TbAugmentedReality,
@@ -24,12 +24,12 @@ const Finance = () => {
   const { data: finances, loading } = useFetchData(`finance/${session.userId}`);
   const { data: program } = useFetchData(`program/${student.programId}`);
 
-  const outstandingBalance = finances?.outstandingBalance;
-  const paymentsMade = finances?.payments || [];
-  const totalFees = finances?.totalFees;
   const discounts = finances?.discounts || [];
+
   const paymentStatus = finances?.paymentStatus?.status;
-  const paymentDate = finances?.paymentStatus?.lastUpdated;
+  const outstandingBalance = finances?.outstandingBalance;
+  const tuitionFee = finances?.tuitionFee;
+
   const schoolYear = finances?.schoolYear;
   const semester = finances?.semester === 1 ? "1st" : "2nd";
 
@@ -42,15 +42,20 @@ const Finance = () => {
     return formattedNumber;
   };
 
-  const formattedBalance = formatCurrency(outstandingBalance);
-  const formattedTotalFees = formatCurrency(totalFees);
+  const calculateRunningBalance = (transactions, totalDue) => {
+    let runningBalance = totalDue;
+    return transactions.map((transaction) => {
+      runningBalance -= transaction.amount;
+      return { ...transaction, balance: runningBalance };
+    });
+  };
 
-  const formattedPayments = paymentsMade.map((payment) => (
-    <div key={payment.id} className={styles.transactionItem}>
-      <p>{new Date(payment.date).toLocaleDateString()}</p>
-      <p>{formatCurrency(payment.amount)}</p>
-    </div>
-  ));
+  const transactionsWithBalances = calculateRunningBalance(
+    finances?.transactions || [],
+    tuitionFee?.totalDue || 0
+  );
+
+  const formattedBalance = formatCurrency(outstandingBalance);
 
   const formattedDiscounts = discounts.map((discount, index) => (
     <div key={index} className={styles.discountItem}>
@@ -162,20 +167,60 @@ const Finance = () => {
 
             <section className={styles.ledgerCard}>
               <h3>Transaction History</h3>
-              <div className={styles.tableWrapper}>
-                <div className={styles.tableHeader}>
-                  <p><strong>Ref No.</strong></p>
-                  <p><strong>Debit</strong></p>
-                  <p><strong>Credit</strong></p>
-                  <p><strong>Balance</strong></p>
-                  <p><strong>Payment Method</strong></p>
-                  <p><strong>Transaction Date</strong></p>
-                </div>
-                <div className={styles.tableContent}></div>
-              </div>
-
-              {formattedPayments.length > 0 ? (
-                <div className={styles.transactionList}>{formattedPayments}</div>
+              {finances.transactions.length !== 0 ? (
+                <>
+                  <div className={styles.tableWrapper}>
+                    <div className={styles.tableHeader}>
+                      <p>
+                        <strong>Reference No.</strong>
+                      </p>
+                      <p>
+                        <strong>Debit</strong>
+                      </p>
+                      <p>
+                        <strong>Credit</strong>
+                      </p>
+                      <p>
+                        <strong>Balance</strong>
+                      </p>
+                      <p>
+                        <strong>Payment Method</strong>
+                      </p>
+                      <p>
+                        <strong>Transaction Date</strong>
+                      </p>
+                    </div>
+                    <div className={styles.tableContent}>
+                      {transactionsWithBalances.map((transaction, index) => {
+                        return (
+                          <>
+                            <div className={styles.tableItem}>
+                              <p>
+                                {transaction.referenceNo === null
+                                  ? "No reference number"
+                                  : transaction.referenceNo}
+                              </p>
+                              <p>
+                                {formatCurrency(
+                                  index === 0
+                                    ? finances.tuitionFee.totalDue
+                                    : transaction.balance
+                                )}
+                              </p>
+                              <p>{formatCurrency(transaction.amount)}</p>
+                              <p>{formatCurrency(transaction.balance)}</p>
+                              <p>{transaction.method}</p>
+                              <p>{format(new Date(transaction.date), "MM/dd/yyyy")}</p>
+                            </div>
+                            {index !== transactionsWithBalances.length - 1 && (
+                              <div className={styles.line}></div>
+                            )}
+                          </>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </>
               ) : (
                 <p>No transactions found</p>
               )}
