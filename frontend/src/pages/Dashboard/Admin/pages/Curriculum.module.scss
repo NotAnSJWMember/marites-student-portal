@@ -1,12 +1,9 @@
 @import "../../../../styles/global.scss";
 
-.mainContent {
-  overflow: scroll;
-}
-
 .wrapper {
   display: grid;
   gap: 1rem;
+  overflow: auto;
 
   .iconLabel {
     grid-row-start: 1;

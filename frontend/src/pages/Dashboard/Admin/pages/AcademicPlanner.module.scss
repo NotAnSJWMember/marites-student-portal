@@ -7,7 +7,7 @@
 .overviewContainer {
    display: grid;
    grid-template-columns: repeat(4, 1fr);
-   gap: 1rem;
+   gap: 0.7rem;
 
    .overviewCard {
       cursor: pointer;
@@ -32,7 +32,7 @@
       }
 
       &:hover {
-         background-color: #f1f1f1;
+         background-color: $white-hovered;
       }
 
       .enrollmentContainer {

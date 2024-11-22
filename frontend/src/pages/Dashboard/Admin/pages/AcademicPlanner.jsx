@@ -14,7 +14,7 @@ const AcademicPlanner = () => {
   return (
     <Layout role="admin" pageName="Academic Planner">
       <main className={styles.mainContent}>
-        <section className={styles.overviewContainer}>
+        <div className={styles.overviewContainer}>
           <a
             href="/admin/dashboard/academic-planner/enrollment"
             className={styles.overviewCard}
@@ -71,7 +71,7 @@ const AcademicPlanner = () => {
             <div className={styles.line}></div>
             <p>Review and edit curriculum options</p>
           </a>
-        </section>
+        </div>
       </main>
     </Layout>
   );

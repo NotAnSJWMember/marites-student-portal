@@ -11,7 +11,7 @@ import { FormStudent } from "./FormStudent";
 import { useForm } from "react-hook-form";
 import { startCase } from "lodash";
 
-export const FormUser = ({ role, loading, closePopup, createAccount, isRegister }) => {
+export const FormUser = ({ role, loading, createdAction, createAccount, isRegister }) => {
   const {
     register,
     handleSubmit,
@@ -27,14 +27,11 @@ export const FormUser = ({ role, loading, closePopup, createAccount, isRegister 
 
     const userData = { ...data, yearLevel, birthDate, firstName, lastName };
     const response = await createAccount(userData, role.toString(), reset);
-    if (response.ok) closePopup();
+    if (response.ok) createdAction();
   };
 
   return (
-    <form
-      className={styles.formContainer}
-      onSubmit={handleSubmit(onCreateSubmit)}
-    >
+    <form className={styles.formContainer} onSubmit={handleSubmit(onCreateSubmit)}>
       <div className={styles.twoColumn}>
         <h4>Name</h4>
         <div className={styles.twoColumn}>
@@ -150,7 +147,7 @@ export const FormUser = ({ role, loading, closePopup, createAccount, isRegister 
             Already have an account?
           </a>
         ) : (
-          <button onClick={closePopup} type="button" className={styles.secondaryBtn}>
+          <button onClick={createdAction} type="button" className={styles.secondaryBtn}>
             Cancel
           </button>
         )}

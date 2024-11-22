@@ -26,7 +26,7 @@ export const usePopupAlert = () => {
          color: "#ffd1d1",
       });
       setShowPopup(true);
-      setTimeout(() => clearPopupState(), 3000);
+      setTimeout(() => clearPopupState(), 2300);
    };
 
    const showSuccess = (title, message) => {
@@ -38,7 +38,7 @@ export const usePopupAlert = () => {
          color: "#b0ffc1",
       });
       setShowPopup(true);
-      setTimeout(() => clearPopupState(false), 3000);
+      setTimeout(() => clearPopupState(false), 2300);
    };
 
    return { popupState, showPopup, setShowPopup, showError, showSuccess };

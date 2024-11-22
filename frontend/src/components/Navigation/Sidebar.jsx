@@ -5,19 +5,22 @@ import styles from "./Sidebar.module.scss";
 import logo from "assets/images/logo.png";
 import { useAuth } from "hooks";
 import {
+  TbAddressBook,
   TbBook,
   TbCalendarEvent,
   TbCertificate,
+  TbCoins,
   TbLayoutDashboardFilled,
   TbLogout,
-  TbNotebook,
   TbReceipt,
-  TbSettings,
+  TbSchool,
   TbSpeakerphone,
+  TbStar,
   TbUser,
 } from "react-icons/tb";
+import IconSizes from "constants/IconSizes";
 
-var ICON_SIZE = 26;
+const ICON_SIZE = IconSizes.LARGE;
 
 export const Sidebar = ({ role }) => {
   const [activeTab, setActiveTab] = useState("");
@@ -34,15 +37,13 @@ export const Sidebar = ({ role }) => {
       "/student/dashboard/announcements": "announcements",
 
       "/admin/dashboard": "dashboard",
+      "/admin/dashboard/finance": "finance",
       "/admin/dashboard/user-management": "userManagement",
       "/admin/dashboard/academic-planner": "academicPlanner",
       "/admin/dashboard/academic-planner/courses": "academicPlanner",
       "/admin/dashboard/academic-planner/programs": "academicPlanner",
       "/admin/dashboard/academic-planner/enrollment": "academicPlanner",
       "/admin/dashboard/academic-planner/curriculums": "academicPlanner",
-      "/admin/dashboard/reports": "reports",
-      "/admin/dashboard/system-settings": "systemSettings",
-      "/admin/dashboard/manage-notifications": "manageNotifications",
     };
 
     const activeRoute = pathToTabMapping[location.pathname];
@@ -59,7 +60,7 @@ export const Sidebar = ({ role }) => {
     switch (role) {
       case "student":
         return (
-          <>
+          <div className={styles.itemWrapper}>
             <div className={styles.sealContainer}>
               <img src={logo} alt="Dr. AMMC Seal" />
               <div className={styles.sealContainerText}>
@@ -81,9 +82,6 @@ export const Sidebar = ({ role }) => {
                   Dashboard
                 </button>
               </Link>
-            </div>
-            <div className={styles.itemContainer}>
-              <h2 className={styles.itemLabel}>Academic</h2>
               <Link
                 to="/student/dashboard/schedule"
                 className={styles.itemBtn}
@@ -121,8 +119,8 @@ export const Sidebar = ({ role }) => {
                 </button>
               </Link>
             </div>
+            <div className={styles.line}></div>
             <div className={styles.itemContainer}>
-              <h2 className={styles.itemLabel}>Administrative</h2>
               <Link
                 to="/student/dashboard/finance"
                 className={styles.itemBtn}
@@ -147,7 +145,7 @@ export const Sidebar = ({ role }) => {
                 </button>
               </Link>
             </div>
-          </>
+          </div>
         );
       case "instructor":
         return (
@@ -158,7 +156,7 @@ export const Sidebar = ({ role }) => {
         );
       case "admin":
         return (
-          <>
+          <div className={styles.itemWrapper}>
             <div className={styles.sealContainer}>
               <img src={logo} alt="Dr. AMMC Seal" />
               <div className={styles.sealContainerText}>
@@ -180,9 +178,19 @@ export const Sidebar = ({ role }) => {
                   Dashboard
                 </button>
               </Link>
-            </div>
-            <div className={styles.itemContainer}>
-              <h2 className={styles.itemLabel}>Administrative</h2>
+              <Link
+                to="/admin/dashboard/academic-planner"
+                className={styles.itemBtn}
+                onClick={() => handleTabClick("academicPlanner")}
+              >
+                <button
+                  type="button"
+                  className={activeTab === "academicPlanner" ? styles.active : ""}
+                >
+                  <TbSchool size={ICON_SIZE} />
+                  Academic Planner
+                </button>
+              </Link>
               <Link
                 to="/admin/dashboard/user-management"
                 className={styles.itemBtn}
@@ -197,46 +205,27 @@ export const Sidebar = ({ role }) => {
                 </button>
               </Link>
               <Link
-                to="/admin/dashboard/academic-planner"
+                to="/admin/dashboard/grades"
                 className={styles.itemBtn}
-                onClick={() => handleTabClick("academicPlanner")}
+                onClick={() => handleTabClick("grades")}
               >
-                <button
-                  type="button"
-                  className={activeTab === "academicPlanner" ? styles.active : ""}
-                >
-                  <TbCertificate size={ICON_SIZE} />
-                  Academic Planner
+                <button type="button" className={activeTab === "grades" ? styles.active : ""}>
+                  <TbAddressBook size={ICON_SIZE} />
+                  Grades Management
                 </button>
               </Link>
               <Link
-                to="/admin/dashboard/system-settings"
+                to="/admin/dashboard/finance"
                 className={styles.itemBtn}
-                onClick={() => handleTabClick("systemSettings")}
+                onClick={() => handleTabClick("finance")}
               >
-                <button
-                  type="button"
-                  className={activeTab === "systemSettings" ? styles.active : ""}
-                >
-                  <TbSettings size={ICON_SIZE} />
-                  System Settings
-                </button>
-              </Link>
-              <Link
-                to="/admin/dashboard/manage-notifications"
-                className={styles.itemBtn}
-                onClick={() => handleTabClick("manageNotifications")}
-              >
-                <button
-                  type="button"
-                  className={activeTab === "manageNotifications" ? styles.active : ""}
-                >
-                  <TbSpeakerphone size={ICON_SIZE} />
-                  Manage Notifications
+                <button type="button" className={activeTab === "finance" ? styles.active : ""}>
+                  <TbCoins size={ICON_SIZE} />
+                  Finance Management
                 </button>
               </Link>
             </div>
-          </>
+          </div>
         );
       default:
         return null;

@@ -123,8 +123,8 @@ const UserManagement = () => {
           <FormUser
             role="student"
             loading={loading}
+            createdAction={handleShowCreatePopup}
             createAccount={createAccount}
-            closePopup={handleShowCreatePopup}
           />
         </div>
       </Popup>
