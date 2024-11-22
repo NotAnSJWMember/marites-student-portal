@@ -7,7 +7,7 @@ import styles from "./AdminDashboard.module.scss";
 const AdminDashboard = () => {
    return (
       <Layout role="admin" pageName="Dashboard">
-         <main>potaka</main>
+         <main>This is the admin dashboard</main>
          <aside></aside>
       </Layout>
    );

@@ -119,8 +119,8 @@ export const Header = () => {
                 </div>
                 <div className={styles.notifContent}>
                   <p>
-                    <strong>Ivan Agripa</strong> wants to send you <strong>bold</strong> for
-                    you to pass the exam.
+                    <strong>Ivan Agripa</strong> wants to send you a <strong>reviewer</strong>{" "}
+                    for you to pass the exam.
                   </p>
                   <p className={styles.status}>Just now</p>
                 </div>
@@ -144,7 +144,7 @@ export const Header = () => {
                 </div>
                 <div className={styles.notifContent}>
                   <p>
-                    <strong>Jhobby Sorsogon</strong> created a <strong>pokingina</strong> for
+                    <strong>Jhobby Sorsogon</strong> created a <strong>group chat</strong> for
                     you to look at!
                   </p>
                   <p className={styles.status}>8 mins ago</p>

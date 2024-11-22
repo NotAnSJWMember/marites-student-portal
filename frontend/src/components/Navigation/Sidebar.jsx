@@ -8,7 +8,6 @@ import {
   TbBook,
   TbCalendarEvent,
   TbCertificate,
-  TbChartBar,
   TbLayoutDashboardFilled,
   TbLogout,
   TbNotebook,
@@ -30,7 +29,6 @@ export const Sidebar = ({ role }) => {
       "/student/dashboard": "dashboard",
       "/student/dashboard/schedule": "schedule",
       "/student/dashboard/examboard": "examboard",
-      "/student/dashboard/assignments": "assignments",
       "/student/dashboard/courses": "courses",
       "/student/dashboard/finance": "finance",
       "/student/dashboard/announcements": "announcements",
@@ -110,19 +108,6 @@ export const Sidebar = ({ role }) => {
                 >
                   <TbBook size={ICON_SIZE} />
                   Examboard
-                </button>
-              </Link>
-              <Link
-                to="/student/dashboard/assignments"
-                className={styles.itemBtn}
-                onClick={() => handleTabClick("assignments")}
-              >
-                <button
-                  type="button"
-                  className={activeTab === "assignments" ? styles.active : ""}
-                >
-                  <TbNotebook size={ICON_SIZE} />
-                  Assignments
                 </button>
               </Link>
               <Link

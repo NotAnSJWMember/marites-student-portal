@@ -1,52 +1,25 @@
 @import "../../../styles/global.scss";
 
-.previewClasses,
-.previewEvents .previewAnnouncements {
-   display: flex;
-   flex-direction: column;
-   flex-grow: 1;
+.mainContent {
+  display: grid;
+  grid-template-rows: repeat(2, 1fr);
 }
 
-.previewClasses {
-   .sectionContent {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1rem;
-      flex-grow: 1;
-   }
+.contentCard {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
-.twoColumn {
-   // display: flex;
-   .sectionContent {
-      display: flex;
-      flex-direction: column;
-      max-height: 18rem;
-      overflow-y: auto;
-      gap: 2rem;
-   }
+.courseContent {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  height: 100%;
 }
 
-.previewSchedule {
-   display: flex;
-   flex-direction: column;
-}
-
-.previewAssignments {
-   flex-grow: 1;
-   overflow: hidden;
-
-   .sectionContent {
-      display: flex;
-      flex-direction: column;
-      overflow-y: scroll;
-      max-height: 88%;
-      gap: 1rem;
-   }
-}
-
-.previewEvents, .previewAnnouncements, .previewAssignments {
-   .sectionContent {
-      padding-right: 0.7rem;
-   }
+.eventContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  overflow: auto;
 }

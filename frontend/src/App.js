@@ -23,7 +23,6 @@ import Schedule from "pages/Dashboard/Student/pages/Schedule";
 import Finance from "pages/Dashboard/Student/pages/Finance";
 import Examboard from "pages/Dashboard/Student/pages/Examboard";
 import Announcements from "pages/Dashboard/Student/pages/Announcements";
-import Assignments from "pages/Dashboard/Student/pages/Assignments";
 
 import "./App.scss";
 
@@ -78,10 +77,6 @@ function App() {
             element={
               <PrivateRoute element={<StudentDashboard />} roles={["student", "admin"]} />
             }
-          />
-          <Route
-            path="/student/dashboard/assignments"
-            element={<PrivateRoute element={<Assignments />} roles={["student", "admin"]} />}
           />
           <Route
             path="/student/dashboard/announcements"
