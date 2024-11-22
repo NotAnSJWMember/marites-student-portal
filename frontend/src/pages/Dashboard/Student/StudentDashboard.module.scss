@@ -1,6 +1,7 @@
 @import "../../../styles/global.scss";
 
-.mainContent {
+.mainContent,
+.sideContent {
   display: grid;
   grid-template-rows: repeat(2, 1fr);
 }
@@ -15,6 +16,7 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   height: 100%;
+  gap: 1rem;
 }
 
 .eventContent {

@@ -11,9 +11,9 @@ const StudentDashboard = () => {
     <Layout role="student" pageName="Dashboard">
       <div className={styles.contentDivider}>
         <main className={styles.mainContent}>
-          <div className={`${styles.contentCard} ${styles.classes}`}>
+          <section className={`${styles.contentCard} ${styles.classes}`}>
             <h2 className={styles.labelText}>Classes Today</h2>
-            <div className={`${styles.alignCenter} ${styles.courseContent}`}>
+            <div className={`${styles.courseContent}`}>
               <CourseCard
                 title="Fundamentals of Programming"
                 catalog="CC 101A"
@@ -39,20 +39,20 @@ const StudentDashboard = () => {
                 teacher="Areth Arana"
               />
             </div>
-          </div>
-          <div className={`${styles.contentCard} ${styles.announcements}`}>
+          </section>
+          <section className={`${styles.contentCard} ${styles.announcements}`}>
             <h2 className={styles.labelText}>Announcements</h2>
-          </div>
+          </section>
         </main>
         <aside className={styles.sideContent}>
-          <div className={`${styles.contentCard} ${styles.calendar}`}>
+          <section className={`${styles.contentCard} ${styles.calendar}`}>
             <h2 className={styles.labelText}>Calendar</h2>
             <CalendarCard />
-          </div>
-          <div className={`${styles.contentCard} ${styles.events}`}>
+          </section>
+          <section className={`${styles.contentCard} ${styles.events}`}>
             <h2 className={styles.labelText}>Events</h2>
             <div className={styles.eventContent}></div>
-          </div>
+          </section>
         </aside>
       </div>
     </Layout>
