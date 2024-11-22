@@ -1,15 +1,19 @@
 @import "../../../styles/global.scss";
 
-.mainContent,
-.sideContent {
+.mainContent {
   display: grid;
   grid-template-rows: repeat(2, 1fr);
+}
+.mainContent {
+  display: grid;
+  grid-template-rows: repeat(max-content, 1fr);
 }
 
 .contentCard {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  flex: 1;
 }
 
 .courseContent {
@@ -19,9 +23,12 @@
   gap: 1rem;
 }
 
+.events {}
+
 .eventContent {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
   overflow: auto;
+
 }

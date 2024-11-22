@@ -50,6 +50,8 @@
       grid-template-columns: repeat(7, 1fr);
       gap: 0.3rem;
       padding-top: 1rem;
+   overflow: auto;
+
 
       .day {
          display: flex;

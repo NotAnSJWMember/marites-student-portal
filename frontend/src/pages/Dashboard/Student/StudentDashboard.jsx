@@ -45,7 +45,7 @@ const StudentDashboard = () => {
           </section>
         </main>
         <aside className={styles.sideContent}>
-          <section className={`${styles.contentCard} ${styles.calendar}`}>
+          <section className={styles.calendar}>
             <h2 className={styles.labelText}>Calendar</h2>
             <CalendarCard />
           </section>
