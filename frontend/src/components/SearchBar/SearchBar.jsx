@@ -11,7 +11,6 @@ const SearchBar = ({
    placeholder = "Search",
 }) => {
    const [searchQuery, setSearchQuery] = useState("");
-   const [selectedQuery, setSelectedQuery] = useState("");
    const [suggestions, setSuggestions] = useState([]);
    const [dropdownStyle, setDropdownStyle] = useState({});
 

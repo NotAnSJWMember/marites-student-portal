@@ -3,7 +3,7 @@ import styles from "./Checkbox.module.scss";
 
 const Checkbox = ({ id, isChecked, onChange }) => {
    return (
-      <div>
+      <>
          <input 
             type="checkbox"
             id={id}
@@ -12,7 +12,7 @@ const Checkbox = ({ id, isChecked, onChange }) => {
             onChange={onChange} 
          />
          <label htmlFor={id} className={styles.newCheckbox}></label>
-      </div>
+      </>
    );
 };
 

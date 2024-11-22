@@ -168,59 +168,57 @@ const Finance = () => {
             <section className={styles.ledgerCard}>
               <h3>Transaction History</h3>
               {finances.transactions.length !== 0 ? (
-                <>
-                  <div className={styles.tableWrapper}>
-                    <div className={styles.tableHeader}>
-                      <p>
-                        <strong>Reference No.</strong>
-                      </p>
-                      <p>
-                        <strong>Debit</strong>
-                      </p>
-                      <p>
-                        <strong>Credit</strong>
-                      </p>
-                      <p>
-                        <strong>Balance</strong>
-                      </p>
-                      <p>
-                        <strong>Payment Method</strong>
-                      </p>
-                      <p>
-                        <strong>Transaction Date</strong>
-                      </p>
-                    </div>
-                    <div className={styles.tableContent}>
-                      {transactionsWithBalances.map((transaction, index) => {
-                        return (
-                          <>
-                            <div className={styles.tableItem}>
-                              <p>
-                                {transaction.referenceNo === null
-                                  ? "No reference number"
-                                  : transaction.referenceNo}
-                              </p>
-                              <p>
-                                {formatCurrency(
-                                  index === 0
-                                    ? finances.tuitionFee.totalDue
-                                    : transaction.balance
-                                )}
-                              </p>
-                              <p>{formatCurrency(transaction.amount)}</p>
-                              <p>{formatCurrency(transaction.balance)}</p>
-                              <p>{transaction.method}</p>
-                              <p>{format(new Date(transaction.date), "MM/dd/yyyy")}</p>
-                            </div>
-                            {index !== transactionsWithBalances.length - 1 && (
-                              <div className={styles.line}></div>
-                            )}
-                          </>
-                        );
-                      })}
-                    </div>
+                <div className={styles.tableWrapper}>
+                  <div className={styles.tableHeader}>
+                    <p>
+                      <strong>Reference No.</strong>
+                    </p>
+                    <p>
+                      <strong>Debit</strong>
+                    </p>
+                    <p>
+                      <strong>Credit</strong>
+                    </p>
+                    <p>
+                      <strong>Balance</strong>
+                    </p>
+                    <p>
+                      <strong>Payment Method</strong>
+                    </p>
+                    <p>
+                      <strong>Transaction Date</strong>
+                    </p>
                   </div>
-                </>
+                  <div className={styles.tableContent}>
+                    {transactionsWithBalances.map((transaction, index) => {
+                      return (
+                        <>
+                          <div className={styles.tableItem}>
+                            <p>
+                              {transaction.referenceNo === null
+                                ? "No reference number"
+                                : transaction.referenceNo}
+                            </p>
+                            <p>
+                              {formatCurrency(
+                                index === 0
+                                  ? finances.tuitionFee.totalDue
+                                  : transaction.balance
+                              )}
+                            </p>
+                            <p>{formatCurrency(transaction.amount)}</p>
+                            <p>{formatCurrency(transaction.balance)}</p>
+                            <p>{transaction.method}</p>
+                            <p>{format(new Date(transaction.date), "MM/dd/yyyy")}</p>
+                          </div>
+                          {index !== transactionsWithBalances.length - 1 && (
+                            <div className={styles.line}></div>
+                          )}
+                        </>
+                      );
+                    })}
+                  </div>
+                </div>
               ) : (
                 <p>No transactions found</p>
               )}

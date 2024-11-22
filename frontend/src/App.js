@@ -25,6 +25,7 @@ import Examboard from "pages/Dashboard/Student/pages/Examboard";
 import Announcements from "pages/Dashboard/Student/pages/Announcements";
 
 import "./App.scss";
+import GradeManagement from "components/GradeManagement/GradeManagement";
 
 function App() {
   return (
@@ -42,6 +43,10 @@ function App() {
           <Route
             path="/admin/dashboard"
             element={<PrivateRoute element={<AdminDashboard />} roles={["admin"]} />}
+          />
+          <Route
+            path="/admin/dashboard/grade-management"
+            element={<PrivateRoute element={<GradeManagement />} roles={["admin"]} />}
           />
           <Route
             path="/admin/dashboard/user-management"

@@ -115,7 +115,7 @@
 
     .tableHeader {
       padding: 0.8rem;
-      background-color: #fbfbfb;
+      background-color: $table-header;
       border-bottom: 1px solid $light-gray-color-100;
       overflow: auto;
     }

@@ -76,7 +76,7 @@ const Table = ({ data, headers, content, popupContent, ctaText, ctaAction }) => 
   const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
-    <div className={styles.tableWrapper}>
+    <div className={styles.wrapper}>
       <div className={styles.table}>
         <div className={styles.toolsContainer}>
           <SearchBar height="100%" width="30rem" />
@@ -103,41 +103,47 @@ const Table = ({ data, headers, content, popupContent, ctaText, ctaAction }) => 
             </button>
           </div>
         </div>
-        <div className={styles.tableHeader}>
-          <Checkbox
-            id="select-all"
-            isChecked={selectedData.length === currentData.length}
-            onChange={handleSelectAll}
-          />
-          {headers.map((header, index) => {
-            return <h4 key={`header-${index}`}>{header}</h4>;
-          })}
-        </div>
-        {currentData.map((data, index) => (
-          <div key={data._id}>
-            <div className={styles.tableItem}>
-              <Checkbox
-                id={`checkbox-${data._id}`}
-                isChecked={selectedData.includes(data._id)}
-                onChange={() => handleCheckboxChange(data._id)}
-              />
-              {content(data)}
-              <button
-                type="button"
-                className={`${styles.actionBtn} ${styles.iconBtn}`}
-                onClick={(event) => togglePopupAction(data._id, event)}
-              >
-                <TbDotsVertical size={IconSizes.MEDIUM} />
-              </button>
-              {activePopup === data._id && (
-                <Popup show={isPopupVisible} close={closePopupAction} position={popupPosition}>
-                  {popupContent(data)}
-                </Popup>
-              )}
-            </div>
-            {index !== currentData.length - 1 && <div className={styles.line}></div>}
+        <div className={styles.tableWrapper}>
+          <div className={styles.tableHeader}>
+            <Checkbox
+              id="select-all"
+              isChecked={selectedData.length === currentData.length}
+              onChange={handleSelectAll}
+            />
+            {headers.map((header, index) => {
+              return <h4 key={`header-${index}`}>{header}</h4>;
+            })}
           </div>
-        ))}
+          {currentData.map((data, index) => (
+            <div key={data._id}>
+              <div className={styles.tableItem}>
+                <Checkbox
+                  id={`checkbox-${data._id}`}
+                  isChecked={selectedData.includes(data._id)}
+                  onChange={() => handleCheckboxChange(data._id)}
+                />
+                {content(data)}
+                <button
+                  type="button"
+                  className={`${styles.actionBtn} ${styles.iconBtn}`}
+                  onClick={(event) => togglePopupAction(data._id, event)}
+                >
+                  <TbDotsVertical size={IconSizes.MEDIUM} />
+                </button>
+                {activePopup === data._id && (
+                  <Popup
+                    show={isPopupVisible}
+                    close={closePopupAction}
+                    position={popupPosition}
+                  >
+                    {popupContent(data)}
+                  </Popup>
+                )}
+              </div>
+              {index !== currentData.length - 1 && <div className={styles.line}></div>}
+            </div>
+          ))}
+        </div>
       </div>
       <div className={styles.pagination}>
         <TbArrowLeft className={styles.iconBtn} onClick={handlePreviousPage} size={16} />

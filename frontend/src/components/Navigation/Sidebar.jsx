@@ -15,7 +15,6 @@ import {
   TbReceipt,
   TbSchool,
   TbSpeakerphone,
-  TbStar,
   TbUser,
 } from "react-icons/tb";
 import IconSizes from "constants/IconSizes";
@@ -37,8 +36,9 @@ export const Sidebar = ({ role }) => {
       "/student/dashboard/announcements": "announcements",
 
       "/admin/dashboard": "dashboard",
-      "/admin/dashboard/finance": "finance",
       "/admin/dashboard/user-management": "userManagement",
+      "/admin/dashboard/grade-management": "gradeManagement",
+      "/admin/dashboard/finance-management": "financeManagement",
       "/admin/dashboard/academic-planner": "academicPlanner",
       "/admin/dashboard/academic-planner/courses": "academicPlanner",
       "/admin/dashboard/academic-planner/programs": "academicPlanner",
@@ -205,21 +205,27 @@ export const Sidebar = ({ role }) => {
                 </button>
               </Link>
               <Link
-                to="/admin/dashboard/grades"
+                to="/admin/dashboard/grade-management"
                 className={styles.itemBtn}
-                onClick={() => handleTabClick("grades")}
+                onClick={() => handleTabClick("gradeManagement")}
               >
-                <button type="button" className={activeTab === "grades" ? styles.active : ""}>
+                <button
+                  type="button"
+                  className={activeTab === "gradeManagement" ? styles.active : ""}
+                >
                   <TbAddressBook size={ICON_SIZE} />
-                  Grades Management
+                  Grade Management
                 </button>
               </Link>
               <Link
-                to="/admin/dashboard/finance"
+                to="/admin/dashboard/finance-management"
                 className={styles.itemBtn}
-                onClick={() => handleTabClick("finance")}
+                onClick={() => handleTabClick("financeManagement")}
               >
-                <button type="button" className={activeTab === "finance" ? styles.active : ""}>
+                <button
+                  type="button"
+                  className={activeTab === "financeManagement" ? styles.active : ""}
+                >
                   <TbCoins size={ICON_SIZE} />
                   Finance Management
                 </button>

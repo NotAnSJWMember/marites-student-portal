@@ -1,0 +1,57 @@
+@import "../../styles/global.scss";
+
+.mainContent {
+  section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+
+.tableWrapper {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid $light-gray-color-100;
+  border-radius: $small-radius;
+  overflow: auto;
+
+  .tableHeader,
+  .tableItem {
+    display: grid;
+    grid-template-columns: 120px 1fr 1fr;
+  }
+
+  .gradeHeader {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
+
+  .tableHeader {
+    padding: 0.8rem;
+    background-color: #fbfbfb;
+    border-bottom: 1px solid $light-gray-color-100;
+    overflow: auto;
+  }
+
+  .tableItem {
+    align-items: center;
+    padding: 0.8rem;
+    overflow: auto;
+  }
+}
+
+.editContainer {
+  height: 100%;
+
+  .select {
+    border: 1px solid $light-gray-color;
+    border-radius: $small-radius;
+    padding: 0.5rem;
+  }
+}
+
+.active {
+  border-color: $light-green-color-300;
+  background-color: $light-green-color-300;
+  color: $light-primary-background;
+}
