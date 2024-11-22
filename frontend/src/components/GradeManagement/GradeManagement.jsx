@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styles from "./GradeManagement.module.scss";
-import { TbCategoryFilled } from "react-icons/tb";
+import { TbCategoryFilled, TbDotsVertical } from "react-icons/tb";
 
 import IconSizes from "constants/IconSizes";
 import Layout from "components/Layout/Layout";
@@ -63,47 +63,42 @@ const GradeManagement = () => {
     };
 
     const calculateAverageGrade = (enrollments) => {
-      const grade = enrollments.map((enrollment) => {
-        const { prelim, midterm, prefinal, final } = enrollment;
-        const validGrades = [prelim, midterm, prefinal, final];
-
-        return validGrades.length > 0
-          ? validGrades.reduce((sum, grade) => sum + grade, 0) / validGrades.length
-          : null;
-      });
-
-      return grade;
+      if (!enrollments || enrollments.length === 0) return "N/A";
+      const grades = enrollments.flatMap(({ prelim, midterm, prefinal, final }) =>
+        [prelim, midterm, prefinal, final].filter(Boolean)
+      );
+      return grades.length > 0
+        ? (grades.reduce((sum, g) => sum + g, 0) / grades.length).toFixed(1)
+        : "N/A";
     };
 
-    return data.length !== 0 ? (
+    if (!data || data.length === 0) {
+      return <p>No students found for the selected category.</p>;
+    }
+
+    return (
       <div className={styles.tableWrapper}>
         <div className={styles.tableHeader}>
           <h4>School ID</h4>
           <h4>Name</h4>
-          {editCategory.name === "course" ? (
+          {editCategory.name === "course" && (
             <div className={styles.gradeHeader}>
               <h4>Prelim</h4>
               <h4>Midterm</h4>
               <h4>Prefinal</h4>
               <h4>Final</h4>
             </div>
-          ) : (
-            <>
-              <p>
-                <strong>Average Grade</strong>
-              </p>
-            </>
           )}
+          {editCategory.name === "program" && <h4>Average Grade</h4>}
         </div>
         <div className={styles.tableContent}>
           {data.map((student) => {
-            const enrollment = enrollments
-              ? enrollments.filter((e) => e.studentId === student.userId)
-              : null;
-
-            const courseGrades = enrollments
-              ? enrollment.find((e) => e.courseId === selectedCourse)
-              : [];
+            const studentEnrollments = enrollments.filter(
+              (e) => e.studentId === student.userId
+            );
+            const courseGrades =
+              editCategory.name === "course" &&
+              studentEnrollments.find((e) => e.courseId === selectedCourse);
 
             return (
               <div key={student._id} className={styles.tableItem}>
@@ -121,24 +116,21 @@ const GradeManagement = () => {
                 </div>
                 {editCategory.name === "course" ? (
                   <div className={styles.gradeHeader}>
-                    <p>{checkAndFormatGrade(courseGrades.prelim)}</p>
-                    <p>{checkAndFormatGrade(courseGrades.midterm)}</p>
-                    <p>{checkAndFormatGrade(courseGrades.prefinal)}</p>
-                    <p>{checkAndFormatGrade(courseGrades.final)}</p>
+                    <p>{checkAndFormatGrade(courseGrades?.prelim)}</p>
+                    <p>{checkAndFormatGrade(courseGrades?.midterm)}</p>
+                    <p>{checkAndFormatGrade(courseGrades?.prefinal)}</p>
+                    <p>{checkAndFormatGrade(courseGrades?.final)}</p>
                   </div>
                 ) : (
-                  <>
-                    <p>{calculateAverageGrade(enrollment)}</p>
-                  </>
+                  <p>{calculateAverageGrade(studentEnrollments)}</p>
                 )}
+                <button type="button" className={`${styles.actionBtn} ${styles.iconBtn}`}>
+                  <TbDotsVertical size={IconSizes.MEDIUM} />
+                </button>
               </div>
             );
           })}
         </div>
-      </div>
-    ) : (
-      <div>
-        <p>No students found for the selected category.</p>
       </div>
     );
   };
