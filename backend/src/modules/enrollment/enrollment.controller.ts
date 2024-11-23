@@ -3,6 +3,8 @@ import {
    Controller,
    Delete,
    Get,
+   HttpException,
+   HttpStatus,
    Param,
    Post,
    Put,
@@ -16,7 +18,7 @@ import { CreateEnrollmentDto } from './enrollment.dto';
 export class EnrollmentController {
    constructor(private readonly enrollmentService: EnrollmentService) {}
 
-   @Post('/batch-enroll')
+   @Post('batch-enroll')
    async batchEnroll(
       @Body()
       body: {
@@ -42,6 +44,40 @@ export class EnrollmentController {
          body.semester,
          body.tuitionFee,
       );
+   }
+
+   @Put('update-grades')
+   async updateGrades(
+      @Body()
+      body: {
+         enrollments: {
+            _id: Types.ObjectId;
+            grades: {
+               prelim: number;
+               midterm: number;
+               prefinal: number;
+               final: number;
+            };
+         }[];
+      },
+   ): Promise<{ status: string; message: string; data: Enrollment[] }> {
+      try {
+         const updatedEnrollments =
+            await this.enrollmentService.updateGradesForEnrollments(
+               body.enrollments,
+            );
+
+         return {
+            status: 'success',
+            message: 'Grades updated successfully.',
+            data: updatedEnrollments,
+         };
+      } catch (error) {
+         throw new HttpException(
+            `Failed to update grades: ${error.message}`,
+            HttpStatus.BAD_REQUEST,
+         );
+      }
    }
 
    @Get()

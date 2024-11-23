@@ -164,6 +164,66 @@ export class EnrollmentService {
       return enrollments;
    }
 
+   async updateGradesForEnrollments(
+      enrollments: {
+         _id: Types.ObjectId;
+         grades: {
+            prelim: number;
+            midterm: number;
+            prefinal: number;
+            final: number;
+         };
+      }[],
+   ): Promise<Enrollment[]> {
+      const updatedEnrollments: Enrollment[] = [];
+      const errors: string[] = [];
+
+      const session = await this.connection.startSession();
+      session.startTransaction();
+
+      console.log(enrollments);
+
+      try {
+         for (let i = 0; i < enrollments.length; i++) {
+            const enrollment = enrollments[i];
+
+            const existingEnrollment = await this.enrollmentModel
+               .findById(enrollment._id)
+               .session(session);
+
+            if (existingEnrollment) {
+               existingEnrollment.prelim = enrollment.grades.prelim;
+               existingEnrollment.midterm = enrollment.grades.midterm;
+               existingEnrollment.prefinal = enrollment.grades.prefinal;
+               existingEnrollment.final = enrollment.grades.final;
+
+               existingEnrollment.status = Status.COMPLETED;
+
+               const updatedEnrollment = await existingEnrollment.save({
+                  session,
+               });
+
+               updatedEnrollments.push(updatedEnrollment);
+            } else {
+               errors.push(`Enrollment with ID ${enrollment._id} not found`);
+            }
+         }
+
+         if (errors.length) {
+            console.warn(`Errors during grade update: ${errors.join(', ')}`);
+         }
+
+         await session.commitTransaction();
+      } catch (error) {
+         await session.abortTransaction();
+         throw new Error(`Batch grade update failed: ${error.message}`);
+      } finally {
+         session.endSession();
+      }
+
+      return updatedEnrollments;
+   }
+
    async findAll(): Promise<Enrollment[]> {
       return this.enrollmentModel.find().exec();
    }

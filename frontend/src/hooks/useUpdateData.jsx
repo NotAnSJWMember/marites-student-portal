@@ -7,11 +7,16 @@ const useUpdateData = () => {
   const { setShowPopup, showError, showSuccess, ...popupProps } = usePopupAlert();
   const [loading, setLoading] = useState(false);
 
-  const updateData = async (data, endpoint, key, fetchData) => {
+  const updateData = async (data, endpoint, key = null, fetchData) => {
     setLoading(true);
     try {
-      const url = getApiUrl();
-      const response = await fetch(`${url}/${endpoint}/${key}`, {
+      let url = `${getApiUrl()}/${endpoint}`;
+
+      if (key) {
+        url = `${getApiUrl()}/${endpoint}/${key}`;
+      }
+
+      const response = await fetch(url, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

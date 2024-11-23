@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import styles from "./GradeManagement.module.scss";
-import { TbCategoryFilled, TbDotsVertical } from "react-icons/tb";
+import { TbDotsVertical } from "react-icons/tb";
 
 import IconSizes from "constants/IconSizes";
 import Layout from "components/Layout/Layout";
@@ -11,18 +11,36 @@ import { useDataContext } from "hooks/contexts/DataContext";
 import SearchBar from "components/SearchBar/SearchBar";
 import Popup from "components/Popup/Popup";
 import TabMenu from "components/TabMenu/TabMenu";
+import { usePopupAlert } from "hooks";
+import PopupAlert from "components/Popup/PopupAlert";
+import usePostData from "hooks/usePostData";
+import useFetchData from "hooks/useFetchData";
+import useUpdateData from "hooks/useUpdateData";
 
 const GradeManagement = () => {
   const [loading, setIsLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [popupData, setPopupData] = useState(null);
   const [filteredData, setFilteredData] = useState([]);
   const [selectedOption, setSelectedOption] = useState("");
-  const [popupData, setPopupData] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState("all");
 
   const { dataState: students } = useDataContext("student");
   const { dataState: courses } = useDataContext("course");
   const { dataState: programs } = useDataContext("program");
-  const { dataState: enrollments } = useDataContext("enrollment");
+  const { data: enrollments, fetchData } = useFetchData("enrollment");
+
+  const { popupState, showPopup, showError } = usePopupAlert();
+  const {
+    popupState: updatePopup,
+    showPopup: showUpdatePopup,
+    setShowPopup: setShowUpdatePopup,
+    loading: updateLoading,
+    updateData,
+  } = useUpdateData();
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   useEffect(() => {
     if (students && courses && programs && enrollments) {
@@ -30,6 +48,36 @@ const GradeManagement = () => {
       setFilteredData(students);
     }
   }, [students, courses, programs, enrollments]);
+
+  const formatGrade = (grade) => (grade !== 0 ? grade.toFixed(1) : "N/A");
+
+  const calculateAverageGrade = (enrollments) => {
+    const grades = enrollments.flatMap(({ prelim, midterm, prefinal, final }) =>
+      [prelim, midterm, prefinal, final].filter(Boolean)
+    );
+    return grades.length
+      ? (grades.reduce((sum, g) => sum + g, 0) / grades.length).toFixed(1)
+      : "N/A";
+  };
+
+  const handleSavedGrades = (data) => {
+    const enrollments = data.map((e) => ({
+      _id: e._id,
+      grades: {
+        prelim: e.prelim,
+        midterm: e.midterm,
+        prefinal: e.prefinal,
+        final: e.final,
+      },
+    }));
+
+    const body = {
+      enrollments: enrollments,
+    };
+
+    const response = updateData(body, `enrollment/update-grades`, null, fetchData);
+    if (response.ok) setShowUpdatePopup(true);
+  };
 
   const handleCategoryChange = (category) => {
     if (category === "all") {
@@ -70,53 +118,126 @@ const GradeManagement = () => {
     setPopupData(null);
   };
 
-  const formatGrade = (grade) => grade.toFixed(1);
-
-  const calculateAverageGrade = (enrollments) => {
-    const grades = enrollments.flatMap(({ prelim, midterm, prefinal, final }) =>
-      [prelim, midterm, prefinal, final].filter(Boolean)
-    );
-    return grades.length
-      ? (grades.reduce((sum, g) => sum + g, 0) / grades.length).toFixed(1)
-      : "N/A";
-  };
-
   const StudentGradeView = ({ data }) => {
-    return data.length !== 0 ? (
-      <div className={styles.tableWrapper}>
-        <div className={styles.tableHeader} style={{ gridTemplateColumns: "100px 200px 1fr" }}>
-          <h4>Code</h4>
-          <h4>Course</h4>
-          <div className={styles.gradeHeader}>
-            <h4>Prelim</h4>
-            <h4>Midterm</h4>
-            <h4>Prefinal</h4>
-            <h4>Final</h4>
+    const memoizedData = useMemo(() => data, [data]);
+
+    const [editingGrade, setEditingGrade] = useState(null);
+    const [editedValue, setEditedValue] = useState("");
+    const [grades, setGrades] = useState(memoizedData);
+
+    const handleDoubleClick = (enrollmentId, gradeType, currentGrade) => {
+      setEditingGrade({ enrollmentId, gradeType });
+      setEditedValue(currentGrade);
+    };
+
+    const handleGradeChange = (e) => {
+      setEditedValue(e.target.value);
+    };
+
+    const handleSave = () => {
+      const grade = parseFloat(editedValue);
+
+      if (isNaN(grade) || grade < 0.0 || grade > 5.0) {
+        showError("Invalid grade", "Grade must be between 0.0 and 5.0.");
+        return;
+      }
+
+      const updatedGrades = grades.map((enrollment) => {
+        if (enrollment._id === editingGrade.enrollmentId) {
+          return {
+            ...enrollment,
+            [editingGrade.gradeType]: grade,
+          };
+        }
+        return enrollment;
+      });
+
+      setGrades(updatedGrades);
+      setEditingGrade(null);
+    };
+
+    const handleBlur = () => {
+      setEditingGrade(null);
+    };
+
+    return grades.length !== 0 ? (
+      <>
+        <div className={styles.tableWrapper}>
+          <div
+            className={styles.tableHeader}
+            style={{ gridTemplateColumns: "100px 200px 1fr" }}
+          >
+            <h4>Code</h4>
+            <h4>Course</h4>
+            <div className={styles.gradeHeader}>
+              <h4>Prelim</h4>
+              <h4>Midterm</h4>
+              <h4>Prefinal</h4>
+              <h4>Final</h4>
+            </div>
+          </div>
+          <div className={styles.tableContent}>
+            {grades.map((enrollment) => {
+              const course = courses
+                ? courses.find((c) => c._id === enrollment.courseId)
+                : null;
+
+              return (
+                <div
+                  key={course._id}
+                  className={styles.tableItem}
+                  style={{ gridTemplateColumns: "100px 200px 1fr" }}
+                >
+                  <p>{course.code}</p>
+                  <p>{course.description}</p>
+                  <div className={styles.gradeHeader}>
+                    {["prelim", "midterm", "prefinal", "final"].map((gradeType) => {
+                      const grade = enrollment[gradeType];
+                      return (
+                        <p
+                          key={gradeType}
+                          className={styles.gradeItem}
+                          onDoubleClick={() =>
+                            handleDoubleClick(enrollment._id, gradeType, grade)
+                          }
+                        >
+                          {editingGrade &&
+                          editingGrade.enrollmentId === enrollment._id &&
+                          editingGrade.gradeType === gradeType ? (
+                            <input
+                              type="number"
+                              onChange={handleGradeChange}
+                              onBlur={handleBlur}
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                  handleSave();
+                                }
+                              }}
+                              autoFocus
+                              placeholder={grade}
+                            />
+                          ) : (
+                            formatGrade(parseFloat(grade))
+                          )}
+                        </p>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
-        <div className={styles.tableContent}>
-          {data.map((enrollment) => {
-            const course = courses ? courses.find((c) => c._id === enrollment.courseId) : null;
-
-            return (
-              <div
-                key={course._id}
-                className={styles.tableItem}
-                style={{ gridTemplateColumns: "100px 200px 1fr" }}
-              >
-                <p>{course.code}</p>
-                <p>{course.description}</p>
-                <div className={styles.gradeHeader}>
-                  <p>{formatGrade(enrollment?.prelim)}</p>
-                  <p>{formatGrade(enrollment?.midterm)}</p>
-                  <p>{formatGrade(enrollment?.prefinal)}</p>
-                  <p>{formatGrade(enrollment?.final)}</p>
-                </div>
-              </div>
-            );
-          })}
+        <div className={styles.buttonContainer}>
+          <button onClick={handleClosePopup} className={styles.secondaryBtn}>
+            Close
+          </button>
+          <button onClick={() => handleSavedGrades(grades)} className={styles.primaryBtn}>
+            Save changes
+            {updateLoading && <Loading />}
+          </button>
         </div>
-      </div>
+      </>
     ) : (
       <p>This student hasn't been enrolled in this semester.</p>
     );
@@ -237,6 +358,7 @@ const GradeManagement = () => {
                       data={studentEnrollments.filter(
                         (enrollment) => enrollment.semester === 1
                       )}
+                      semester={1}
                     />
                   ),
                 },
@@ -247,19 +369,12 @@ const GradeManagement = () => {
                       data={studentEnrollments.filter(
                         (enrollment) => enrollment.semester === 2
                       )}
+                      semester={2}
                     />
                   ),
                 },
               ]}
             />
-          </div>
-          <div className={styles.buttonContainer}>
-            <button onClick={handleClosePopup} className={styles.secondaryBtn}>
-              Close
-            </button>
-            <button onClick={handleClosePopup} className={styles.primaryBtn}>
-              Save changes
-            </button>
           </div>
         </div>
       </Popup>
@@ -355,6 +470,22 @@ const GradeManagement = () => {
         <Loading />
       )}
       {popupData && renderEditPopup()}
+      <PopupAlert
+        icon={updatePopup.icon}
+        title={updatePopup.title}
+        message={updatePopup.message}
+        color={updatePopup.color}
+        border={updatePopup.border}
+        show={showUpdatePopup}
+      />
+      <PopupAlert
+        icon={popupState.icon}
+        title={popupState.title}
+        message={popupState.message}
+        color={popupState.color}
+        border={popupState.border}
+        show={showPopup}
+      />
     </Layout>
   );
 };
