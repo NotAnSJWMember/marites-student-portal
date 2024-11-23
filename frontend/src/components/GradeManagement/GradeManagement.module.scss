@@ -26,8 +26,8 @@
   }
 
   .tableHeader {
-    padding: 0.8rem;
-    background-color: #fbfbfb;
+    padding: 0.5rem 0.8rem;
+    background-color: $table-header;
     border-bottom: 1px solid $light-gray-color-100;
     overflow: auto;
   }

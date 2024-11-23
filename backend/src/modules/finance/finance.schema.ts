@@ -14,7 +14,7 @@ export class Finance extends Document {
 
    @Prop({
       type: {
-         amount: { type: Number, default: 0 },
+         amount: { type: Number, required: true },
          discounts: [
             {
                discountType: {
@@ -25,7 +25,7 @@ export class Finance extends Document {
                default: [],
             },
          ],
-         totalDue: { type: Number, required: true },
+         totalDue: { type: Number, default: 0 },
       },
       required: true,
    })

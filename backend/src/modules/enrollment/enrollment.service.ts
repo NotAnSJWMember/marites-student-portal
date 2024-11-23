@@ -32,7 +32,11 @@ export class EnrollmentService {
       studentId: string,
       schoolYear: string,
       semester: number,
-      tuitionFee: { totalDue: number; discounts: { amount: number }[] },
+      tuitionFee: {
+         amount: number;
+         totalDue: number;
+         discounts: { amount: number }[];
+      },
    ): Promise<Enrollment[]> {
       if (
          courseIds.length !== sectionIds.length ||
@@ -49,10 +53,19 @@ export class EnrollmentService {
       const session = await this.connection.startSession();
       session.startTransaction();
 
+      const totalDue = this.calculateTotalDue(
+         tuitionFee.amount,
+         tuitionFee.discounts,
+      );
+
       try {
          const finance = new this.financeModel({
             studentId,
-            tuitionFee,
+            tuitionFee: {
+               amount: tuitionFee.amount,
+               discounts: tuitionFee.discounts,
+               totalDue: totalDue,
+            },
             outstandingBalance: this.calculateOutstandingBalance(tuitionFee),
             paymentStatus: {
                status: 'unpaid',
@@ -75,6 +88,20 @@ export class EnrollmentService {
 
             if (!section) {
                errors.push(`Section not found for course ${courseId}`);
+               continue;
+            }
+
+            const existingEnrollment = await this.enrollmentModel
+               .findOne({
+                  courseId,
+                  studentId,
+                  schoolYear,
+                  semester,
+               })
+               .session(session);
+
+            if (existingEnrollment) {
+               errors.push(`Already enrolled in course ${courseId}`);
                continue;
             }
 
@@ -163,6 +190,10 @@ export class EnrollmentService {
       discounts: { amount: number }[];
    }): number {
       let outstandingBalance = tuitionFee.totalDue;
+      if (!tuitionFee.discounts) {
+         return outstandingBalance;
+      }
+
       if (tuitionFee.discounts && tuitionFee.discounts.length > 0) {
          const totalDiscount = tuitionFee.discounts.reduce(
             (sum, discount) => sum + discount.amount,
@@ -206,23 +237,14 @@ export class EnrollmentService {
       return enrollments.map((enrollment) => enrollment.courseId);
    }
 
-   async seedTuition(): Promise<void> {
-      const fees = [
-         {
-            schoolYear: '2024-2025',
-            semester: 1,
-            tuitionFee: 30000,
-         },
-         {
-            schoolYear: '2024-2025',
-            semester: 2,
-            tuitionFee: 32000,
-         },
-      ];
-
-      await this.programModel.updateOne(
-         { _id: '672ee7ad7c40b8f5027d6741' },
-         { $set: { fees: fees } },
+   private calculateTotalDue(
+      amount: number,
+      discounts: { amount: number }[],
+   ): number {
+      const totalDiscount = discounts.reduce(
+         (sum, discount) => sum + discount.amount,
+         0,
       );
+      return amount - totalDiscount;
    }
 }

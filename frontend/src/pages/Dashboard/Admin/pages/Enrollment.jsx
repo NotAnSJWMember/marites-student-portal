@@ -230,9 +230,9 @@ const Enrollment = () => {
     );
 
     const tuitionFee = {
-      amount: 0,
-      totalDue: fee.tuitionFee,
+      amount: fee.tuitionFee,
       discounts: [],
+      totalDue: 0,
     };
 
     const body = {

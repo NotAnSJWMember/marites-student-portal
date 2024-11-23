@@ -31,8 +31,8 @@ class TuitionFeeDto {
    discounts?: DiscountDto[];
 
    @IsNumber()
-   @IsNotEmpty()
-   totalDue: number;
+   @IsOptional()
+   totalDue?: number;
 }
 
 class TransactionDto {

@@ -7,13 +7,21 @@ import { Helmet } from "react-helmet-async";
 import styles from "./Register.module.scss";
 import LogoIcon from "../../assets/images/logo.png";
 import { useNavigate } from "react-router-dom";
+import usePostData from "hooks/usePostData";
+import useFetchData from "hooks/useFetchData";
 
 const Register = () => {
-  const { popupState, showPopup, setShowPopup, loading, createAccount } = useRegister();
+  const { popupState, setShowPopup, showPopup, loading, postData } = usePostData();
+  const { fetchData } = useFetchData("student");
+
   const navigate = useNavigate();
 
-  const handleClosePopup = () => {
-    setShowPopup(false);
+  const handleCreateUser = async (formData, role) => {
+    const response = await postData(formData, role.toString(), fetchData);
+    if (response) {
+      setShowPopup(true);
+      handleFinishCreation();
+    }
   };
 
   const handleFinishCreation = () => {
@@ -40,7 +48,7 @@ const Register = () => {
             role="student"
             loading={loading}
             createdAction={handleFinishCreation}
-            createAccount={createAccount}
+            createAccount={handleCreateUser}
             isRegister={true}
           />
         </div>
@@ -51,7 +59,6 @@ const Register = () => {
         color={popupState.color}
         title={popupState.title}
         message={popupState.message}
-        onClose={handleClosePopup}
         show={showPopup}
       />
     </>

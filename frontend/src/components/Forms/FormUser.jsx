@@ -16,6 +16,7 @@ export const FormUser = ({ role, loading, createdAction, createAccount, isRegist
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm();
 
   const onCreateSubmit = async (data) => {
@@ -26,6 +27,7 @@ export const FormUser = ({ role, loading, createdAction, createAccount, isRegist
 
     const userData = { ...data, yearLevel, birthDate, firstName, lastName };
     await createAccount(userData, role.toString());
+    reset();
   };
 
   return (

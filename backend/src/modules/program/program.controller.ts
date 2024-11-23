@@ -46,6 +46,6 @@ export class ProgramController {
 
    @Post('seed')
    async seed() {
-      return await this.programService.createMiscFees();
+      return await this.programService.createPrograms();
    }
 }

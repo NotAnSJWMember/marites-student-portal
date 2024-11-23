@@ -46,7 +46,7 @@ export class ProgramService {
       return program;
    }
 
-   async createDummyPrograms(): Promise<void> {
+   async createPrograms(): Promise<void> {
       const programs = [
          {
             description: 'Bachelor of Science in Information Technology',
@@ -60,53 +60,109 @@ export class ProgramService {
             duration: 4,
             department: 'Computer Studies',
          },
+         {
+            description: 'Bachelor of Arts in Communication',
+            code: 'BAComm',
+            duration: 4,
+            department: 'Arts and Humanities',
+         },
+         {
+            description: 'Bachelor of Science in Nursing',
+            code: 'BSN',
+            duration: 4,
+            department: 'Health Sciences',
+         },
+         {
+            description: 'Bachelor of Science in Business Administration',
+            code: 'BSBA',
+            duration: 4,
+            department: 'Business and Management',
+         },
+         {
+            description: 'Bachelor of Science in Tourism Management',
+            code: 'BSTour',
+            duration: 4,
+            department: 'Tourism and Hospitality',
+         },
+         {
+            description: 'Bachelor of Science in Accountancy',
+            code: 'BSA',
+            duration: 4,
+            department: 'Business and Management',
+         },
+         {
+            description:
+               'Bachelor of Science in Education Major in Mathematics',
+            code: 'BSEMath',
+            duration: 4,
+            department: 'Education',
+         },
+         {
+            description: 'Bachelor of Science in Psychology',
+            code: 'BSPsych',
+            duration: 4,
+            department: 'Social Sciences',
+         },
+         {
+            description: 'Bachelor of Science in Architecture',
+            code: 'BSArch',
+            duration: 5,
+            department: 'Architecture and Design',
+         },
       ];
 
-      await this.programModel.insertMany(programs);
-   }
-
-   async createMiscFees(): Promise<void> {
       const miscellaneousFees = [
          {
             feeType: 'Library Fee',
             amount: 500,
             description:
                'Fee for accessing the library resources and borrowing books',
-            _id: new Types.ObjectId(),
          },
          {
             feeType: 'Laboratory Fee',
-            amount: 1500,
+            amount: 3000,
             description:
                'Fee for using the laboratory facilities for hands-on practice',
-            _id: new Types.ObjectId(),
          },
          {
             feeType: 'Activity Fee',
             amount: 800,
             description: 'Fee for student activities and campus events',
-            _id: new Types.ObjectId(),
          },
          {
             feeType: 'Technology Fee',
-            amount: 1000,
+            amount: 500,
             description:
                'Fee for maintaining and upgrading technology on campus',
-            _id: new Types.ObjectId(),
          },
          {
             feeType: 'Student Health Fee',
-            amount: 300,
+            amount: 3000,
             description:
                'Fee for health services and medical assistance on campus',
-            _id: new Types.ObjectId(),
          },
       ];
 
-      const id = '672ee7ad7c40b8f5027d6741';
-      await this.programModel.updateOne(
-         { _id: id },
-         { $set: { miscellaneousFees: miscellaneousFees } },
-      );
+      for (const program of programs) {
+         const fees = [
+            {
+               schoolYear: '2024-2025',
+               semester: 1,
+               tuitionFee: Math.floor(Math.random() * 10000) + 40000, // Random fee between 40k-50k
+            },
+            {
+               schoolYear: '2024-2025',
+               semester: 2,
+               tuitionFee: Math.floor(Math.random() * 10000) + 40000,
+            },
+         ];
+
+         await this.programModel.create({
+            ...program,
+            fees,
+            miscellaneousFees,
+         });
+      }
+      console.log('Programs successfully created!');
    }
 }

@@ -237,14 +237,14 @@ const GradeManagement = () => {
           </main>
           <aside className={styles.sideContent}>
             <section className={styles.requestsContainer}>
-              <h2>Grade Edit Requests</h2>
+              <h3>Requests</h3>
               <p>Manage requests for grade changes submitted by instructors.</p>
               <ul>
                 <li>Request #1: Change grade for John Doe in Course A (Pending)</li>
               </ul>
             </section>
             <section className={styles.guidelinesContainer}>
-              <h2>Grade Editing Guidelines</h2>
+              <h3>Guidelines</h3>
               <p>
                 Please follow the provided guidelines when editing grades to ensure data
                 accuracy and compliance with institutional policies.

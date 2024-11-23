@@ -26,7 +26,11 @@ export class EnrollmentController {
          studentId: string;
          schoolYear: string;
          semester: number;
-         tuitionFee: { totalDue: number; discounts: { amount: number }[] };
+         tuitionFee: {
+            amount: number;
+            totalDue: number;
+            discounts: { amount: number }[];
+         };
       },
    ) {
       return this.enrollmentService.batchEnroll(
@@ -61,10 +65,5 @@ export class EnrollmentController {
    @Delete(':id')
    async delete(@Param('id') id: Types.ObjectId): Promise<Enrollment> {
       return this.enrollmentService.delete(id);
-   }
-
-   @Post('/seed')
-   async seedTuition() {
-      await this.enrollmentService.seedTuition();
    }
 }
