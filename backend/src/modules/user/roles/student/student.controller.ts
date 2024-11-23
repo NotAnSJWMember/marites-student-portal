@@ -16,7 +16,7 @@ export class StudentController {
    constructor(private readonly studentService: StudentService) {}
 
    @Post()
-   async create(@Body() createStudentDto: CreateStudentDto): Promise<void> {
+   async create(@Body() createStudentDto: CreateStudentDto): Promise<any> {
       return this.studentService.create(createStudentDto);
    }
 

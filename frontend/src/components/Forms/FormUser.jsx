@@ -15,7 +15,6 @@ export const FormUser = ({ role, loading, createdAction, createAccount, isRegist
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors },
   } = useForm();
 
@@ -26,8 +25,7 @@ export const FormUser = ({ role, loading, createdAction, createAccount, isRegist
     const lastName = startCase(data.lastName);
 
     const userData = { ...data, yearLevel, birthDate, firstName, lastName };
-    const response = await createAccount(userData, role.toString(), reset);
-    if (response.ok) createdAction();
+    await createAccount(userData, role.toString());
   };
 
   return (

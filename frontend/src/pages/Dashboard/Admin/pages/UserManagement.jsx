@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./UserManagement.module.scss";
 import { TbEdit, TbFileArrowRight, TbTrash } from "react-icons/tb";
 
@@ -12,38 +12,42 @@ import { FormUser } from "components/Forms/FormUser";
 
 import useFetchData from "hooks/useFetchData";
 import useDeleteData from "hooks/useDeleteData";
-import { useRegister } from "hooks";
 import { format, formatDistanceToNow } from "date-fns";
 import { capitalize } from "lodash";
+import usePostData from "hooks/usePostData";
 
 const UserManagement = () => {
-  const [shouldRefetch, setShouldRefetch] = useState(false);
   const [showUserPopup, setShowUserPopup] = useState(false);
 
-  const headers = ["Name", "Role", "Last Seen", "Created on"];
-
-  const { data: users } = useFetchData("user", shouldRefetch);
+  const { data: users, fetchData } = useFetchData("user");
   const {
     popupState: deleteState,
     showPopup: showDeletePopup,
     deleteData,
   } = useDeleteData("user");
+
   const {
     popupState: createState,
     showPopup: showCreatePopup,
     loading,
-    createAccount,
-  } = useRegister();
+    postData,
+  } = usePostData();
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const formatDate = (isoString) => {
     return format(new Date(isoString), "MMMM d, yyyy");
   };
 
+  const handleCreateUser = async (formData, role) => {
+    const response = await postData(formData, role.toString(), fetchData);
+    if (response) handleShowCreatePopup();
+  };
+
   const handleDeleteUser = async (userId) => {
-    if (userId) {
-      await deleteData(userId);
-      setShouldRefetch((prev) => !prev);
-    }
+    if (userId) await deleteData(userId, fetchData);
   };
 
   const handleShowCreatePopup = () => {
@@ -102,7 +106,7 @@ const UserManagement = () => {
             </h3>
             <Table
               data={users}
-              headers={headers}
+              headers={["Name", "Role", "Last Seen", "Created on"]}
               content={renderData}
               popupContent={renderPopupContent}
               ctaText="Create user"
@@ -120,12 +124,7 @@ const UserManagement = () => {
       >
         <div className={styles.userPopup}>
           <h2>Create a user</h2>
-          <FormUser
-            role="student"
-            loading={loading}
-            createdAction={handleShowCreatePopup}
-            createAccount={createAccount}
-          />
+          <FormUser role="student" loading={loading} createAccount={handleCreateUser} />
         </div>
       </Popup>
 

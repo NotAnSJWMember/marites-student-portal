@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Student } from './student.schema';
@@ -16,19 +16,23 @@ export class StudentService {
       private curriculumService: CurriculumService,
    ) {}
 
-   async create(createStudentDto: CreateStudentDto): Promise<void> {
+   async create(createStudentDto: CreateStudentDto): Promise<any> {
       this.logger.log('Creating new student...');
+      try {
+         this.logger.log('Creating new student...');
 
-      const curriculum = await this.curriculumService.findCurriculum(
-         createStudentDto.programId,
-         createStudentDto.yearLevel,
-      );
-
-      if (!curriculum) {
-         this.logger.warn(
-            'Curriculum not found for this program and year level',
+         const curriculum = await this.curriculumService.findCurriculum(
+            createStudentDto.programId,
+            createStudentDto.yearLevel,
          );
-      } else {
+
+         if (!curriculum) {
+            throw new HttpException(
+               'Curriculum not found for this program and year level',
+               HttpStatus.BAD_REQUEST,
+            );
+         }
+
          const student = await this.userService.create(createStudentDto);
 
          const newStudent = new this.studentModel({
@@ -41,9 +45,18 @@ export class StudentService {
 
          await newStudent.save();
          this.logger.log('Student created successfully!');
+
+         return {
+            message: 'Student created successfully!',
+            student: newStudent,
+         };
+      } catch (error) {
+         throw new HttpException(
+            error.message || 'An error occurred during student creation',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+         );
       }
    }
-
    async findAll(): Promise<Student[]> {
       this.logger.log('Fetching all users...');
 

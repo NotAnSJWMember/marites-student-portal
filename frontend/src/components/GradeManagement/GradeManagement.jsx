@@ -26,23 +26,19 @@ const GradeManagement = () => {
   useEffect(() => {
     if (students && courses && programs && enrollments) {
       setIsLoading(false);
-      setFilteredData(students); // Initialize with all students
-      console.log(filteredData);
-      console.log(selectedCategory);
+      setFilteredData(students);
     }
   }, [students, courses, programs, enrollments]);
 
   const handleCategoryChange = (category) => {
-    if (selectedCategory === category) {
-      // If the same category is clicked again, reset to "all"
+    if (category === "all") {
       setSelectedCategory("all");
       setSelectedOption("");
-      setFilteredData(students); // Reset to show all students
+      setFilteredData(students);
     } else {
-      // Otherwise, set the new category
       setSelectedCategory(category);
       setSelectedOption("");
-      setFilteredData([]); // Clear filtered data until an option is selected
+      setFilteredData([]);
     }
   };
 
