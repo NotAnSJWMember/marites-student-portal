@@ -22,7 +22,9 @@
 
   .gradeHeader {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-columns: repeat(4, 1fr);
+    justify-items: center;
+    gap: 0 1.5rem;
   }
 
   .tableHeader {
@@ -57,11 +59,14 @@
 }
 
 .popupWrapper {
-  display: flex;
-  flex-direction: column;
+  display: grid;
   gap: 1rem;
   padding: 1rem;
 
   .studentInfo {
+  }
+
+  .buttonContainer {
+    justify-self: end;
   }
 }

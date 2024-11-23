@@ -70,7 +70,7 @@ const GradeManagement = () => {
     setPopupData(null);
   };
 
-  const formatGrade = (grade) => (grade !== 0 ? grade.toFixed(1) : "N/A");
+  const formatGrade = (grade) => grade.toFixed(1);
 
   const calculateAverageGrade = (enrollments) => {
     const grades = enrollments.flatMap(({ prelim, midterm, prefinal, final }) =>
@@ -82,58 +82,44 @@ const GradeManagement = () => {
   };
 
   const StudentGradeView = ({ data }) => {
-    const studentEnrollments = enrollments
-      ? enrollments.filter((e) => e.studentId === data.userId)
-      : [];
-
-    <div className={styles.tableWrapper}>
-      <div
-        className={styles.tableHeader}
-        style={
-          selectedCategory === "all"
-            ? { gridTemplateColumns: "120px 1fr 1fr 1fr 40px" }
-            : { gridTemplateColumns: "120px 1fr 1fr 40px" }
-        }
-      >
-        <h4>School ID</h4>
-        <h4>Name</h4>
-        {selectedCategory === "all" && (
-          <>
-            <h4>Program</h4>
-            <h4>Average Grade</h4>
-          </>
-        )}
-        {selectedCategory === "course" && (
+    return data.length !== 0 ? (
+      <div className={styles.tableWrapper}>
+        <div className={styles.tableHeader} style={{ gridTemplateColumns: "100px 200px 1fr" }}>
+          <h4>Code</h4>
+          <h4>Course</h4>
           <div className={styles.gradeHeader}>
             <h4>Prelim</h4>
             <h4>Midterm</h4>
             <h4>Prefinal</h4>
             <h4>Final</h4>
           </div>
-        )}
-        {selectedCategory === "program" && <h4>Average Grade</h4>}
-      </div>
-      <div className={styles.tableContent}>
-        {studentEnrollments.map((enrollment) => {
-          const course = courses ? courses.find((c) => c._id === enrollment.courseId) : null;
+        </div>
+        <div className={styles.tableContent}>
+          {data.map((enrollment) => {
+            const course = courses ? courses.find((c) => c._id === enrollment.courseId) : null;
 
-          return (
-            <div
-              key={course._id}
-              className={styles.tableItem}
-              style={{ gridTemplateColumns: "repeat(4, 1fr)" }}
-            >
-              <div className={styles.gradeHeader}>
-                <p>{formatGrade(enrollment?.prelim)}</p>
-                <p>{formatGrade(enrollment?.midterm)}</p>
-                <p>{formatGrade(enrollment?.prefinal)}</p>
-                <p>{formatGrade(enrollment?.final)}</p>
+            return (
+              <div
+                key={course._id}
+                className={styles.tableItem}
+                style={{ gridTemplateColumns: "100px 200px 1fr" }}
+              >
+                <p>{course.code}</p>
+                <p>{course.description}</p>
+                <div className={styles.gradeHeader}>
+                  <p>{formatGrade(enrollment?.prelim)}</p>
+                  <p>{formatGrade(enrollment?.midterm)}</p>
+                  <p>{formatGrade(enrollment?.prefinal)}</p>
+                  <p>{formatGrade(enrollment?.final)}</p>
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
-    </div>;
+    ) : (
+      <p>This student hasn't been enrolled in this semester.</p>
+    );
   };
 
   const GradeView = ({ data }) => {
@@ -228,6 +214,58 @@ const GradeManagement = () => {
     );
   };
 
+  const renderEditPopup = () => {
+    const studentEnrollments = enrollments
+      ? enrollments.filter((e) => e.studentId === popupData.userId)
+      : [];
+
+    return (
+      <Popup show={!!popupData} close={handleClosePopup} position="center">
+        <div className={styles.popupWrapper}>
+          <div className={styles.studentInfo}>
+            <h3>{`${popupData.firstName} ${popupData.lastName}`}</h3>
+            <p>{popupData.email}</p>
+            <p>{popupData.userId}</p>
+          </div>
+          <div className={styles.contentContainer}>
+            <TabMenu
+              tabs={[
+                {
+                  label: "1st Semester",
+                  content: (
+                    <StudentGradeView
+                      data={studentEnrollments.filter(
+                        (enrollment) => enrollment.semester === 1
+                      )}
+                    />
+                  ),
+                },
+                {
+                  label: "2nd Semester",
+                  content: (
+                    <StudentGradeView
+                      data={studentEnrollments.filter(
+                        (enrollment) => enrollment.semester === 2
+                      )}
+                    />
+                  ),
+                },
+              ]}
+            />
+          </div>
+          <div className={styles.buttonContainer}>
+            <button onClick={handleClosePopup} className={styles.secondaryBtn}>
+              Close
+            </button>
+            <button onClick={handleClosePopup} className={styles.primaryBtn}>
+              Save changes
+            </button>
+          </div>
+        </div>
+      </Popup>
+    );
+  };
+
   return (
     <Layout role="admin" pageName="Grade Management">
       {!loading ? (
@@ -316,50 +354,7 @@ const GradeManagement = () => {
       ) : (
         <Loading />
       )}
-
-      {popupData && (
-        <Popup show={!!popupData} close={handleClosePopup} position="center">
-          <div className={styles.popupWrapper}>
-            <div className={styles.studentInfo}>
-              <h3>{`${popupData.firstName} ${popupData.lastName}`}</h3>
-              <p>{popupData.email}</p>
-              <p>{popupData.userId}</p>
-            </div>
-            {selectedCategory === "all" && (
-              <div>
-                <select
-                  className={styles.select}
-                  value={selectedOption}
-                  onChange={(e) => handleOptionChange(e.target.value)}
-                >
-                  <option value="">Select course</option>
-                  {courses.map((option) => (
-                    <option key={option._id} value={option._id}>
-                      {option.description}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
-            <div className={styles.contentContainer}>
-              <TabMenu
-                tabs={[
-                  { label: "1st Semester", content: <StudentGradeView data={popupData} /> },
-                  { label: "2nd Semester", content: <StudentGradeView data={popupData} /> },
-                ]}
-              />
-            </div>
-            <div className={styles.buttonContainer}>
-              <button onClick={handleClosePopup} className={styles.secondaryBtn}>
-                Close
-              </button>
-              <button onClick={handleClosePopup} className={styles.primaryBtn}>
-                Save changes
-              </button>
-            </div>
-          </div>
-        </Popup>
-      )}
+      {popupData && renderEditPopup()}
     </Layout>
   );
 };
