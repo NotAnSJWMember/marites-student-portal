@@ -64,7 +64,7 @@ export const Sidebar = ({ role }) => {
             <div className={styles.sealContainer}>
               <img src={logo} alt="Dr. AMMC Seal" />
               <div className={styles.sealContainerText}>
-                <h1>Aurelio Mendoza Memorial College</h1>
+                <h1>Dr. Aurelio Mendoza Memorial College</h1>
                 <p>Student Portal</p>
               </div>
             </div>
@@ -160,7 +160,7 @@ export const Sidebar = ({ role }) => {
             <div className={styles.sealContainer}>
               <img src={logo} alt="Dr. AMMC Seal" />
               <div className={styles.sealContainerText}>
-                <h1>Aurelio Mendoza Memorial College</h1>
+                <h1>Dr. Aurelio Mendoza Memorial College</h1>
                 <p>Admin Portal</p>
               </div>
             </div>

@@ -10,6 +10,7 @@ import UserIcon from "components/ui/UserIcon/UserIcon";
 import { useDataContext } from "hooks/contexts/DataContext";
 import SearchBar from "components/SearchBar/SearchBar";
 import Popup from "components/Popup/Popup";
+import TabMenu from "components/TabMenu/TabMenu";
 
 const GradeManagement = () => {
   const [loading, setIsLoading] = useState(true);
@@ -69,21 +70,76 @@ const GradeManagement = () => {
     setPopupData(null);
   };
 
+  const formatGrade = (grade) => (grade !== 0 ? grade.toFixed(1) : "N/A");
+
+  const calculateAverageGrade = (enrollments) => {
+    const grades = enrollments.flatMap(({ prelim, midterm, prefinal, final }) =>
+      [prelim, midterm, prefinal, final].filter(Boolean)
+    );
+    return grades.length
+      ? (grades.reduce((sum, g) => sum + g, 0) / grades.length).toFixed(1)
+      : "N/A";
+  };
+
+  const StudentGradeView = ({ data }) => {
+    const studentEnrollments = enrollments
+      ? enrollments.filter((e) => e.studentId === data.userId)
+      : [];
+
+    <div className={styles.tableWrapper}>
+      <div
+        className={styles.tableHeader}
+        style={
+          selectedCategory === "all"
+            ? { gridTemplateColumns: "120px 1fr 1fr 1fr 40px" }
+            : { gridTemplateColumns: "120px 1fr 1fr 40px" }
+        }
+      >
+        <h4>School ID</h4>
+        <h4>Name</h4>
+        {selectedCategory === "all" && (
+          <>
+            <h4>Program</h4>
+            <h4>Average Grade</h4>
+          </>
+        )}
+        {selectedCategory === "course" && (
+          <div className={styles.gradeHeader}>
+            <h4>Prelim</h4>
+            <h4>Midterm</h4>
+            <h4>Prefinal</h4>
+            <h4>Final</h4>
+          </div>
+        )}
+        {selectedCategory === "program" && <h4>Average Grade</h4>}
+      </div>
+      <div className={styles.tableContent}>
+        {studentEnrollments.map((enrollment) => {
+          const course = courses ? courses.find((c) => c._id === enrollment.courseId) : null;
+
+          return (
+            <div
+              key={course._id}
+              className={styles.tableItem}
+              style={{ gridTemplateColumns: "repeat(4, 1fr)" }}
+            >
+              <div className={styles.gradeHeader}>
+                <p>{formatGrade(enrollment?.prelim)}</p>
+                <p>{formatGrade(enrollment?.midterm)}</p>
+                <p>{formatGrade(enrollment?.prefinal)}</p>
+                <p>{formatGrade(enrollment?.final)}</p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>;
+  };
+
   const GradeView = ({ data }) => {
     if (!data || data.length === 0) {
       return <p>No students found for the selected category.</p>;
     }
-
-    const formatGrade = (grade) => (grade !== 0 ? grade.toFixed(1) : "N/A");
-
-    const calculateAverageGrade = (enrollments) => {
-      const grades = enrollments.flatMap(({ prelim, midterm, prefinal, final }) =>
-        [prelim, midterm, prefinal, final].filter(Boolean)
-      );
-      return grades.length
-        ? (grades.reduce((sum, g) => sum + g, 0) / grades.length).toFixed(1)
-        : "N/A";
-    };
 
     return (
       <div className={styles.tableWrapper}>
@@ -263,10 +319,44 @@ const GradeManagement = () => {
 
       {popupData && (
         <Popup show={!!popupData} close={handleClosePopup} position="center">
-          <div>
-            <h3>{`${popupData.firstName} ${popupData.lastName}`}</h3>
-            <p>{popupData.email}</p>
-            <button onClick={handleClosePopup}>Close</button>
+          <div className={styles.popupWrapper}>
+            <div className={styles.studentInfo}>
+              <h3>{`${popupData.firstName} ${popupData.lastName}`}</h3>
+              <p>{popupData.email}</p>
+              <p>{popupData.userId}</p>
+            </div>
+            {selectedCategory === "all" && (
+              <div>
+                <select
+                  className={styles.select}
+                  value={selectedOption}
+                  onChange={(e) => handleOptionChange(e.target.value)}
+                >
+                  <option value="">Select course</option>
+                  {courses.map((option) => (
+                    <option key={option._id} value={option._id}>
+                      {option.description}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+            <div className={styles.contentContainer}>
+              <TabMenu
+                tabs={[
+                  { label: "1st Semester", content: <StudentGradeView data={popupData} /> },
+                  { label: "2nd Semester", content: <StudentGradeView data={popupData} /> },
+                ]}
+              />
+            </div>
+            <div className={styles.buttonContainer}>
+              <button onClick={handleClosePopup} className={styles.secondaryBtn}>
+                Close
+              </button>
+              <button onClick={handleClosePopup} className={styles.primaryBtn}>
+                Save changes
+              </button>
+            </div>
           </div>
         </Popup>
       )}
