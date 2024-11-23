@@ -285,6 +285,10 @@ const GradeManagement = () => {
               selectedCategory === "course" &&
               studentEnrollments.find((enrollment) => enrollment.courseId === selectedOption);
 
+            const program = programs
+              ? programs.find((p) => p._id === student.programId)
+              : "No program";
+
             return (
               <div
                 key={student._id}
@@ -308,7 +312,9 @@ const GradeManagement = () => {
                   </div>
                 </div>
                 {selectedCategory === "all" && (
-                  <p>{calculateAverageGrade(studentEnrollments)}</p>
+                  <p>
+                    {program?.code ? `${program.code} - ${student.yearLevel}` : "No Program"}
+                  </p>
                 )}
                 {selectedCategory === "course" ? (
                   <div className={styles.gradeHeader}>
