@@ -66,7 +66,7 @@ export class EnrollmentService {
                discounts: tuitionFee.discounts,
                totalDue: totalDue,
             },
-            outstandingBalance: this.calculateOutstandingBalance(tuitionFee),
+            outstandingBalance: totalDue,
             paymentStatus: {
                status: 'unpaid',
                lastUpdated: new Date(),
@@ -190,9 +190,6 @@ export class EnrollmentService {
       discounts: { amount: number }[];
    }): number {
       let outstandingBalance = tuitionFee.totalDue;
-      if (!tuitionFee.discounts) {
-         return outstandingBalance;
-      }
 
       if (tuitionFee.discounts && tuitionFee.discounts.length > 0) {
          const totalDiscount = tuitionFee.discounts.reduce(
