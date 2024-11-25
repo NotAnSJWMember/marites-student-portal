@@ -9,11 +9,22 @@ export const FormStudent = ({ setValue, userData = {}, register, errors }) => {
   const [selectedProgram, setSelectedProgram] = useState(null);
 
   useEffect(() => {
-    setValue("programId", userData.programId)
-    setValue("yearLevel", userData.yearLevel)
+    setValue("programId", userData.programId);
+    setValue("yearLevel", userData.yearLevel);
   });
 
   const { dataState: programs } = useDataContext("program");
+
+  const programOptions = useMemo(() => {
+    return programs.map((p) => {
+      const label = p.description.replace(/Bachelor of (Science|Arts) in /, "");
+
+      return {
+        value: p._id,
+        label,
+      };
+    });
+  }, [programs]);
 
   const yearOptions = useMemo(() => {
     const baseOptions = [
@@ -40,10 +51,7 @@ export const FormStudent = ({ setValue, userData = {}, register, errors }) => {
         <FormSelect
           name="program"
           value="programId"
-          options={programs.map((program) => ({
-            value: program._id,
-            label: program.description.replace("Bachelor of Science in", ""),
-          }))}
+          options={programOptions}
           register={register}
           onChange={handleProgramChange}
           errors={errors}

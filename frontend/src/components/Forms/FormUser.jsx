@@ -7,10 +7,9 @@ import { FormStudent } from "./FormStudent";
 import { useForm } from "react-hook-form";
 import { startCase } from "lodash";
 import UploadWidget from "components/UploadWidget/UploadWidget";
-import UserIcon from "components/ui/UserIcon/UserIcon";
-import { getUserPhoto } from "utils/getUserPhoto";
 import { TbEdit, TbId } from "react-icons/tb";
 import IconSizes from "constants/IconSizes";
+import CustomDatePicker from "components/CustomDatePicker/CustomDatePicker";
 
 export const FormUser = ({
   role,
@@ -28,10 +27,7 @@ export const FormUser = ({
     formState: { errors },
   } = useForm();
   const [selectedFile, setSelectedFile] = useState(null);
-
-  useEffect(() => {
-    console.log(selectedFile)
-  })
+  const [selectedDate, setSelectedDate] = useState(null);
 
   const formatDate = (date) => {
     if (!date) return "";
@@ -106,13 +102,14 @@ export const FormUser = ({
         <div className={styles.line}></div>
         <div className={styles.twoColumn}>
           <h4>Birthdate</h4>
-          <FormInput
+          <CustomDatePicker onDateChange={setSelectedDate} />
+          {/* <FormInput
             type="date"
             name="birthDate"
             placeholder="Birth date"
             register={register}
             errors={errors}
-          />
+          /> */}
         </div>
         <div className={styles.line}></div>
         <div className={styles.twoColumn}>
@@ -306,22 +303,11 @@ export const FormUser = ({
   };
 
   return (
-    <form
-      className={styles.formContainer}
-      onSubmit={handleSubmit(onCreateSubmit)}
-    >
+    <form className={styles.formContainer} onSubmit={handleSubmit(onCreateSubmit)}>
       {type === "register" ? <RegisterForm /> : <EditForm />}
-      <div
-        className={
-          type === "register" ? styles.buttonContainer : styles.spaceBetween
-        }
-      >
+      <div className={type === "register" ? styles.buttonContainer : styles.spaceBetween}>
         {type === "edit" && (
-          <button
-            type="button"
-            className={styles.redBtn}
-            style={{ justifySelf: "start" }}
-          >
+          <button type="button" className={styles.redBtn} style={{ justifySelf: "start" }}>
             Delete user
           </button>
         )}
