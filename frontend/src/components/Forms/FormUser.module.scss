@@ -5,47 +5,30 @@
 }
 
 .formContainer {
-  .changePhotoContainer {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+  .userContainer {
+    gap: 1.5rem;
 
-    .changePhoto {
-      cursor: pointer;
+    .title {
+      font-size: 1.6rem;
+    }
+    .desc {
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+    }
+    .badge {
+      font-weight: 500;
+    }
+  }
+
+  .userInfo {
+    .studentId {
       display: flex;
       align-items: center;
-      flex-direction: column;
-      background-color: white;
-      border: 1px solid $light-gray-color;
-      border-radius: $small-radius;
-      padding: 1rem;
-      gap: 0.5rem;
-      flex: 1;
-
-      .iconBtn {
-        cursor: unset;
-        height: 40px;
-        width: 40px;
-        border-radius: 50%;
-        background-color: $light-gray-color-200;
-        color: $light-primary-text;
-        padding: 0;
-      }
-
-      p {
-        text-align: center;
-      }
-
-      span {
-        font-weight: 600;
-        text-decoration: underline;
-        text-underline-offset: 1.5px;
-      }
+      gap: 0.3rem;
     }
   }
 
   .buttonContainer {
     justify-content: flex-end;
-    margin-top: 0.5rem;
   }
 }

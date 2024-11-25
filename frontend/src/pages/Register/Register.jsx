@@ -1,7 +1,6 @@
 import React from "react";
 import PopupAlert from "components/Popup/PopupAlert";
 import { FormUser } from "components/Forms/FormUser";
-import { useRegister } from "../../hooks";
 import { Helmet } from "react-helmet-async";
 
 import styles from "./Register.module.scss";
@@ -17,7 +16,7 @@ const Register = () => {
   const navigate = useNavigate();
 
   const handleCreateUser = async (formData, role) => {
-    const response = await postData(formData, role.toString(), fetchData);
+    const response = await postData(formData, role.toString(), fetchData, true);
     if (response) {
       setShowPopup(true);
       handleFinishCreation();
@@ -27,7 +26,7 @@ const Register = () => {
   const handleFinishCreation = () => {
     setTimeout(() => {
       navigate("/login");
-    }, 850);
+    }, 800);
   };
 
   return (
@@ -46,10 +45,11 @@ const Register = () => {
           </div>
           <FormUser
             role="student"
+            type="register"
             loading={loading}
             createdAction={handleFinishCreation}
             createAccount={handleCreateUser}
-            isRegister={true}
+            isFirst={true}
           />
         </div>
       </div>

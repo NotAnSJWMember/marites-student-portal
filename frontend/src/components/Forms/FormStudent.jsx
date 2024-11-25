@@ -1,12 +1,17 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import styles from "./FormUser.module.scss";
 
 import { FormSelect } from "components/ui/Form";
 
 import { useDataContext } from "hooks/contexts/DataContext";
 
-export const FormStudent = ({ register, errors }) => {
+export const FormStudent = ({ setValue, userData = {}, register, errors }) => {
   const [selectedProgram, setSelectedProgram] = useState(null);
+
+  useEffect(() => {
+    setValue("programId", userData.programId)
+    setValue("yearLevel", userData.yearLevel)
+  });
 
   const { dataState: programs } = useDataContext("program");
 
@@ -37,7 +42,7 @@ export const FormStudent = ({ register, errors }) => {
           value="programId"
           options={programs.map((program) => ({
             value: program._id,
-            label: program.description,
+            label: program.description.replace("Bachelor of Science in", ""),
           }))}
           register={register}
           onChange={handleProgramChange}

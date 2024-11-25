@@ -17,9 +17,11 @@ export class InstructorController {
 
    @Post()
    async create(
-      @Body() createInstructorDto: CreateInstructorDto,
+      @Body()
+      file: Express.Multer.File,
+      createInstructorDto: CreateInstructorDto,
    ): Promise<void> {
-      return this.instructorService.create(createInstructorDto);
+      return this.instructorService.create(createInstructorDto, file);
    }
 
    @Get()
@@ -46,9 +48,9 @@ export class InstructorController {
       return this.instructorService.delete(id);
    }
 
-   @Post('seed')
-   async seed(): Promise<string> {
-      await this.instructorService.createDummyData();
-      return 'Success!';
-   }
+   // @Post('seed')
+   // async seed(): Promise<string> {
+   //    await this.instructorService.createDummyData();
+   //    return 'Success!';
+   // }
 }

@@ -23,6 +23,9 @@ import { ScheduleModule } from './modules/schedule/schedule.module';
 import { UserModule } from './modules/user/user.module';
 import { CurriculumService } from './modules/curriculum/curriculum.service';
 import { CurriculumModule } from './modules/curriculum/curriculum.module';
+import { FileUploadService } from './common/services/file-upload/file-upload.service';
+import { FileUploadController } from './common/services/file-upload/file-upload.controller';
+import { FileUploadModule } from './common/services/file-upload/file-upload.module';
 
 @Module({
    imports: [
@@ -53,9 +56,10 @@ import { CurriculumModule } from './modules/curriculum/curriculum.module';
       ProgramModule,
       InstructorModule,
       CurriculumModule,
+      FileUploadModule,
    ],
-   controllers: [AppController],
-   providers: [AppService, CurriculumService],
+   controllers: [AppController, FileUploadController],
+   providers: [AppService, CurriculumService, FileUploadService],
    exports: [JwtModule],
 })
 export class AppModule {}

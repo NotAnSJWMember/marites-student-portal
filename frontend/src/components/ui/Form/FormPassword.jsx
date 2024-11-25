@@ -50,7 +50,7 @@ export const FormPassword = ({ name, placeholder, register, errors, ...props }) 
       >
         <input
           style={styles.input}
-          placeholder="Password"
+          placeholder={placeholder}
           type={showPassword ? "text" : "password"}
           {...register(name, { required: `${placeholder} is required` })}
           {...props}

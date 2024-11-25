@@ -16,7 +16,10 @@ export class StudentService {
       private curriculumService: CurriculumService,
    ) {}
 
-   async create(createStudentDto: CreateStudentDto): Promise<any> {
+   async create(
+      createStudentDto: CreateStudentDto,
+      file: Express.Multer.File,
+   ): Promise<any> {
       this.logger.log('Creating new student...');
       try {
          this.logger.log('Creating new student...');
@@ -33,7 +36,7 @@ export class StudentService {
             );
          }
 
-         const student = await this.userService.create(createStudentDto);
+         const student = await this.userService.create(createStudentDto, file);
 
          const newStudent = new this.studentModel({
             ...createStudentDto,

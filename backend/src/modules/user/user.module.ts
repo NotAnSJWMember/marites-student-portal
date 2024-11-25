@@ -9,6 +9,7 @@ import { DatabaseModule } from 'src/common/database/database.module';
 import { StudentModule } from './roles/student/student.module';
 import { AdminController } from './roles/admin/admin.controller';
 import { AdminModule } from './roles/admin/admin.module';
+import { FileUploadService } from 'src/common/services/file-upload/file-upload.service';
 
 @Module({
    imports: [
@@ -23,7 +24,7 @@ import { AdminModule } from './roles/admin/admin.module';
       StudentModule,
       AdminModule,
    ],
-   providers: [UserService, MailService, IdGenerator],
+   providers: [UserService, FileUploadService, MailService, IdGenerator],
    controllers: [UserController, AdminController],
    exports: [UserService],
 })

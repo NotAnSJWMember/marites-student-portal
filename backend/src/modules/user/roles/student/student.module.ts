@@ -7,6 +7,7 @@ import { StudentController } from './student.controller';
 import { UserService } from '../../user.service';
 import { CurriculumService } from 'src/modules/curriculum/curriculum.service';
 import { IdGenerator } from 'src/common/utils/generate-id.helper';
+import { FileUploadService } from 'src/common/services/file-upload/file-upload.service';
 
 @Module({
    imports: [
@@ -19,7 +20,13 @@ import { IdGenerator } from 'src/common/utils/generate-id.helper';
          }),
       }),
    ],
-   providers: [StudentService, UserService, CurriculumService, IdGenerator],
+   providers: [
+      UserService,
+      StudentService,
+      CurriculumService,
+      FileUploadService,
+      IdGenerator,
+   ],
    controllers: [StudentController],
    exports: [StudentService],
 })

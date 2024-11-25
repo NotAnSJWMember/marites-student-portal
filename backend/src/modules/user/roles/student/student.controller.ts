@@ -6,18 +6,32 @@ import {
    Param,
    Post,
    Put,
+   UploadedFile,
+   UseInterceptors,
 } from '@nestjs/common';
 import { StudentService } from './student.service';
 import { CreateStudentDto } from './student.dto';
 import { Student } from './student.schema';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('student')
 export class StudentController {
    constructor(private readonly studentService: StudentService) {}
 
    @Post()
-   async create(@Body() createStudentDto: CreateStudentDto): Promise<any> {
-      return this.studentService.create(createStudentDto);
+   @UseInterceptors(FileInterceptor('file'))
+   async create(
+      @Body() createStudentDto: any,
+      @UploadedFile() file: Express.Multer.File,
+   ): Promise<any> {
+      const studentData: CreateStudentDto = JSON.parse(
+         createStudentDto.userData,
+      );
+
+      console.log(studentData);
+      console.log(file);
+
+      return this.studentService.create(studentData, file);
    }
 
    @Get()

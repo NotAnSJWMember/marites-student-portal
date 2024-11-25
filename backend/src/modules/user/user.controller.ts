@@ -11,7 +11,9 @@ import {
    Post,
    Put,
    Res,
+   UploadedFile,
    UseGuards,
+   UseInterceptors,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Roles } from 'src/common/decorators/roles.decorator';
@@ -20,14 +22,24 @@ import { User } from './user.schema';
 import { UserService } from './user.service';
 import { CreateUserDto } from './user.dto';
 import { Response } from 'express';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('user')
 export class UserController {
    constructor(private readonly userService: UserService) {}
 
    @Post()
-   async create(@Body() createUserDto: CreateUserDto) {
-      return this.userService.create(createUserDto);
+   @UseInterceptors(FileInterceptor('file'))
+   async create(
+      @Body() createUserDto: any,
+      @UploadedFile() file: Express.Multer.File,
+   ): Promise<any> {
+      const userData: CreateUserDto = JSON.parse(createUserDto.userData);
+
+      console.log(userData);
+      console.log(file);
+
+      return this.userService.create(userData, file);
    }
 
    @Get()

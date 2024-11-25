@@ -7,30 +7,40 @@ const usePostData = () => {
   const { setShowPopup, showError, showSuccess, ...popupProps } = usePopupAlert();
   const [loading, setLoading] = useState(false);
 
-  const postData = async (data, endpoint, fetchData) => {
+  const postData = async (data, endpoint, fetchData, isFileUpload = false) => {
     setLoading(true);
+
     try {
       const url = getApiUrl();
-      const response = await fetch(`${url}/${endpoint}`, {
+      const options = {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify(data),
-      });
+      };
 
-      if (!response.ok) throw new Error(`Failed to post to ${endpoint}`);
+      console.log("File upload? ", isFileUpload);
+
+      if (isFileUpload) {
+        for (const [key, value] of data.entries()) {
+          console.log(`${key}:`, value);
+        }
+        options.body = data;
+      } else {
+        options.headers["Content-Type"] = "application/json";
+        options.body = JSON.stringify(data);
+      }
+
+      const response = await fetch(`${url}/${endpoint}`, options);
+      if (!response.ok) throw new Error(`Failed to post data to ${endpoint}`);
 
       const contentType = response.headers.get("Content-Type");
       let responseData = {};
-      if (contentType && contentType.includes("application/json")) {
+      if (contentType && contentType.includes("application/json"))
         responseData = await response.json();
-      }
 
-      showSuccess("Success!", responseData.message || "Data posted successfully!");
-
-      fetchData();
+      showSuccess("Success!", responseData.message || "Data posted successfully.");
+      if (fetchData) fetchData();
 
       return responseData;
     } catch (error) {

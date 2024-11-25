@@ -15,11 +15,18 @@ import useDeleteData from "hooks/useDeleteData";
 import { format, formatDistanceToNow } from "date-fns";
 import { capitalize } from "lodash";
 import usePostData from "hooks/usePostData";
+import { getUserPhoto } from "utils/getUserPhoto";
+import { formatDate } from "utils/formatDate";
+import { findDataByUserId } from "utils/findDataByUserId";
 
 const UserManagement = () => {
-  const [showUserPopup, setShowUserPopup] = useState(false);
+  const [showCreateUserPopup, setShowCreateUserPopup] = useState(false);
+  const [showEditUserPopup, setShowEditUserPopup] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
 
-  const { data: users, fetchData } = useFetchData("user");
+  const { data: users, fetchData: userFetchData } = useFetchData("user");
+  const { data: instructors, fetchData: instructorFetchData } = useFetchData("instructor");
+  const { data: students, fetchData: studentFetchData } = useFetchData("student");
   const {
     popupState: deleteState,
     showPopup: showDeletePopup,
@@ -34,31 +41,43 @@ const UserManagement = () => {
   } = usePostData();
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  const formatDate = (isoString) => {
-    return format(new Date(isoString), "MMMM d, yyyy");
-  };
+    userFetchData();
+    instructorFetchData();
+    studentFetchData();
+  }, [instructorFetchData, studentFetchData, userFetchData]);
 
   const handleCreateUser = async (formData, role) => {
-    const response = await postData(formData, role.toString(), fetchData);
+    const response = await postData(formData, role.toString(), userFetchData);
     if (response) handleShowCreatePopup();
   };
 
   const handleDeleteUser = async (userId) => {
-    if (userId) await deleteData(userId, fetchData);
+    if (userId) await deleteData(userId, userFetchData);
   };
 
   const handleShowCreatePopup = () => {
-    setShowUserPopup((prev) => !prev);
+    setShowCreateUserPopup((prev) => !prev);
+  };
+
+  const handleShowEditPopup = (user) => {
+    if (user && user.role === "student") {
+      const student = students ? findDataByUserId(students, user.userId) : null;
+      setSelectedUser(student);
+    } else if (user && user.role === "instructor") {
+      const instructor = instructors ? findDataByUserId(instructors, user.userId) : null;
+      setSelectedUser(instructor);
+    } else {
+      setSelectedUser(user);
+    }
+
+    setShowEditUserPopup((prev) => !prev);
   };
 
   const renderData = (data) => {
     return (
       <>
         <div className={styles.userContainer}>
-          <UserIcon image={data.userPhoto} size={48} />
+          <UserIcon image={getUserPhoto(data.userPhoto)} size={48} />
           <div className={styles.userInfo}>
             <h4 className={styles.title}>{`${data.firstName} ${data.lastName}`}</h4>
             <p className={styles.desc}>{data.email}</p>
@@ -76,7 +95,11 @@ const UserManagement = () => {
   const renderPopupContent = (user) => (
     <div className={styles.popupWrapper}>
       <div className={styles.popupContent}>
-        <button type="button" className={styles.iconCta}>
+        <button
+          type="button"
+          className={styles.iconCta}
+          onClick={() => handleShowEditPopup(user)}
+        >
           <TbEdit size={IconSizes.POPUP} />
           Edit details
         </button>
@@ -110,21 +133,45 @@ const UserManagement = () => {
               content={renderData}
               popupContent={renderPopupContent}
               ctaText="Create user"
-              ctaAction={() => setShowUserPopup(true)}
+              ctaAction={() => setShowCreateUserPopup(true)}
             />
           </div>
         </section>
       </main>
 
       <Popup
-        show={showUserPopup}
+        show={showCreateUserPopup}
         close={handleShowCreatePopup}
         position="center"
         handleClickOutside={false}
       >
         <div className={styles.userPopup}>
           <h2>Create a user</h2>
-          <FormUser role="student" loading={loading} createAccount={handleCreateUser} />
+          <FormUser
+            role="student"
+            type="register"
+            loading={loading}
+            createAccount={handleCreateUser}
+            createdAction={handleShowCreatePopup}
+          />
+        </div>
+      </Popup>
+
+      <Popup
+        show={showEditUserPopup}
+        close={handleShowEditPopup}
+        position="center"
+        handleClickOutside={false}
+      >
+        <div className={styles.userPopup}>
+          <FormUser
+            role={selectedUser?.role ? selectedUser.role : "user"}
+            type="edit"
+            loading={loading}
+            createAccount={handleCreateUser}
+            createdAction={handleShowEditPopup}
+            userData={selectedUser}
+          />
         </div>
       </Popup>
 

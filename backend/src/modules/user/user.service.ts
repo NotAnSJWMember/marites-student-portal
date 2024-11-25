@@ -14,6 +14,7 @@ import { CreateUserDto } from './user.dto';
 import * as bcrypt from 'bcrypt';
 import { Student } from './roles/student/student.schema';
 import { Instructor } from './roles/instructor/instructor.schema';
+import { FileUploadService } from 'src/common/services/file-upload/file-upload.service';
 
 @Injectable()
 export class UserService {
@@ -23,10 +24,14 @@ export class UserService {
       @InjectModel(User.name) private userModel: Model<User>,
       @InjectModel(Student.name) private studentModel: Model<Student>,
       @InjectModel(Instructor.name) private instructorModel: Model<Instructor>,
+      protected readonly fileUploadService: FileUploadService,
       private idGenerator: IdGenerator,
    ) {}
 
-   async create(createUserDto: CreateUserDto): Promise<User> {
+   async create(
+      createUserDto: CreateUserDto,
+      file: Express.Multer.File,
+   ): Promise<User> {
       this.logger.log('Creating new user...');
 
       try {
@@ -34,6 +39,17 @@ export class UserService {
          this.logger.log(`Generated user id: ${createUserDto.userId}`);
 
          const hashedPassword = await this.hashPassword(createUserDto.password);
+
+         if (file) {
+            const filePath = await this.fileUploadService.uploadUserPhoto(
+               file,
+               createUserDto.userId,
+            );
+            createUserDto.userPhoto = filePath;
+            this.logger.log(`Photo saved at: ${filePath}`);
+         } else {
+            this.logger.warn(`No photo uploaded for user.`);
+         }
 
          const newUser = new this.userModel({
             ...createUserDto,

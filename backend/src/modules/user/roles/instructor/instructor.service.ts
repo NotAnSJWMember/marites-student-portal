@@ -16,10 +16,16 @@ export class InstructorService {
       private readonly userService: UserService,
    ) {}
 
-   async create(createInstructorDto: CreateInstructorDto): Promise<void> {
+   async create(
+      createInstructorDto: CreateInstructorDto,
+      file: Express.Multer.File,
+   ): Promise<void> {
       this.logger.log('Creating new instructor...');
 
-      const instructor = await this.userService.create(createInstructorDto);
+      const instructor = await this.userService.create(
+         createInstructorDto,
+         file,
+      );
 
       const newInstructor = new this.InstructorModel({
          ...createInstructorDto,
@@ -58,28 +64,28 @@ export class InstructorService {
       await this.userService.delete(userId);
    }
 
-   async createDummyData(): Promise<void> {
-      const dummyInstructors = [
-         {
-            userId: '000001',
-            birthDate: new Date('2004-11-01'),
-            firstName: 'Caenar',
-            lastName: 'Arteta',
-            email: 'crazy@apple.com',
-            phoneNum: '12345678910',
-            gender: 'Male',
-            username: 'whoami',
-            password: '1',
-            department: 'Computer Science',
-         },
-      ];
+   // async createDummyData(): Promise<void> {
+   //    const dummyInstructors = [
+   //       {
+   //          userId: '000001',
+   //          birthDate: new Date('2004-11-01'),
+   //          firstName: 'Caenar',
+   //          lastName: 'Arteta',
+   //          email: 'crazy@apple.com',
+   //          phoneNum: '12345678910',
+   //          gender: 'Male',
+   //          username: 'whoami',
+   //          password: '1',
+   //          department: 'Computer Science',
+   //       },
+   //    ];
 
-      for (const instructor of dummyInstructors) {
-         await this.create(instructor);
-      }
+   //    for (const instructor of dummyInstructors) {
+   //       await this.create(instructor);
+   //    }
 
-      this.logger.log(
-         'And Caenar said, "Let there be one ultimate instructor in this portal.',
-      );
-   }
+   //    this.logger.log(
+   //       'And Caenar said, "Let there be one ultimate instructor in this portal.',
+   //    );
+   // }
 }
