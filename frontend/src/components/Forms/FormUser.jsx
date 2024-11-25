@@ -10,6 +10,7 @@ import UploadWidget from "components/UploadWidget/UploadWidget";
 import { TbEdit, TbId } from "react-icons/tb";
 import IconSizes from "constants/IconSizes";
 import CustomDatePicker from "components/CustomDatePicker/CustomDatePicker";
+import UserIcon from "components/ui/UserIcon/UserIcon";
 
 export const FormUser = ({
   role,
@@ -27,7 +28,10 @@ export const FormUser = ({
     formState: { errors },
   } = useForm();
   const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedGender, setSelectedGender] = useState(null);
+  const customErrors = useState([]);
 
   const formatDate = (date) => {
     if (!date) return "";
@@ -102,27 +106,21 @@ export const FormUser = ({
         <div className={styles.line}></div>
         <div className={styles.twoColumn}>
           <h4>Birthdate</h4>
-          <CustomDatePicker onDateChange={setSelectedDate} />
-          {/* <FormInput
-            type="date"
-            name="birthDate"
-            placeholder="Birth date"
-            register={register}
-            errors={errors}
-          /> */}
+          <CustomDatePicker
+            selectedDate={selectedDate}
+            setSelectedDate={setSelectedDate}
+            errors={customErrors}
+          />
         </div>
         <div className={styles.line}></div>
         <div className={styles.twoColumn}>
           <h4>Gender</h4>
           <FormSelect
             name="gender"
-            value="gender"
             options={[
               { value: "Male", label: "Male" },
               { value: "Female", label: "Female" },
             ]}
-            register={register}
-            errors={errors}
           />
         </div>
         <div className={styles.line}></div>
@@ -136,14 +134,12 @@ export const FormUser = ({
               register={register}
               errors={errors}
             />
-            <div className={styles.formItem}>
-              <FormPassword
-                name="password"
-                placeholder="Password"
-                register={register}
-                errors={errors}
-              />
-            </div>
+            <FormPassword
+              name="password"
+              placeholder="Password"
+              register={register}
+              errors={errors}
+            />
           </div>
         </div>
         <div className={styles.line}></div>
@@ -189,14 +185,13 @@ export const FormUser = ({
     return (
       <>
         <div className={styles.userContainer}>
-          {/* <UserIcon
+          <UserIcon
             image={selectedImage}
             desc={`User ${userData.userId}'s profile photo`}
             size={110}
             editable={true}
             setImage={setSelectedImage}
-          /> */}
-
+          />
           <div className={styles.userInfo}>
             <div className={styles.alignCenter}>
               <h2 className={styles.title}>
@@ -289,13 +284,12 @@ export const FormUser = ({
           <h4>Gender</h4>
           <FormSelect
             name="gender"
-            value="gender"
             options={[
               { value: "Male", label: "Male" },
               { value: "Female", label: "Female" },
             ]}
-            register={register}
-            errors={errors}
+            onSelectOption={setSelectedGender}
+            errors={customErrors}
           />
         </div>
       </>

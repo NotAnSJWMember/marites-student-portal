@@ -1,5 +1,8 @@
 @import "../../styles/global.scss";
 
+.customWrapper {
+  width: 100%;
+}
 .customInput {
   cursor: pointer;
   padding: 0.4rem;
@@ -13,14 +16,22 @@
 }
 
 .customPopper {
-  visibility: hidden;
-  transform: scale(98%);
-  transition: 200ms $trans-smooth;
+  pointer-events: none;
+  transform: scale(97%);
+  transition: 200ms $trans-fast;
   z-index: 2;
 
+  span {
+    transition: 200ms $trans-fast;
+    visibility: hidden;
+  }
+
   &.show {
-    transform: scale(100%);
-    visibility: visible;
+    pointer-events: unset;
+
+    span {
+      visibility: visible;
+    }
   }
 }
 
@@ -28,8 +39,8 @@
   border-radius: $small-radius;
   border: 1px solid $light-gray-color-200;
   visibility: hidden;
-  transform: scale(98%);
-  transition: 200ms $trans-smooth;
+  transform: scale(97%);
+  transition: 200ms $trans-fast;
   z-index: 2;
 
   &.show {

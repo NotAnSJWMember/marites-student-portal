@@ -1,20 +1,16 @@
 import { useTogglePassword } from "hooks";
-import { capitalize } from "lodash";
 import React from "react";
 import { TbEye, TbEyeOff } from "react-icons/tb";
 
 const styles = {
   inputMerge: {
     display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    width: "100%",
     borderRadius: "0.4rem",
     border: "1px solid #ccc",
     backgroundColor: "white",
   },
   input: {
-    flex: "1",
+    width: "100%",
     height: "100%",
     border: "none",
   },

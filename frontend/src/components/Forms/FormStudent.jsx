@@ -5,13 +5,11 @@ import { FormSelect } from "components/ui/Form";
 
 import { useDataContext } from "hooks/contexts/DataContext";
 
-export const FormStudent = ({ setValue, userData = {}, register, errors }) => {
+export const FormStudent = ({ setValue, userData = {}, errors }) => {
   const [selectedProgram, setSelectedProgram] = useState(null);
+  const [selectedYearLevel, setSelectedYearLevel] = useState(null);
 
-  useEffect(() => {
-    setValue("programId", userData.programId);
-    setValue("yearLevel", userData.yearLevel);
-  });
+  const hasError = errors;
 
   const { dataState: programs } = useDataContext("program");
 
@@ -50,19 +48,11 @@ export const FormStudent = ({ setValue, userData = {}, register, errors }) => {
       <div className={styles.twoColumn}>
         <FormSelect
           name="program"
-          value="programId"
           options={programOptions}
-          register={register}
           onChange={handleProgramChange}
-          errors={errors}
+          onSelectOption={setSelectedYearLevel}
         />
-        <FormSelect
-          name="year"
-          value="yearLevel"
-          options={yearOptions}
-          register={register}
-          errors={errors}
-        />
+        <FormSelect name="year" options={yearOptions} onSelectOption={setSelectedYearLevel} />
       </div>
     </div>
   );

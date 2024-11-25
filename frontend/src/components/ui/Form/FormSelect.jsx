@@ -2,8 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { capitalize } from "lodash";
 import styles from "./FormSelect.module.scss";
 
-export const FormSelect = ({ name, value, options, register, errors, ...props }) => {
-  const hasError = errors?.[value];
+export const FormSelect = ({ onSelectOption, name, options, errors }) => {
+  const hasError = errors;
 
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState(null);
@@ -11,6 +11,7 @@ export const FormSelect = ({ name, value, options, register, errors, ...props })
   const [isAbove, setIsAbove] = useState(false);
 
   const selectRef = useRef(null);
+  const optionsRef = useRef(null);
   const timeoutRef = useRef(null);
 
   const handleShowOptions = () => {
@@ -34,6 +35,7 @@ export const FormSelect = ({ name, value, options, register, errors, ...props })
   };
 
   const handleOptionClick = (option) => {
+    onSelectOption(option);
     setSelectedOption(option);
     setIsOpen(false);
   };
@@ -42,11 +44,25 @@ export const FormSelect = ({ name, value, options, register, errors, ...props })
     setHoveredIndex(index);
   };
 
+  const handleClickOutside = (event) => {
+    if (
+      selectRef.current &&
+      !selectRef.current.contains(event.target) &&
+      optionsRef.current &&
+      !optionsRef.current.contains(event.target)
+    ) {
+      setIsOpen(false);
+    }
+  };
+
   useEffect(() => {
+    document.addEventListener("click", handleClickOutside);
+
     return () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
+      document.removeEventListener("click", handleClickOutside);
     };
   }, []);
 
@@ -56,9 +72,8 @@ export const FormSelect = ({ name, value, options, register, errors, ...props })
         <div
           className={`${styles.selectBox} ${hasError ? styles.error : ""}`}
           onClick={handleShowOptions}
-          {...props}
-          ref={selectRef}
           style={selectedOption ? { color: "black" } : { color: "gray" }}
+          ref={selectRef}
         >
           {selectedOption ? selectedOption.label : `Select ${capitalize(name)}`}
         </div>
@@ -68,6 +83,7 @@ export const FormSelect = ({ name, value, options, register, errors, ...props })
             bottom: isAbove ? "110%" : "auto",
             top: isAbove ? "auto" : "110%",
           }}
+          ref={optionsRef}
         >
           {options.map((option, index) => (
             <div
@@ -86,7 +102,7 @@ export const FormSelect = ({ name, value, options, register, errors, ...props })
           ))}
         </div>
 
-        {hasError && <span className={styles.errorMsg}>{errors[value]?.message}</span>}
+        {hasError && <span className={styles.errorMsg}>{errors.message}</span>}
       </div>
     </div>
   );
