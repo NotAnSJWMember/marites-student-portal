@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import styles from "./UploadWidget.module.scss";
 import { TbCloudDownload } from "react-icons/tb";
 
@@ -9,7 +9,13 @@ const UploadWidget = ({ fileSelect, selectedFile }) => {
   const [error, setError] = useState(null);
   const [fileInfo, setFileInfo] = useState({ name: "", size: "" });
 
-  useEffect(() => {
+  const formatFileSize = (size) => {
+    if (size < 1024) return `${size} bytes`;
+    if (size < 1024 * 1024) return `${(size / 1024).toFixed(2)} KB`;
+    return `${(size / (1024 * 1024)).toFixed(2)} MB`;
+  };
+
+  useMemo(() => {
     if (selectedFile) {
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -26,6 +32,14 @@ const UploadWidget = ({ fileSelect, selectedFile }) => {
       setError("No file selected.");
       return;
     }
+
+    const maxSize = 2 * 1024 * 1024;
+    if (file.size > maxSize) {
+      setError("File size exceeds the 2MB limit.");  
+      return;
+    }
+
+    setError(null);
     fileSelect(file);
   };
 
@@ -36,12 +50,6 @@ const UploadWidget = ({ fileSelect, selectedFile }) => {
 
   const triggerFileInput = () => {
     if (!preview) document.getElementById("fileInput").click();
-  };
-
-  const formatFileSize = (size) => {
-    if (size < 1024) return `${size} bytes`;
-    if (size < 1024 * 1024) return `${(size / 1024).toFixed(2)} KB`;
-    return `${(size / (1024 * 1024)).toFixed(2)} MB`;
   };
 
   return (
@@ -65,7 +73,7 @@ const UploadWidget = ({ fileSelect, selectedFile }) => {
         {!preview ? (
           <>
             <button type="button" className={styles.iconBtn}>
-              <TbCloudDownload size={IconSizes.MEDIUM} />
+              <TbCloudDownload size={IconSizes.SMALL} />
             </button>
             <p>
               <span>Click to upload</span> or drag and drop <br />

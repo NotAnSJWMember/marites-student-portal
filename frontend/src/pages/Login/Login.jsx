@@ -74,7 +74,6 @@ const Login = () => {
           <form
             className={styles.formContainer}
             onSubmit={handleSubmit(onSubmit)}
-            autoComplete="off"
           >
             <div className={styles.formItem}>
               <label htmlFor="username">

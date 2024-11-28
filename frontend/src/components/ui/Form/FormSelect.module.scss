@@ -35,9 +35,11 @@
     z-index: 1;
     transform: scale(97%);
     visibility: hidden;
+    opacity: 0;
     transition: 200ms $trans-fast;
 
     &.show {
+      opacity: 1;
       transform: scale(100%);
       visibility: visible;
     }

@@ -19,8 +19,6 @@ const usePostData = () => {
         },
       };
 
-      console.log("File upload? ", isFileUpload);
-
       if (isFileUpload) {
         for (const [key, value] of data.entries()) {
           console.log(`${key}:`, value);

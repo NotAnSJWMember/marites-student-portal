@@ -1,69 +1,69 @@
 @import "../../../../styles/global.scss";
 
 .tableWrapper {
-   display: flex;
-   flex-direction: column;
-   height: 100%;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .tableContainer {
-   display: flex;
-   flex-direction: column;
-   gap: 1rem;
-   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  flex: 1;
 
-   .label {
-      font-size: 1.5rem;
-      font-weight: 800;
+  .label {
+    font-size: 1.5rem;
+    font-weight: 800;
 
-      span {
-         color: $light-green-color-300;
-      }
-   }
+    span {
+      color: $light-green-color-300;
+    }
+  }
 
-   .tools {
-      display: flex;
-      gap: 0.5rem;
-   }
+  .tools {
+    display: flex;
+    gap: 0.5rem;
+  }
 }
 
 .lastActive,
 .createdAt {
-   color: $light-gray-color-600;
+  color: $light-gray-color-600;
 }
 
 .userPopup {
-   display: grid;
-   gap: 1rem;
-   padding: 1.5rem;
+  display: grid;
+  gap: 1rem;
+  padding: 1.5rem;
 }
 
 .popupWrapper {
-   padding: 0.5rem;
+  padding: 0.5rem;
 
-   .popupContent {
-      display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
+  .popupContent {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
 
-      button {
-         background-color: transparent;
+    button {
+      background-color: transparent;
+    }
+
+    .iconCta {
+      width: 100%;
+      padding: 0.7rem;
+      border-radius: 0.5rem;
+      justify-content: flex-start;
+      transition: 200ms $trans-smooth;
+
+      &:hover {
+        background-color: $light-gray-color-100;
       }
+    }
 
-      .iconCta {
-         width: 100%;
-         padding: 0.7rem;
-         border-radius: 0.5rem;
-         justify-content: flex-start;
-         transition: 200ms $trans-smooth;
-
-         &:hover {
-            background-color: $light-gray-color-100;
-         }
-      }
-
-      .deleteBtn {
-         color: #e22828;
-      }
-   }
+    .deleteBtn {
+      color: #e22828;
+    }
+  }
 }

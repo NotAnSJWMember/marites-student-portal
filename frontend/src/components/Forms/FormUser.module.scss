@@ -6,25 +6,60 @@
 
 .formContainer {
   .userContainer {
+    align-items: start;
     gap: 1.5rem;
+    margin-bottom: 1.5rem;
 
     .title {
       font-size: 1.6rem;
+      margin-bottom: 3px;
     }
     .desc {
       font-size: 1rem;
-      margin-bottom: 0.5rem;
     }
     .badge {
+      background-color: white;
       font-weight: 500;
     }
-  }
 
-  .userInfo {
+    .ctaBtn {
+      padding: 0;
+    }
+
+    .spaceBetween {
+      align-items: start;
+      width: 100%;
+    }
+
     .studentId {
       display: flex;
       align-items: center;
       gap: 0.3rem;
+    }
+
+    .editDetailsContainer {
+      input {
+        background-color: transparent;
+        border: none;
+        border-radius: 0;
+        width: max-content;
+        padding: 0;
+      }
+
+      .editName {
+        font-size: 1.6rem;
+        font-weight: 700;
+        width: max-content;
+        margin-bottom: 3px;
+      }
+
+      .editEmail {
+        font-size: 1rem;
+      }
+
+      .secondaryBtn {
+        margin-top: 1.3rem;
+      }
     }
   }
 

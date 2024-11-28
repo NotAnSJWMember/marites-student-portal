@@ -4,32 +4,50 @@ import { usePopupAlert } from "hooks";
 import { getApiUrl } from "utils/api";
 
 const useUpdateData = () => {
-  const { setShowPopup, showError, showSuccess, ...popupProps } = usePopupAlert();
+  const { setShowPopup, showError, showWarning, showSuccess, ...popupProps } = usePopupAlert();
   const [loading, setLoading] = useState(false);
 
-  const updateData = async (data, endpoint, key = null, fetchData) => {
+  const updateData = async (data, endpoint, key = null, fetchData, isFileUpload = false) => {
     setLoading(true);
+
     try {
       let url = `${getApiUrl()}/${endpoint}`;
+      const options = {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      };
 
       if (key) {
         url = `${getApiUrl()}/${endpoint}/${key}`;
       }
 
-      const response = await fetch(url, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify(data),
-      });
+      if (isFileUpload) {
+        options.body = data;
+      } else {
+        options.headers["Content-Type"] = "application/json";
+        options.body = JSON.stringify(data);
+      }
 
-      if (!response.ok) throw new Error(`Failed to post to ${endpoint}`);
+      const response = await fetch(url, options);
+      if (!response.ok) throw new Error(`Failed to put data to ${endpoint}`);
 
-      const responseData = await response.json();
-      showSuccess("Success!", responseData.message || "Data updated successfully!");
-      fetchData();
+      const contentType = response.headers.get("Content-Type");
+
+      let responseData = {};
+
+      if (contentType && contentType.includes("application/json"))
+        responseData = await response.json();
+
+      if (responseData.message.startsWith("No changes")) {
+        showWarning("Warning", "No changes detected in the provided data.");
+      } else {
+        showSuccess("Success!", responseData.message || "Data updated successfully!");
+      }
+      if (fetchData) fetchData();
+
+      return responseData;
     } catch (error) {
       showError(
         "Internal Server Error",

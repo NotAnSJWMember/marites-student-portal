@@ -1,7 +1,14 @@
 import React, { useState } from "react";
 import styles from "./UserIcon.module.scss";
 
-export const UserIcon = ({ image, desc, size, setImage, editable = false }) => {
+export const UserIcon = ({
+  image,
+  desc,
+  size,
+  selectedImage,
+  setSelectedImage,
+  editable = false,
+}) => {
   const [showSpan, setShowSpan] = useState(false);
 
   const handleFileSelect = (e) => {
@@ -16,7 +23,7 @@ export const UserIcon = ({ image, desc, size, setImage, editable = false }) => {
   };
 
   const validateAndSetFile = (file) => {
-    if (!file) return;  
+    if (!file) return;
 
     const validTypes = ["image/png", "image/jpeg", "image/svg+xml"];
     if (!validTypes.includes(file.type)) {
@@ -30,7 +37,7 @@ export const UserIcon = ({ image, desc, size, setImage, editable = false }) => {
 
     const reader = new FileReader();
     reader.onload = () => {
-      setImage(reader.result);
+      setSelectedImage(reader.result);
     };
     reader.readAsDataURL(file);
   };
@@ -53,7 +60,7 @@ export const UserIcon = ({ image, desc, size, setImage, editable = false }) => {
         <span className={`${styles.editableText} ${showSpan ? styles.show : ""}`}>
           Change profile photo
         </span>
-        <img src={image} alt={desc} className={styles.editable} />
+        <img src={editable ? selectedImage : image} alt={desc} className={styles.editable} />
       </div>
       <input
         id="fileInput"

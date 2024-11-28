@@ -32,7 +32,14 @@ const styles = {
   },
 };
 
-export const FormPassword = ({ name, placeholder, register, errors, ...props }) => {
+export const FormPassword = ({
+  name,
+  placeholder,
+  required = true,
+  register,
+  errors,
+  ...props
+}) => {
   const [showPassword, togglePasswordVisibility] = useTogglePassword();
   const hasError = errors?.[name];
 
@@ -48,7 +55,9 @@ export const FormPassword = ({ name, placeholder, register, errors, ...props }) 
           style={styles.input}
           placeholder={placeholder}
           type={showPassword ? "text" : "password"}
-          {...register(name, { required: `${placeholder} is required` })}
+          {...register(name, {
+            ...(required && { required: `${placeholder} is required` }),
+          })}
           {...props}
         />
         <span style={styles.inputIcon} onClick={togglePasswordVisibility}>

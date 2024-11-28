@@ -2,11 +2,10 @@ import React, { useEffect, useRef, useState } from "react";
 import { capitalize } from "lodash";
 import styles from "./FormSelect.module.scss";
 
-export const FormSelect = ({ onSelectOption, name, options, errors }) => {
+export const FormSelect = ({ selectedData, setSelectedData, name, options, errors }) => {
   const hasError = errors;
 
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedOption, setSelectedOption] = useState(null);
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [isAbove, setIsAbove] = useState(false);
 
@@ -35,8 +34,7 @@ export const FormSelect = ({ onSelectOption, name, options, errors }) => {
   };
 
   const handleOptionClick = (option) => {
-    onSelectOption(option);
-    setSelectedOption(option);
+    setSelectedData(option);
     setIsOpen(false);
   };
 
@@ -56,6 +54,9 @@ export const FormSelect = ({ onSelectOption, name, options, errors }) => {
   };
 
   useEffect(() => {
+    // console.log(selectedData);
+    
+
     document.addEventListener("click", handleClickOutside);
 
     return () => {
@@ -72,10 +73,10 @@ export const FormSelect = ({ onSelectOption, name, options, errors }) => {
         <div
           className={`${styles.selectBox} ${hasError ? styles.error : ""}`}
           onClick={handleShowOptions}
-          style={selectedOption ? { color: "black" } : { color: "gray" }}
+          style={selectedData ? { color: "black" } : { color: "gray" }}
           ref={selectRef}
         >
-          {selectedOption ? selectedOption.label : `Select ${capitalize(name)}`}
+          {selectedData ? selectedData.label : `Select ${capitalize(name)}`}
         </div>
         <div
           className={`${styles.optionsContainer} ${isOpen ? styles.show : ""}`}
@@ -90,7 +91,7 @@ export const FormSelect = ({ onSelectOption, name, options, errors }) => {
               key={option.value}
               className={`${styles.option} ${
                 hoveredIndex === index ? styles.optionHover : ""
-              } ${selectedOption?.value === option.value ? styles.selected : ""} ${
+              } ${selectedData?.value === option.value ? styles.selected : ""} ${
                 isOpen ? styles.show : ""
               }`}
               onClick={() => handleOptionClick(option)}

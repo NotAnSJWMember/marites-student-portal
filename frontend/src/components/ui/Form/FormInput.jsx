@@ -18,7 +18,15 @@ const styles = {
   },
 };
 
-export const FormInput = ({ type, name, placeholder, register, errors, ...props }) => {
+export const FormInput = ({
+  type,
+  name,
+  placeholder,
+  required = true,
+  register,
+  errors,
+  ...props
+}) => {
   const hasError = errors?.[name];
 
   return (
@@ -32,13 +40,14 @@ export const FormInput = ({ type, name, placeholder, register, errors, ...props 
         type={type}
         id={name}
         {...register(name, {
-          required: `${placeholder} is required`,
-          ...(type === "tel" && {
-            pattern: {
-              value: /^[0-9]{11}$/, 
-              message: "Phone number must be exactly 11 digits",
-            },
-          }),
+          ...(required && { required: `${placeholder} is required` }),
+          ...(required &&
+            type === "tel" && {
+              pattern: {
+                value: /^[0-9]{11}$/,
+                message: "Phone number must be exactly 11 digits",
+              },
+            }),
         })}
         {...props}
       />

@@ -39,11 +39,13 @@
   border-radius: $small-radius;
   border: 1px solid $light-gray-color-200;
   visibility: hidden;
+  opacity: 0;
   transform: scale(97%);
   transition: 200ms $trans-fast;
   z-index: 2;
 
   &.show {
+    opacity: 1;
     transform: scale(100%);
     visibility: visible;
   }

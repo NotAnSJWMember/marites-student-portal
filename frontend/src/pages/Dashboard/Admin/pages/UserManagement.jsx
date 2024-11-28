@@ -12,21 +12,24 @@ import { FormUser } from "components/Forms/FormUser";
 
 import useFetchData from "hooks/useFetchData";
 import useDeleteData from "hooks/useDeleteData";
-import { format, formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow } from "date-fns";
 import { capitalize } from "lodash";
 import usePostData from "hooks/usePostData";
 import { getUserPhoto } from "utils/getUserPhoto";
 import { formatDate } from "utils/formatDate";
 import { findDataByUserId } from "utils/findDataByUserId";
+import useUpdateData from "hooks/useUpdateData";
 
 const UserManagement = () => {
   const [showCreateUserPopup, setShowCreateUserPopup] = useState(false);
   const [showEditUserPopup, setShowEditUserPopup] = useState(false);
+  const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
 
   const { data: users, fetchData: userFetchData } = useFetchData("user");
   const { data: instructors, fetchData: instructorFetchData } = useFetchData("instructor");
   const { data: students, fetchData: studentFetchData } = useFetchData("student");
+
   const {
     popupState: deleteState,
     showPopup: showDeletePopup,
@@ -36,9 +39,16 @@ const UserManagement = () => {
   const {
     popupState: createState,
     showPopup: showCreatePopup,
-    loading,
+    loading: createLoading,
     postData,
   } = usePostData();
+
+  const {
+    popupState: updateState,
+    showPopup: showUpdatePopup,
+    loading: updateLoading,
+    updateData,
+  } = useUpdateData();
 
   useEffect(() => {
     userFetchData();
@@ -47,8 +57,11 @@ const UserManagement = () => {
   }, [instructorFetchData, studentFetchData, userFetchData]);
 
   const handleCreateUser = async (formData, role) => {
-    const response = await postData(formData, role.toString(), userFetchData);
-    if (response) handleShowCreatePopup();
+    await postData(formData, role.toString(), userFetchData);
+  };
+
+  const handleUpdateUser = async (formData) => {
+    await updateData(formData, "user", selectedUser?.userId, userFetchData, true);
   };
 
   const handleDeleteUser = async (userId) => {
@@ -71,6 +84,7 @@ const UserManagement = () => {
     }
 
     setShowEditUserPopup((prev) => !prev);
+    setIsPopupVisible(false);
   };
 
   const renderData = (data) => {
@@ -131,46 +145,38 @@ const UserManagement = () => {
               data={users}
               headers={["Name", "Role", "Last Seen", "Created on"]}
               content={renderData}
+              isPopupVisible={isPopupVisible}
+              setIsPopupVisible={setIsPopupVisible}
               popupContent={renderPopupContent}
               ctaText="Create user"
-              ctaAction={() => setShowCreateUserPopup(true)}
+              ctaAction={() => handleShowCreatePopup()}
             />
           </div>
         </section>
       </main>
 
-      <Popup
-        show={showCreateUserPopup}
-        close={handleShowCreatePopup}
-        position="center"
-        handleClickOutside={false}
-      >
+      <Popup show={showCreateUserPopup} close={handleShowCreatePopup} position="center">
         <div className={styles.userPopup}>
           <h2>Create a user</h2>
           <FormUser
-            role="student"
             type="register"
-            loading={loading}
+            role="student"
+            loading={createLoading}
             createAccount={handleCreateUser}
             createdAction={handleShowCreatePopup}
           />
         </div>
       </Popup>
 
-      <Popup
-        show={showEditUserPopup}
-        close={handleShowEditPopup}
-        position="center"
-        handleClickOutside={false}
-      >
+      <Popup show={showEditUserPopup} close={handleShowEditPopup} position="center">
         <div className={styles.userPopup}>
           <FormUser
-            role={selectedUser?.role ? selectedUser.role : "user"}
             type="edit"
-            loading={loading}
-            createAccount={handleCreateUser}
+            role={selectedUser?.role ? selectedUser.role : "user"}
+            userInfo={selectedUser}
+            loading={updateLoading}
+            createAccount={handleUpdateUser}
             createdAction={handleShowEditPopup}
-            userData={selectedUser}
           />
         </div>
       </Popup>
@@ -191,6 +197,15 @@ const UserManagement = () => {
         title={createState.title}
         message={createState.message}
         show={showCreatePopup}
+      />
+
+      <PopupAlert
+        icon={updateState.icon}
+        border={updateState.border}
+        color={updateState.color}
+        title={updateState.title}
+        message={updateState.message}
+        show={showUpdatePopup}
       />
     </Layout>
   );

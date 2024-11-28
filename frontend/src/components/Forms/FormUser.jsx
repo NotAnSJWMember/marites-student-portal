@@ -1,16 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import styles from "./FormUser.module.scss";
 import Loading from "components/Loading/Loading";
-import { FormInput, FormPassword, FormSelect } from "components/ui/Form";
-import { FormStudent } from "./FormStudent";
 
 import { useForm } from "react-hook-form";
 import { startCase } from "lodash";
-import UploadWidget from "components/UploadWidget/UploadWidget";
-import { TbEdit, TbId } from "react-icons/tb";
-import IconSizes from "constants/IconSizes";
-import CustomDatePicker from "components/CustomDatePicker/CustomDatePicker";
-import UserIcon from "components/ui/UserIcon/UserIcon";
+import RegisterForm from "./components/RegisterForm";
+import EditForm from "./components/EditForm";
+import useFetchData from "hooks/useFetchData";
 
 export const FormUser = ({
   role,
@@ -18,54 +14,102 @@ export const FormUser = ({
   loading,
   createdAction,
   createAccount,
-  userData = {},
+  userInfo = {},
   isFirst = false,
 }) => {
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedGender, setSelectedGender] = useState(null);
+  const [selectedProgram, setSelectedProgram] = useState(null);
+  const [selectedYearLevel, setSelectedYearLevel] = useState(null);
+  const [editedName, setEditedName] = useState(null);
+  const [editedEmail, setEditedEmail] = useState(null);
+
+  const { data: programs } = useFetchData("program");
+
+  console.log("Initial Data:", userInfo);
+
   const {
     register,
     handleSubmit,
     setValue,
     formState: { errors },
   } = useForm();
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [selectedDate, setSelectedDate] = useState(null);
-  const [selectedGender, setSelectedGender] = useState(null);
-  const customErrors = useState([]);
 
-  const formatDate = (date) => {
-    if (!date) return "";
-    const d = new Date(date);
-    return d.toLocaleDateString("en-CA");
-  };
+  const programOptions = useMemo(() => {
+    return programs.map((p) => {
+      const label = p.description.replace(/Bachelor of (Science|Arts) in /, "");
+
+      return {
+        value: p._id,
+        label,
+      };
+    });
+  }, [programs]);
+
+  const yearOptions = useMemo(() => {
+    const baseOptions = [
+      { value: 1, label: "First Year" },
+      { value: 2, label: "Second Year" },
+      { value: 3, label: "Third Year" },
+      { value: 4, label: "Fourth Year" },
+    ];
+    if (selectedProgram?.duration === 5) {
+      baseOptions.push({ value: 5, label: "Fifth Year" });
+    }
+    return baseOptions;
+  }, [selectedProgram]);
 
   useEffect(() => {
-    if (userData) {
-      setValue("firstName", userData.firstName || "");
-      setValue("lastName", userData.lastName || "");
-      setValue("birthDate", formatDate(userData.birthDate) || "");
-      setValue("gender", userData.gender || "");
-      setValue("username", userData.username || "");
-      setValue("email", userData.email || "");
-      setValue("phoneNum", userData.phoneNum || "");
-      setValue("yearLevel", userData.yearLevel || "");
+    if (userInfo && type === "edit") {
+      setValue("username", userInfo.username || "");
+      setValue("phoneNum", userInfo.phoneNum || "");
+      setValue("password", null);
     }
-  }, [userData, setValue]);
+  }, [setValue, type, userInfo]);
 
   const onCreateSubmit = async (data) => {
-    const userData = {
+    const nameParts = editedName.trim().split(" ");
+    const firstAndMiddleName = nameParts.slice(0, nameParts.length - 1).join(" ");
+    const lastName = nameParts[nameParts.length - 1];
+
+    let userData = {
       ...data,
-      yearLevel: parseInt(data.yearLevel, 10),
-      birthDate: new Date(data.birthDate).toISOString(),
-      firstName: startCase(data.firstName),
-      lastName: startCase(data.lastName),
+      gender: selectedGender?.value,
+      programId: selectedProgram?.value,
+      yearLevel: selectedYearLevel?.value,
+      birthDate: selectedDate,
+      firstName: !editedName ? startCase(data.firstName) : firstAndMiddleName,
+      lastName: !editedName ? startCase(data.lastName) : lastName,
+      email: !editedEmail ? data.email : editedEmail,
     };
+
+    if (type === "edit") {
+      userData = {
+        ...userData,
+        password: data.password === null ? userInfo.password : data.password,
+      };
+    }
+
     const formData = new FormData();
+
     if (selectedFile) {
       formData.append("file", selectedFile);
     }
+
+    if (selectedImage) {
+      formData.append("file", selectedImage);
+    }
+
     formData.append("userData", JSON.stringify(userData));
-    await createAccount(formData, role.toString());
+
+    console.log("Submitted Data:", userData);
+    // if (type === "register") {
+    //   await createAccount(formData, role.toString());
+    // } else {
+    //   await createAccount(formData);
+    // }
   };
 
   const ActionButton = ({ onClick, label }) => (
@@ -81,224 +125,49 @@ export const FormUser = ({
     </button>
   );
 
-  const RegisterForm = () => {
-    return (
-      <>
-        <div className={styles.twoColumn}>
-          <h4>Name</h4>
-          <div className={styles.twoColumn}>
-            <FormInput
-              type="text"
-              name="firstName"
-              placeholder="First name"
-              register={register}
-              errors={errors}
-            />
-            <FormInput
-              type="text"
-              name="lastName"
-              placeholder="Last name"
-              register={register}
-              errors={errors}
-            />
-          </div>
-        </div>
-        <div className={styles.line}></div>
-        <div className={styles.twoColumn}>
-          <h4>Birthdate</h4>
-          <CustomDatePicker
-            selectedDate={selectedDate}
-            setSelectedDate={setSelectedDate}
-            errors={customErrors}
-          />
-        </div>
-        <div className={styles.line}></div>
-        <div className={styles.twoColumn}>
-          <h4>Gender</h4>
-          <FormSelect
-            name="gender"
-            options={[
-              { value: "Male", label: "Male" },
-              { value: "Female", label: "Female" },
-            ]}
-          />
-        </div>
-        <div className={styles.line}></div>
-        <div className={styles.twoColumn}>
-          <h4>Login</h4>
-          <div className={styles.twoColumn}>
-            <FormInput
-              type="text"
-              name="username"
-              placeholder="Username"
-              register={register}
-              errors={errors}
-            />
-            <FormPassword
-              name="password"
-              placeholder="Password"
-              register={register}
-              errors={errors}
-            />
-          </div>
-        </div>
-        <div className={styles.line}></div>
-        <div className={styles.twoColumn}>
-          <h4>Contact</h4>
-          <div className={styles.twoColumn}>
-            <FormInput
-              type="text"
-              name="email"
-              placeholder="Email address"
-              register={register}
-              errors={errors}
-            />
-            <div className={styles.formItem}>
-              <FormInput
-                type="tel"
-                name="phoneNum"
-                placeholder="Phone number"
-                register={register}
-                errors={errors}
-              />
-            </div>
-          </div>
-        </div>
-        <div className={styles.line}></div>
-        <div className={styles.twoColumn}>
-          <h4>Profile Photo</h4>
-          <UploadWidget fileSelect={setSelectedFile} selectedFile={selectedFile} />
-        </div>
-        {role === "student" && (
-          <FormStudent
-            userData={userData}
-            setValue={setValue}
-            register={register}
-            errors={errors}
-          />
-        )}
-      </>
-    );
-  };
-
-  const EditForm = () => {
-    return (
-      <>
-        <div className={styles.userContainer}>
-          <UserIcon
-            image={selectedImage}
-            desc={`User ${userData.userId}'s profile photo`}
-            size={110}
-            editable={true}
-            setImage={setSelectedImage}
-          />
-          <div className={styles.userInfo}>
-            <div className={styles.alignCenter}>
-              <h2 className={styles.title}>
-                {userData.firstName} {userData.lastName}
-              </h2>
-              <TbEdit size={IconSizes.LARGE} />
-            </div>
-            <p className={styles.desc}>{userData.email}</p>
-            <div className={`${styles.badge} ${styles.iconLabel}`}>
-              <span className={styles.studentId}>
-                <TbId size={IconSizes.SMALL} />
-                <strong>Student ID</strong>
-              </span>
-              <p>{userData.userId}</p>
-            </div>
-          </div>
-        </div>
-        <div className={styles.twoColumn}>
-          <h4>Login</h4>
-          <div className={styles.twoColumn}>
-            <FormInput
-              type="text"
-              name="username"
-              placeholder="Username"
-              register={register}
-              errors={errors}
-            />
-            <div className={styles.formItem}>
-              <FormPassword
-                name="password"
-                placeholder="Enter new password"
-                register={register}
-                errors={errors}
-              />
-            </div>
-          </div>
-        </div>
-        <div className={styles.line}></div>
-        {role === "student" && (
-          <FormStudent
-            userData={userData}
-            setValue={setValue}
-            register={register}
-            errors={errors}
-          />
-        )}
-        {role === "instructor" && (
-          <FormStudent
-            userData={userData}
-            setValue={setValue}
-            register={register}
-            errors={errors}
-          />
-        )}
-        <div className={styles.line}></div>
-        <div className={styles.twoColumn}>
-          <h4>Contact</h4>
-          <div className={styles.twoColumn}>
-            <FormInput
-              type="text"
-              name="email"
-              placeholder="Email address"
-              register={register}
-              errors={errors}
-            />
-            <div className={styles.formItem}>
-              <FormInput
-                type="tel"
-                name="phoneNum"
-                placeholder="Phone number"
-                register={register}
-                errors={errors}
-              />
-            </div>
-          </div>
-        </div>
-        <div className={styles.line}></div>
-        <div className={styles.twoColumn}>
-          <h4>Birthdate</h4>
-          <FormInput
-            type="date"
-            name="birthDate"
-            placeholder="Birth date"
-            register={register}
-            errors={errors}
-          />
-        </div>
-        <div className={styles.line}></div>
-        <div className={styles.twoColumn}>
-          <h4>Gender</h4>
-          <FormSelect
-            name="gender"
-            options={[
-              { value: "Male", label: "Male" },
-              { value: "Female", label: "Female" },
-            ]}
-            onSelectOption={setSelectedGender}
-            errors={customErrors}
-          />
-        </div>
-      </>
-    );
-  };
-
   return (
     <form className={styles.formContainer} onSubmit={handleSubmit(onCreateSubmit)}>
-      {type === "register" ? <RegisterForm /> : <EditForm />}
+      {type === "register" ? (
+        <RegisterForm
+          role={role}
+          register={register}
+          errors={errors}
+          userData={userInfo}
+          selectedDate={selectedDate}
+          setSelectedDate={setSelectedDate}
+          selectedGender={selectedGender}
+          setSelectedGender={setSelectedGender}
+          setSelectedFile={setSelectedFile}
+          selectedFile={selectedFile}
+          selectedProgram={selectedProgram}
+          setSelectedProgram={setSelectedProgram}
+          selectedYearLevel={selectedYearLevel}
+          setSelectedYearLevel={setSelectedYearLevel}
+        />
+      ) : (
+        <EditForm
+          role={role}
+          errors={errors}
+          register={register}
+          userData={userInfo}
+          programOptions={programOptions}
+          yearOptions={yearOptions}
+          setEditedEmail={setEditedEmail}
+          editedEmail={editedEmail}
+          setEditedName={setEditedName}
+          editedName={editedName}
+          setSelectedDate={setSelectedDate}
+          selectedDate={selectedDate}
+          setSelectedGender={setSelectedGender}
+          selectedGender={selectedGender}
+          setSelectedImage={setSelectedImage}
+          selectedImage={selectedImage}
+          setSelectedProgram={setSelectedProgram}
+          selectedProgram={selectedProgram}
+          selectedYearLevel={selectedYearLevel}
+          setSelectedYearLevel={setSelectedYearLevel}
+        />
+      )}
       <div className={type === "register" ? styles.buttonContainer : styles.spaceBetween}>
         {type === "edit" && (
           <button type="button" className={styles.redBtn} style={{ justifySelf: "start" }}>

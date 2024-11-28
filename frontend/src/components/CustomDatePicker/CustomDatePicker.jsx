@@ -4,8 +4,7 @@ import "react-datepicker/src/stylesheets/datepicker.scss";
 
 import styles from "./CustomDatePicker.module.scss";
 
-const CustomDatePicker = ({ selectedDate, setSelectedDate, errors }) => {
-  const hasError = errors;
+const CustomDatePicker = ({ selectedDate, setSelectedDate }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const timeoutRef = useRef(null);
@@ -42,12 +41,13 @@ const CustomDatePicker = ({ selectedDate, setSelectedDate, errors }) => {
     <div className={styles.formItem}>
       <DatePicker
         id="birthdate"
+        autoComplete="off"
         showPopperArrow={false}
         selected={selectedDate}
         onChange={handleDateChange}
         dateFormat="MMMM d, yyyy"
         className={styles.customInput}
-        placeholderText="Select a date"
+        placeholderText={selectedDate ? selectedDate : "Select a date"}
         enableTabLoop={false}
         wrapperClassName={styles.customWrapper}
         popperClassName={`${styles.customPopper} ${isOpen ? styles.show : ""}`}
@@ -59,7 +59,6 @@ const CustomDatePicker = ({ selectedDate, setSelectedDate, errors }) => {
         onCalendarClose={handleCalendarClose}
         open={true}
       />
-      {hasError && <span className={styles.errorMsg}>{errors.message}</span>}
     </div>
   );
 };

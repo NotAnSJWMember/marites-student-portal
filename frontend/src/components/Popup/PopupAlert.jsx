@@ -6,6 +6,7 @@ import {
    IoCheckmarkCircleOutline,
    IoAlertCircleOutline,
 } from "react-icons/io5";
+import { TbExclamationCircle } from "react-icons/tb";
 
 const PopupAlert = ({ icon, color, border, title, message, onClose, show }) => {
    return (
@@ -18,6 +19,8 @@ const PopupAlert = ({ icon, color, border, title, message, onClose, show }) => {
                <IoCheckmarkCircleOutline size={40} />
             ) : icon === "error" ? (
                <IoAlertCircleOutline size={40} />
+            ) : icon === "warning" ? (
+               <TbExclamationCircle size={40} />
             ) : null}
             <div>
                <p className={styles.title}>{title}</p>

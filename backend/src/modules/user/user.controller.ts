@@ -35,10 +35,6 @@ export class UserController {
       @UploadedFile() file: Express.Multer.File,
    ): Promise<any> {
       const userData: CreateUserDto = JSON.parse(createUserDto.userData);
-
-      console.log(userData);
-      console.log(file);
-
       return this.userService.create(userData, file);
    }
 
@@ -63,15 +59,18 @@ export class UserController {
    }
 
    @Put(':userId')
+   @UseInterceptors(FileInterceptor('file'))
    @UseGuards(AuthGuard('jwt'), RolesGuard)
    @Roles('admin')
    async update(
       @Param('userId') userId: string,
-      @Body() userData: Partial<User>,
+      @Body() createUserDto: any,
+      @UploadedFile() file: Express.Multer.File,
       @Res() res: Response,
    ) {
       try {
-         const result = await this.userService.update(userId, userData);
+         const userData: CreateUserDto = JSON.parse(createUserDto.userData);
+         const result = await this.userService.update(userId, userData, file);
 
          if (result.updatedUser) {
             return res.status(HttpStatus.OK).json({

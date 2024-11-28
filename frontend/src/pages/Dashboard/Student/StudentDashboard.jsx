@@ -1,7 +1,6 @@
 import React from "react";
 import styles from "./StudentDashboard.module.scss";
 
-import IconSizes from "constants/IconSizes";
 import Layout from "components/Layout/Layout";
 import CourseCard from "components/CourseCard/CourseCard";
 import CalendarCard from "components/Calendar/CalendarCard";

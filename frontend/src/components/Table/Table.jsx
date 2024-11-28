@@ -1,8 +1,6 @@
 import React, { useMemo, useState } from "react";
 import styles from "./Table.module.scss";
 import {
-  TbArrowLeft,
-  TbArrowRight,
   TbArrowsUpDown,
   TbDotsVertical,
   TbFileArrowRight,
@@ -14,16 +12,24 @@ import IconSizes from "constants/IconSizes";
 import Checkbox from "components/ui/Checkbox/Checkbox";
 import Popup from "components/Popup/Popup";
 import SearchBar from "components/SearchBar/SearchBar";
+import Pagination from "components/Navigation/Pagination";
 
-const Table = ({ data, headers, content, popupContent, ctaText, ctaAction }) => {
+const Table = ({
+  data,
+  headers,
+  content,
+  isPopupVisible,
+  setIsPopupVisible,
+  popupContent,
+  ctaText,
+  ctaAction,
+}) => {
   const [activePopup, setActivePopup] = useState(null);
-  const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [popupPosition, setPopupPosition] = useState({ top: 0, right: 0 });
   const [selectedData, setSelectedData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
 
   const itemsPerPage = 7;
-  const totalPages = Math.ceil(data.length / itemsPerPage);
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentData = useMemo(() => {
@@ -33,14 +39,11 @@ const Table = ({ data, headers, content, popupContent, ctaText, ctaAction }) => 
   const togglePopupAction = (userId, event) => {
     const rect = event.currentTarget.getBoundingClientRect();
 
+    setIsPopupVisible(true);
+
     setTimeout(() => {
-      if (activePopup === userId) {
-        closePopupAction();
-      } else {
-        setActivePopup(userId);
-        setIsPopupVisible(true);
-        setPopupPosition({ top: rect.bottom - 40, left: rect.left - 150 });
-      }
+      setActivePopup(userId);
+      setPopupPosition({ top: rect.bottom - 40, left: rect.left - 150 });
     }, 100);
   };
 
@@ -66,14 +69,6 @@ const Table = ({ data, headers, content, popupContent, ctaText, ctaAction }) => 
       setSelectedData(currentData.map((data) => data._id));
     }
   };
-
-  const handlePreviousPage = () => {
-    if (currentPage !== 1) setCurrentPage(currentPage - 1);
-  };
-  const handleNextPage = () => {
-    if (currentPage !== totalPages) setCurrentPage(currentPage + 1);
-  };
-  const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
     <div className={styles.wrapper}>
@@ -145,20 +140,12 @@ const Table = ({ data, headers, content, popupContent, ctaText, ctaAction }) => 
           ))}
         </div>
       </div>
-      <div className={styles.pagination}>
-        <TbArrowLeft className={styles.iconBtn} onClick={handlePreviousPage} size={16} />
-        {[...Array(totalPages)].map((_, index) => (
-          <button
-            key={`button-${index}`}
-            type="button"
-            className={currentPage === index + 1 ? styles.active : ""}
-            onClick={() => handlePageChange(index + 1)}
-          >
-            {index + 1}
-          </button>
-        ))}
-        <TbArrowRight className={styles.iconBtn} onClick={handleNextPage} size={16} />
-      </div>
+      <Pagination
+        totalItems={data.length}
+        itemsPerPage={itemsPerPage}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+      />
     </div>
   );
 };

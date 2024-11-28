@@ -77,121 +77,70 @@ export class UserService {
       }
    }
 
-   async hashPassword(password: string): Promise<string> {
-      const saltRounds = 10;
-      try {
-         this.logger.log('Hashing password...');
-         const hashedPassword = await bcrypt.hash(password, saltRounds);
-         this.logger.log('Password hashed successfully.');
-         return hashedPassword;
-      } catch (error) {
-         this.logger.error('Error hashing password:', error);
-         throw new HttpException(
-            'Password hashing failed',
-            HttpStatus.INTERNAL_SERVER_ERROR,
-         );
-      }
-   }
-
-   async comparePassword(
-      plainPassword: string,
-      hashedPassword: string,
-   ): Promise<boolean> {
-      return bcrypt.compare(plainPassword, hashedPassword);
-   }
-
-   async findAll(): Promise<User[]> {
-      this.logger.log('Fetching all users...');
-      const users = await this.userModel.find().exec();
-      this.logger.log(`Fetched ${users.length} users.`);
-      return users;
-   }
-
-   async findOne(userId: string): Promise<User> {
-      this.logger.log(`Fetching user: ${userId}`);
-
-      this.logger.log(`Trying their username...`);
-      let user = await this.findByUsername(userId);
-
-      if (!user) {
-         this.logger.log('Username not found, trying their ID...');
-         user = await this.findByUserId(userId);
-      }
-
-      if (user) {
-         this.logger.log(`Found user: ${user}`);
-      } else {
-         this.logger.warn(`User ${userId} not found.`);
-      }
-
-      return user;
-   }
-
-   async findByUsername(username: string): Promise<User> {
-      this.logger.log(`Searching for user with username: ${username}`);
-      const user = await this.userModel.findOne({ username }).exec();
-      if (!user) {
-         this.logger.warn(`No user found with username: ${username}`);
-      }
-      return user;
-   }
-
-   async findByUserId(userId: string): Promise<User> {
-      this.logger.log(`Searching for user with user id: ${userId}`);
-      const user = await this.userModel.findOne({ userId }).exec();
-      if (!user) {
-         this.logger.warn(`No user found with user id: ${userId}`);
-      }
-      return user;
-   }
-
-   async updatePassword(userId: string, newPassword: string): Promise<void> {
-      this.logger.log(`Updating password for user with ID: ${userId}`);
-      const hashedPassword = await this.hashPassword(newPassword);
-
-      try {
-         await this.userModel.updateOne(
-            { userId },
-            { password: hashedPassword },
-         );
-         this.logger.log(
-            `Password updated successfully for user ID: ${userId}`,
-         );
-      } catch (error) {
-         this.logger.error(
-            `Failed to update password for user ID: ${userId}`,
-            error,
-         );
-         throw new HttpException(
-            'Failed to update password',
-            HttpStatus.INTERNAL_SERVER_ERROR,
-         );
-      }
-   }
-
    async update(
       userId: string,
-      userData: Partial<CreateUserDto>,
+      createUserDto: CreateUserDto,
+      file: Express.Multer.File,
    ): Promise<{ message: string; updatedUser?: User | null }> {
       this.logger.log(`Updating user with ID: ${userId}`);
 
-      const updatedUser = await this.userModel
-         .findOneAndUpdate({ userId }, userData, { new: true })
-         .exec();
+      try {
+         if (file) {
+            const filePath = await this.fileUploadService.uploadUserPhoto(
+               file,
+               userId,
+            );
+            createUserDto.userPhoto = filePath;
+            this.logger.log(`Photo saved at: ${filePath}`);
+         } else {
+            this.logger.warn(`No photo uploaded for user.`);
+         }
 
-      if (updatedUser) {
+         const existingUser = await this.userModel.findOne({ userId }).exec();
+         if (!existingUser) {
+            this.logger.warn(`No user found with ID: ${userId} to update.`);
+            return {
+               message: `No user found with ID: ${userId} to update.`,
+               updatedUser: null,
+            };
+         }
+
+         if (createUserDto.password) {
+            this.logger.log('Hashing new password..');
+            createUserDto.password = await this.hashPassword(
+               createUserDto.password,
+            );
+         }
+
+         let updatedUser: any = await this.userModel
+            .findOneAndUpdate({ userId }, createUserDto, { new: true })
+            .exec();
+
+         const updatedStudent = this.studentModel
+            .findOneAndUpdate({ userId }, createUserDto, { new: true })
+            .exec();
+
+         const updatedInstructor = this.instructorModel
+            .findOneAndUpdate({ userId }, createUserDto, { new: true })
+            .exec();
+
+         if (createUserDto.role === 'student') {
+            updatedUser = updatedStudent;
+         } else {
+            updatedUser = updatedInstructor;
+         }
+
          this.logger.log(`Successfully updated user: ${updatedUser}`);
-
          return {
             message: `Successfully updated the user ${updatedUser.firstName}`,
             updatedUser,
          };
-      } else {
-         this.logger.warn(`No user found with ID: ${userId} to update.`);
-         return {
-            message: `No user found with ID: ${userId} to update.`,
-            updatedUser: null,
-         };
+      } catch (error) {
+         this.logger.error(`Failed to update user with ID: ${userId}`, error);
+         throw new HttpException(
+            'Failed to update user',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+         );
       }
    }
 
@@ -239,6 +188,98 @@ export class UserService {
                deletedUser: null,
             };
          }
+      }
+   }
+
+   async findAll(): Promise<User[]> {
+      this.logger.log('Fetching all users...');
+      const users = await this.userModel.find().exec();
+      this.logger.log(`Fetched ${users.length} users.`);
+      return users;
+   }
+
+   async findOne(userId: string): Promise<User> {
+      this.logger.log(`Fetching user: ${userId}`);
+
+      this.logger.log(`Trying their username...`);
+      let user = await this.findByUsername(userId);
+
+      if (!user) {
+         this.logger.log('Username not found, trying their ID...');
+         user = await this.findByUserId(userId);
+      }
+
+      if (user) {
+         this.logger.log(`Found user: ${user}`);
+      } else {
+         this.logger.warn(`User ${userId} not found.`);
+      }
+
+      return user;
+   }
+
+   async hashPassword(password: string): Promise<string> {
+      const saltRounds = 10;
+      try {
+         this.logger.log('Hashing password...');
+         const hashedPassword = await bcrypt.hash(password, saltRounds);
+         this.logger.log('Password hashed successfully.');
+         return hashedPassword;
+      } catch (error) {
+         this.logger.error('Error hashing password:', error);
+         throw new HttpException(
+            'Password hashing failed',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+         );
+      }
+   }
+
+   async comparePassword(
+      plainPassword: string,
+      hashedPassword: string,
+   ): Promise<boolean> {
+      return bcrypt.compare(plainPassword, hashedPassword);
+   }
+
+   async findByUsername(username: string): Promise<User> {
+      this.logger.log(`Searching for user with username: ${username}`);
+      const user = await this.userModel.findOne({ username }).exec();
+      if (!user) {
+         this.logger.warn(`No user found with username: ${username}`);
+      }
+      return user;
+   }
+
+   async findByUserId(userId: string): Promise<User> {
+      this.logger.log(`Searching for user with user id: ${userId}`);
+      const user = await this.userModel.findOne({ userId }).exec();
+      if (!user) {
+         this.logger.warn(`No user found with user id: ${userId}`);
+      }
+      return user;
+   }
+
+   async updatePassword(userId: string, newPassword: string): Promise<void> {
+      this.logger.log(`Updating password for user with ID: ${userId}`);
+      const hashedPassword = await this.hashPassword(newPassword);
+
+      try {
+         await this.userModel.updateOne(
+            { userId },
+            { password: hashedPassword },
+         );
+         this.logger.log(
+            `Password updated successfully for user ID: ${userId}`,
+         );
+      } catch (error) {
+         this.logger.error(
+            `Failed to update password for user ID: ${userId}`,
+            error,
+         );
+         throw new HttpException(
+            'Failed to update password',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+         );
       }
    }
 }
