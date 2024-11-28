@@ -39,8 +39,8 @@ export class UserController {
    }
 
    @Get()
-   @UseGuards(AuthGuard('jwt'), RolesGuard)
-   @Roles('admin')
+   // @UseGuards(AuthGuard('jwt'), RolesGuard)
+   // @Roles('admin')
    async findAll(): Promise<User[]> {
       return this.userService.findAll();
    }
@@ -72,16 +72,16 @@ export class UserController {
          const userData: CreateUserDto = JSON.parse(createUserDto.userData);
          const result = await this.userService.update(userId, userData, file);
 
-         if (result.updatedUser) {
+         if (result.updatedUser === null) {
             return res.status(HttpStatus.OK).json({
-               message: result.message,
-               updatedUser: result.updatedUser,
-            });
-         } else {
-            return res.status(HttpStatus.NOT_FOUND).json({
                message: result.message,
             });
          }
+
+         return res.status(HttpStatus.OK).json({
+            message: result.message,
+            updatedUser: result.updatedUser,
+         });
       } catch (error) {
          return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
             message: 'An error occurred while updating the user.',
@@ -113,6 +113,11 @@ export class UserController {
             error: error.message,
          });
       }
+   }
+
+   @Post('/seed')
+   async operationRestore() {
+      await this.userService.operationRestoreMyself();
    }
 
    @All('*')

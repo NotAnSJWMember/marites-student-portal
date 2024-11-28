@@ -7,6 +7,7 @@ import { TbEdit, TbId } from "react-icons/tb";
 import { FormInput, FormPassword, FormSelect } from "components/ui/Form";
 import { FormStudent } from "../FormStudent";
 import CustomDatePicker from "components/CustomDatePicker/CustomDatePicker";
+import { getUserPhoto } from "utils/getUserPhoto";
 
 const EditForm = memo(
   ({
@@ -30,6 +31,8 @@ const EditForm = memo(
     selectedProgram,
     selectedYearLevel,
     setSelectedYearLevel,
+    setPreview,
+    preview,
   }) => {
     const [mode, setMode] = useState("view");
 
@@ -38,11 +41,20 @@ const EditForm = memo(
         setEditedName(`${userData.firstName} ${userData.lastName}`);
         setEditedEmail(userData.email);
         setSelectedDate(userData.birthDate);
+        setPreview(getUserPhoto(userData.userPhoto));
         userData.gender === "Male"
           ? setSelectedGender({ value: "Male", label: "Male" })
           : setSelectedGender({ value: "Female", label: "Female" });
       }
-    }, [setEditedEmail, setEditedName, setSelectedDate, setSelectedGender, userData]);
+    }, [
+      setEditedEmail,
+      setEditedName,
+      setPreview,
+      setSelectedDate,
+      setSelectedGender,
+      setSelectedImage,
+      userData,
+    ]);
 
     const handleEditInfo = () => {
       setMode("view");
@@ -55,7 +67,8 @@ const EditForm = memo(
             <UserIcon
               size={110}
               editable={true}
-              selectedImage={selectedImage}
+              preview={preview}
+              setPreview={setPreview}
               setSelectedImage={setSelectedImage}
               desc={`User ${userData.userId}'s profile photo`}
             />

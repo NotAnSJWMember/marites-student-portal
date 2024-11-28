@@ -29,7 +29,7 @@ const Table = ({
   const [selectedData, setSelectedData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const itemsPerPage = 7;
+  const itemsPerPage = 8;
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentData = useMemo(() => {

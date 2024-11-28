@@ -23,6 +23,7 @@ import useUpdateData from "hooks/useUpdateData";
 const UserManagement = () => {
   const [showCreateUserPopup, setShowCreateUserPopup] = useState(false);
   const [showEditUserPopup, setShowEditUserPopup] = useState(false);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
 
@@ -57,15 +58,27 @@ const UserManagement = () => {
   }, [instructorFetchData, studentFetchData, userFetchData]);
 
   const handleCreateUser = async (formData, role) => {
-    await postData(formData, role.toString(), userFetchData);
+    await postData(formData, role.toString(), userFetchData, true);
   };
 
   const handleUpdateUser = async (formData) => {
     await updateData(formData, "user", selectedUser?.userId, userFetchData, true);
+    instructorFetchData();
+    studentFetchData();
+    setShowEditUserPopup((prev) => !prev);
   };
 
-  const handleDeleteUser = async (userId) => {
-    if (userId) await deleteData(userId, userFetchData);
+  const handleDeleteUser = async () => {
+    if (selectedUser?.userId) {
+      await deleteData(selectedUser.userId, userFetchData);
+      setShowDeleteConfirmation(false);
+    }
+  };
+
+  const handleShowDeleteConfirmation = (user) => {
+    setSelectedUser(user);
+    setShowDeleteConfirmation(true);
+    setIsPopupVisible(false);
   };
 
   const handleShowCreatePopup = () => {
@@ -124,7 +137,7 @@ const UserManagement = () => {
         <button
           type="button"
           className={`${styles.deleteBtn} ${styles.iconCta}`}
-          onClick={() => handleDeleteUser(user.userId)}
+          onClick={() => handleShowDeleteConfirmation(user)}
         >
           <TbTrash size={IconSizes.POPUP} />
           Delete user
@@ -168,16 +181,46 @@ const UserManagement = () => {
         </div>
       </Popup>
 
-      <Popup show={showEditUserPopup} close={handleShowEditPopup} position="center">
+      <Popup
+        show={showEditUserPopup}
+        close={handleShowEditPopup}
+        position="center"
+        handleClickOutside={false}
+      >
         <div className={styles.userPopup}>
           <FormUser
             type="edit"
             role={selectedUser?.role ? selectedUser.role : "user"}
-            userInfo={selectedUser}
+            userData={selectedUser}
             loading={updateLoading}
+            handleDelete={setShowDeleteConfirmation}
             createAccount={handleUpdateUser}
             createdAction={handleShowEditPopup}
           />
+        </div>
+      </Popup>
+
+      <Popup
+        show={showDeleteConfirmation}
+        close={() => setShowDeleteConfirmation(false)}
+        position={"center"}
+      >
+        <div className={styles.userPopup}>
+          <p>
+            <strong>Are you sure you want to delete {selectedUser?.firstName}?</strong>
+          </p>
+          <div className={styles.buttonContainer}>
+            <button
+              type="button"
+              className={styles.secondaryBtn}
+              onClick={() => setShowDeleteConfirmation(false)}
+            >
+              Cancel
+            </button>
+            <button type="button" className={styles.redBtn} onClick={handleDeleteUser}>
+              Delete
+            </button>
+          </div>
         </div>
       </Popup>
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import styles from "./FormUser.module.scss";
 import Loading from "components/Loading/Loading";
 
@@ -12,9 +12,10 @@ export const FormUser = ({
   role,
   type,
   loading,
+  handleDelete,
   createdAction,
   createAccount,
-  userInfo = {},
+  userData = {},
   isFirst = false,
 }) => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -23,12 +24,11 @@ export const FormUser = ({
   const [selectedGender, setSelectedGender] = useState(null);
   const [selectedProgram, setSelectedProgram] = useState(null);
   const [selectedYearLevel, setSelectedYearLevel] = useState(null);
+  const [preview, setPreview] = useState(null);
   const [editedName, setEditedName] = useState(null);
   const [editedEmail, setEditedEmail] = useState(null);
 
   const { data: programs } = useFetchData("program");
-
-  console.log("Initial Data:", userInfo);
 
   const {
     register,
@@ -62,33 +62,36 @@ export const FormUser = ({
   }, [selectedProgram]);
 
   useEffect(() => {
-    if (userInfo && type === "edit") {
-      setValue("username", userInfo.username || "");
-      setValue("phoneNum", userInfo.phoneNum || "");
-      setValue("password", null);
+    if (userData && type === "edit") {
+      setValue("username", userData.username || "");
+      setValue("phoneNum", userData.phoneNum || "");
     }
-  }, [setValue, type, userInfo]);
+  }, [setValue, type, userData]);
 
   const onCreateSubmit = async (data) => {
-    const nameParts = editedName.trim().split(" ");
-    const firstAndMiddleName = nameParts.slice(0, nameParts.length - 1).join(" ");
-    const lastName = nameParts[nameParts.length - 1];
+    let firstAndMiddleName = "";
+    let lastName = "";
+
+    if (type === "edit") {
+      const nameParts = editedName.trim().split(" ");
+      firstAndMiddleName = nameParts.slice(0, nameParts.length - 1).join(" ");
+      lastName = nameParts[nameParts.length - 1];
+    }
 
     let userData = {
       ...data,
       gender: selectedGender?.value,
       programId: selectedProgram?.value,
       yearLevel: selectedYearLevel?.value,
-      birthDate: selectedDate,
+      birthDate: !selectedDate ? data.birthDate : selectedDate.toString(),
       firstName: !editedName ? startCase(data.firstName) : firstAndMiddleName,
       lastName: !editedName ? startCase(data.lastName) : lastName,
-      email: !editedEmail ? data.email : editedEmail,
     };
 
     if (type === "edit") {
       userData = {
         ...userData,
-        password: data.password === null ? userInfo.password : data.password,
+        email: editedEmail,
       };
     }
 
@@ -104,12 +107,12 @@ export const FormUser = ({
 
     formData.append("userData", JSON.stringify(userData));
 
-    console.log("Submitted Data:", userData);
-    // if (type === "register") {
-    //   await createAccount(formData, role.toString());
-    // } else {
-    //   await createAccount(formData);
-    // }
+    console.log("Submitted Data;", userData);
+    if (type === "register") {
+      await createAccount(formData, role.toString());
+    } else {
+      await createAccount(formData);
+    }
   };
 
   const ActionButton = ({ onClick, label }) => (
@@ -132,7 +135,9 @@ export const FormUser = ({
           role={role}
           register={register}
           errors={errors}
-          userData={userInfo}
+          userData={userData}
+          programOptions={programOptions}
+          yearOptions={yearOptions}
           selectedDate={selectedDate}
           setSelectedDate={setSelectedDate}
           selectedGender={selectedGender}
@@ -149,7 +154,7 @@ export const FormUser = ({
           role={role}
           errors={errors}
           register={register}
-          userData={userInfo}
+          userData={userData}
           programOptions={programOptions}
           yearOptions={yearOptions}
           setEditedEmail={setEditedEmail}
@@ -166,11 +171,18 @@ export const FormUser = ({
           selectedProgram={selectedProgram}
           selectedYearLevel={selectedYearLevel}
           setSelectedYearLevel={setSelectedYearLevel}
+          setPreview={setPreview}
+          preview={preview}
         />
       )}
       <div className={type === "register" ? styles.buttonContainer : styles.spaceBetween}>
         {type === "edit" && (
-          <button type="button" className={styles.redBtn} style={{ justifySelf: "start" }}>
+          <button
+            type="button"
+            className={styles.redBtn}
+            style={{ justifySelf: "start" }}
+            onClick={() => handleDelete(true)}
+          >
             Delete user
           </button>
         )}

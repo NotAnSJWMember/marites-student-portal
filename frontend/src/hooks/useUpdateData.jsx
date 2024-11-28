@@ -40,11 +40,13 @@ const useUpdateData = () => {
       if (contentType && contentType.includes("application/json"))
         responseData = await response.json();
 
-      if (responseData.message.startsWith("No changes")) {
-        showWarning("Warning", "No changes detected in the provided data.");
+      const length = Object.keys(responseData).length;
+      if (length > 1) {
+        showSuccess("Success!", responseData.message || "Updated successfully!");
       } else {
-        showSuccess("Success!", responseData.message || "Data updated successfully!");
+        showWarning("Warning", responseData.message || "No changes were made.");
       }
+
       if (fetchData) fetchData();
 
       return responseData;

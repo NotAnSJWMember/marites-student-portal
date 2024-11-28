@@ -5,7 +5,8 @@ export const UserIcon = ({
   image,
   desc,
   size,
-  selectedImage,
+  preview,
+  setPreview,
   setSelectedImage,
   editable = false,
 }) => {
@@ -37,7 +38,8 @@ export const UserIcon = ({
 
     const reader = new FileReader();
     reader.onload = () => {
-      setSelectedImage(reader.result);
+      setPreview(reader.result);
+      setSelectedImage(file);
     };
     reader.readAsDataURL(file);
   };
@@ -60,7 +62,7 @@ export const UserIcon = ({
         <span className={`${styles.editableText} ${showSpan ? styles.show : ""}`}>
           Change profile photo
         </span>
-        <img src={editable ? selectedImage : image} alt={desc} className={styles.editable} />
+        <img src={editable ? preview : image} alt={desc} className={styles.editable} />
       </div>
       <input
         id="fileInput"

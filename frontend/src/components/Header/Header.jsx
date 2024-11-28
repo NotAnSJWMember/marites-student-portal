@@ -8,6 +8,7 @@ import useFetchData from "hooks/useFetchData";
 import IconSizes from "constants/IconSizes";
 import { useDataContext } from "hooks/contexts/DataContext";
 import { findDataById } from "utils/findDataById";
+import { getUserPhoto } from "utils/getUserPhoto";
 
 export const Header = () => {
   const [isPopupVisibleUser, setPopupVisibleUser] = useState(false);
@@ -60,14 +61,14 @@ export const Header = () => {
             <TbBell size={IconSizes.LARGE} />
           </div>
           <div className={styles.userIcon} onClick={togglePopupUser}>
-            <img src={user.userPhoto} alt="Your Profile Icon" />
+            <img src={getUserPhoto(user.userPhoto)} alt="Your Profile Icon" />
           </div>
         </div>
         <Popup show={isPopupVisibleUser} close={closePopupUser} position={popupUserPosition}>
           <div className={styles.popupWrapperUser}>
             <div className={styles.userContainer}>
               <div className={styles.userIcon}>
-                <img src={user.userPhoto} alt="Your Profile Icon" />
+                <img src={getUserPhoto(user.userPhoto)} alt="Your Profile Icon" />
               </div>
               <div className={styles.userName}>
                 <h3 className={styles.name}>

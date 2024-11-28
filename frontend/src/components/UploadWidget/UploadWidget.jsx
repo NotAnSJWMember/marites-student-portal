@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import styles from "./UploadWidget.module.scss";
 import { TbCloudDownload } from "react-icons/tb";
 

@@ -2,9 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { capitalize } from "lodash";
 import styles from "./FormSelect.module.scss";
 
-export const FormSelect = ({ selectedData, setSelectedData, name, options, errors }) => {
-  const hasError = errors;
-
+export const FormSelect = ({ selectedData, setSelectedData, name, options }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [isAbove, setIsAbove] = useState(false);
@@ -54,9 +52,6 @@ export const FormSelect = ({ selectedData, setSelectedData, name, options, error
   };
 
   useEffect(() => {
-    // console.log(selectedData);
-    
-
     document.addEventListener("click", handleClickOutside);
 
     return () => {
@@ -71,7 +66,7 @@ export const FormSelect = ({ selectedData, setSelectedData, name, options, error
     <div className={styles.formItem}>
       <div className={styles.selectContainer}>
         <div
-          className={`${styles.selectBox} ${hasError ? styles.error : ""}`}
+          className={`${styles.selectBox}`}
           onClick={handleShowOptions}
           style={selectedData ? { color: "black" } : { color: "gray" }}
           ref={selectRef}
@@ -102,8 +97,6 @@ export const FormSelect = ({ selectedData, setSelectedData, name, options, error
             </div>
           ))}
         </div>
-
-        {hasError && <span className={styles.errorMsg}>{errors.message}</span>}
       </div>
     </div>
   );

@@ -8,7 +8,7 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './user.schema';
 import { IdGenerator } from 'src/common/utils/generate-id.helper';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { CreateUserDto } from './user.dto';
 
 import * as bcrypt from 'bcrypt';
@@ -85,7 +85,29 @@ export class UserService {
       this.logger.log(`Updating user with ID: ${userId}`);
 
       try {
-         if (file) {
+         this.logger.log('Initial payload:', createUserDto);
+
+         let existingUser = await this.userModel.findOne({ userId }).exec();
+         if (!existingUser) {
+            this.logger.warn(`No user found with ID: ${userId} to update.`);
+            return {
+               message: `No user found with ID: ${userId} to update.`,
+               updatedUser: null,
+            };
+         }
+         this.logger.log('Existing user:', existingUser);
+
+         if (existingUser.role === 'student') {
+            existingUser = await this.studentModel.findOne({ userId }).exec();
+         } else if (existingUser.role === 'instructor') {
+            existingUser = await this.instructorModel
+               .findOne({ userId })
+               .exec();
+         }
+
+         this.logger.log('Existing user:', existingUser);
+
+         if (existingUser && file) {
             const filePath = await this.fileUploadService.uploadUserPhoto(
                file,
                userId,
@@ -96,39 +118,63 @@ export class UserService {
             this.logger.warn(`No photo uploaded for user.`);
          }
 
-         const existingUser = await this.userModel.findOne({ userId }).exec();
-         if (!existingUser) {
-            this.logger.warn(`No user found with ID: ${userId} to update.`);
+         const updatedFields: Partial<CreateUserDto> = {};
+         Object.keys(createUserDto).forEach((key) => {
+            const newValue = createUserDto[key];
+            const oldValue = existingUser[key];
+
+            if (key === 'birthDate') {
+               if (
+                  new Date(newValue).getTime() === new Date(oldValue).getTime()
+               ) {
+                  this.logger.warn(`Field ${key} is unchanged.`);
+                  return;
+               }
+            } else if (
+               newValue === null ||
+               newValue === undefined ||
+               newValue === '' ||
+               newValue === oldValue
+            ) {
+               this.logger.warn(
+                  `Field ${key} is ${newValue === oldValue ? 'unchanged' : 'invalid'}.`,
+               );
+               return;
+            }
+
+            updatedFields[key] = newValue;
+         });
+
+         if (Object.keys(updatedFields).length === 0 && !file) {
+            this.logger.warn('No updates were made to the user.');
             return {
-               message: `No user found with ID: ${userId} to update.`,
+               message:
+                  'No changes were made as all fields are unchanged or invalid.',
                updatedUser: null,
             };
          }
 
-         if (createUserDto.password) {
+         if (updatedFields.password) {
             this.logger.log('Hashing new password..');
-            createUserDto.password = await this.hashPassword(
-               createUserDto.password,
+            updatedFields.password = await this.hashPassword(
+               updatedFields.password,
             );
          }
 
-         let updatedUser: any = await this.userModel
-            .findOneAndUpdate({ userId }, createUserDto, { new: true })
+         this.logger.log('Filtered payload: ', updatedFields);
+
+         const updatedUser = await this.userModel
+            .findOneAndUpdate({ userId }, updatedFields, { new: true })
             .exec();
 
-         const updatedStudent = this.studentModel
-            .findOneAndUpdate({ userId }, createUserDto, { new: true })
-            .exec();
-
-         const updatedInstructor = this.instructorModel
-            .findOneAndUpdate({ userId }, createUserDto, { new: true })
-            .exec();
-
-         if (createUserDto.role === 'student') {
-            updatedUser = updatedStudent;
-         } else {
-            updatedUser = updatedInstructor;
-         }
+         await Promise.all([
+            this.studentModel
+               .findOneAndUpdate({ userId }, updatedFields, { new: true })
+               .exec(),
+            this.instructorModel
+               .findOneAndUpdate({ userId }, updatedFields, { new: true })
+               .exec(),
+         ]);
 
          this.logger.log(`Successfully updated user: ${updatedUser}`);
          return {
@@ -281,5 +327,31 @@ export class UserService {
             HttpStatus.INTERNAL_SERVER_ERROR,
          );
       }
+   }
+
+   async operationRestoreMyself() {
+      await this.userModel.create({
+         _id: new Types.ObjectId('67095a953d179c4cb977e090'),
+         userId: '832269',
+         firstName: 'Mikhaille',
+         lastName: 'Bacay',
+         email: 'kaiserlaconfiture@gmail.com',
+         phoneNum: '9569372583',
+         birthDate: new Date('2024-10-01T00:00:00.000Z'),
+         sex: 'Male',
+         programme: 'BSIT',
+         year: 1,
+         username: 'raneac',
+         password:
+            '$2a$12$VlmU.ScvUV3Q5thXtMlFa.agvyGNUoym0qFqGdXd/B1.Q2uSklOBi',
+         role: 'admin',
+         createdAt: new Date('2024-10-11T16:50:22.488Z'),
+         updatedAt: new Date('2024-11-28T10:24:49.086Z'),
+         __v: 946656000000,
+         lastActive: new Date('2024-11-28T10:21:04.264Z'),
+         gender: 'Female',
+         userPhoto:
+            'uploads/images/users/832269-1732779214108-249d8644ed61ca978c1411ea75f72042.jpg',
+      });
    }
 }

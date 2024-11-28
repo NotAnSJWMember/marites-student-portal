@@ -12,6 +12,8 @@ const RegisterForm = memo(
     role,
     errors,
     register,
+    programOptions,
+    yearOptions,
     selectedDate,
     setSelectedDate,
     setSelectedGender,
@@ -111,6 +113,8 @@ const RegisterForm = memo(
         {role === "student" && (
           <FormStudent
             userData={userData}
+            programOptions={programOptions}
+            yearOptions={yearOptions}
             selectedProgram={selectedProgram}
             setSelectedProgram={setSelectedProgram}
             selectedYearLevel={selectedYearLevel}
