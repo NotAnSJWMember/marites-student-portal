@@ -2,16 +2,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import styles from "./Popup.module.scss";
 
-const Popup = ({
-  show,
-  close,
-  position,
-  children,
-  handleClickOutside = true,
-}) => {
-  const positionClass = styles[position];
+const Popup = ({ show, close, position, children, handleClickOutside = true }) => {
   const [shouldRender, setShouldRender] = useState(false);
+  const positionClass = styles[position];
   const popupRef = useRef(null);
+
+  const popupStyles = {
+    top: position?.top,
+    left: position?.left,
+  };
 
   const handleOutsideClick = (event) => {
     if (popupRef.current && !popupRef.current.contains(event.target)) {
@@ -22,6 +21,7 @@ const Popup = ({
   useEffect(() => {
     if (show) {
       setShouldRender(true);
+
       setTimeout(() => {
         if (popupRef.current) {
           popupRef.current.classList.add(styles.show);
@@ -37,7 +37,7 @@ const Popup = ({
       }
       setTimeout(() => {
         setShouldRender(false);
-      }, 300);
+      }, 200);
     }
 
     return () => {
@@ -49,18 +49,12 @@ const Popup = ({
 
   if (!shouldRender) return null;
 
-  const popupStyles = {
-    top: position.top,
-    left: position.left,
-    transform: position.transform,
-  };
-
   return (
     <div
-      ref={popupRef}
-      className={`${styles.popupContent} ${positionClass}`}
       style={popupStyles}
+      className={`${styles.popupContent} ${positionClass}`}
       onClick={(e) => e.stopPropagation()}
+      ref={popupRef}
     >
       {children}
     </div>

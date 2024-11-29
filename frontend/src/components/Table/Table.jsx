@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import styles from "./Table.module.scss";
 import {
   TbArrowsUpDown,
@@ -70,6 +70,13 @@ const Table = ({
     }
   };
 
+  useEffect(() => {
+    const totalPages = Math.ceil(data.length / itemsPerPage);
+    if (currentPage > totalPages && currentPage !== 1) {
+      setCurrentPage((prev) => prev - 1);
+    }
+  }, [data, currentPage, itemsPerPage]);
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.table}>
@@ -140,12 +147,14 @@ const Table = ({
           ))}
         </div>
       </div>
-      <Pagination
-        totalItems={data.length}
-        itemsPerPage={itemsPerPage}
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-      />
+      {data.length > itemsPerPage && (
+        <Pagination
+          totalItems={data.length}
+          itemsPerPage={itemsPerPage}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+        />
+      )}
     </div>
   );
 };

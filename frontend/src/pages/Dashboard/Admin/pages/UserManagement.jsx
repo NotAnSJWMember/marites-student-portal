@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styles from "./UserManagement.module.scss";
-import { TbEdit, TbFileArrowRight, TbTrash } from "react-icons/tb";
+import { TbEdit, TbFileArrowRight, TbFileTypeCsv, TbJson, TbTrash } from "react-icons/tb";
 
 import IconSizes from "constants/IconSizes";
 import Table from "components/Table/Table";
@@ -19,11 +19,15 @@ import { getUserPhoto } from "utils/getUserPhoto";
 import { formatDate } from "utils/formatDate";
 import { findDataByUserId } from "utils/findDataByUserId";
 import useUpdateData from "hooks/useUpdateData";
+import { exportToCSV } from "utils/exportToCSV";
+import { exportToJSON } from "utils/exportToJSON";
 
 const UserManagement = () => {
   const [showCreateUserPopup, setShowCreateUserPopup] = useState(false);
   const [showEditUserPopup, setShowEditUserPopup] = useState(false);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [showExportPopup, setShowExportPopup] = useState(false);
+  const [selectFileType, setSelectFileType] = useState(null);
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
 
@@ -59,6 +63,13 @@ const UserManagement = () => {
 
   const handleCreateUser = async (formData, role) => {
     await postData(formData, role.toString(), userFetchData, true);
+    setShowCreateUserPopup((prev) => !prev);
+  };
+
+  const handleShowExportPopup = (user) => {
+    setSelectedUser(user);
+    setIsPopupVisible(false);
+    setShowExportPopup((prev) => !prev);
   };
 
   const handleUpdateUser = async (formData) => {
@@ -100,6 +111,18 @@ const UserManagement = () => {
     setIsPopupVisible(false);
   };
 
+  const handleExport = () => {
+    const filename = `${selectedUser?.userId}-data-export.${selectFileType}`;
+
+    if (selectFileType === "csv") {
+      exportToCSV(filename, [selectedUser]);
+    } else if (selectFileType === "json") {
+      exportToJSON(filename, selectedUser);
+    }
+
+    setSelectFileType(null);
+  };
+
   const renderData = (data) => {
     return (
       <>
@@ -130,7 +153,11 @@ const UserManagement = () => {
           <TbEdit size={IconSizes.POPUP} />
           Edit details
         </button>
-        <button type="button" className={styles.iconCta}>
+        <button
+          type="button"
+          className={styles.iconCta}
+          onClick={() => handleShowExportPopup(user)}
+        >
           <TbFileArrowRight size={IconSizes.POPUP} />
           Export details
         </button>
@@ -219,6 +246,48 @@ const UserManagement = () => {
             </button>
             <button type="button" className={styles.redBtn} onClick={handleDeleteUser}>
               Delete
+            </button>
+          </div>
+        </div>
+      </Popup>
+
+      <Popup show={showExportPopup} close={() => setShowExportPopup(false)} position="center">
+        <div className={styles.exportPopup}>
+          <div>
+            <h3 className={styles.title}>Export data</h3>
+            <p className={styles.desc}>Select the file type you would like to download</p>
+          </div>
+          <div className={styles.container}>
+            <div
+              className={`${styles.card} ${styles.alignCenter} ${
+                selectFileType === "csv" ? styles.selected : ""
+              }`}
+              onClick={() => setSelectFileType("csv")}
+            >
+              <TbFileTypeCsv size={IconSizes.SMALL} />
+              <p>CSV</p>
+            </div>
+            <div
+              className={`${styles.card} ${styles.alignCenter} ${
+                selectFileType === "json" ? styles.selected : ""
+              }`}
+              onClick={() => setSelectFileType("json")}
+            >
+              <TbJson size={IconSizes.SMALL} />
+              <p>JSON</p>
+            </div>
+          </div>
+          <div className={styles.line}></div>
+          <div className={styles.buttonContainer}>
+            <button
+              type="button"
+              className={styles.secondaryBtn}
+              onClick={() => setShowExportPopup(false)}
+            >
+              Cancel
+            </button>
+            <button type="button" className={styles.primaryBtn} onClick={() => handleExport()}>
+              Export
             </button>
           </div>
         </div>

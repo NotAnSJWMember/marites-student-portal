@@ -32,10 +32,36 @@
   color: $light-gray-color-600;
 }
 
-.userPopup {
+.buttonContainer {
+  justify-self: end;
+}
+
+.userPopup,
+.exportPopup {
   display: grid;
   gap: 1rem;
   padding: 1.5rem;
+  border-radius: $small-radius;
+}
+
+.exportPopup {
+  .container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    width: 100%;
+    gap: 5px;
+
+    .card {
+      cursor: pointer;
+      width: 100%;
+      transition: 100ms $trans-fast;
+    }
+
+    .selected {
+      border-color: $light-green-color-300;
+      background-color: $light-green-color-100;
+    }
+  }
 }
 
 .popupWrapper {

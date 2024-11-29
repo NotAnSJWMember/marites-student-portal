@@ -96,7 +96,7 @@ export const DataProvider = ({ children }) => {
       "course",
       "program",
       "schedule",
-      "finance",  
+      "finance",
     ];
 
     if (!dataState[endpoints]) {
@@ -107,6 +107,7 @@ export const DataProvider = ({ children }) => {
         fetchData(endpoint);
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

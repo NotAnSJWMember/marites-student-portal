@@ -40,11 +40,11 @@
   .closeBtn {
     cursor: pointer;
   }
-}
 
-.popup.show {
-  opacity: 1;
-  visibility: visible;
-  transform: scale(100%);
-  transition: 300ms cubic-bezier(0.34, 0, 0.13, 1);
+  &.show {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(100%);
+    transition: 300ms cubic-bezier(0.34, 0, 0.13, 1);
+  }
 }
