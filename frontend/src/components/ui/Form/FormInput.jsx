@@ -35,7 +35,7 @@ export const FormInput = ({
         placeholder={placeholder}
         style={{
           ...styles.input,
-          ...(hasError ? styles.inputError : {}),
+          ...(hasError ? styles.inputError : null),
         }}
         type={type}
         id={name}
@@ -51,7 +51,11 @@ export const FormInput = ({
         })}
         {...props}
       />
-      {hasError && <span style={styles.errorMsg}>{errors[name]?.message}</span>}
+      <div>
+        {placeholder && hasError && (
+          <span style={styles.errorMsg}>{errors[name]?.message}</span>
+        )}
+      </div>
     </div>
   );
 };

@@ -36,6 +36,8 @@ export const FormPassword = ({
   name,
   placeholder,
   required = true,
+  validate = false,
+  validateName,
   register,
   errors,
   ...props
@@ -56,7 +58,12 @@ export const FormPassword = ({
           placeholder={placeholder}
           type={showPassword ? "text" : "password"}
           {...register(name, {
-            ...(required && { required: `${placeholder} is required` }),
+            ...(required && {
+              required: `${placeholder ? placeholder : "This field"} is required`,
+            }),
+            ...(validate && {
+              validate: (value) => value === validateName || "Passwords do not match",
+            }),
           })}
           {...props}
         />
@@ -68,7 +75,7 @@ export const FormPassword = ({
           )}
         </span>
       </div>
-      {hasError && <span style={styles.errorMsg}>{errors[name]?.message}</span>}
+      {placeholder && hasError && <span style={styles.errorMsg}>{errors[name]?.message}</span>}
     </div>
   );
 };

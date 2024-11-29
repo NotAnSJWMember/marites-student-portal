@@ -9,6 +9,7 @@ import IconSizes from "constants/IconSizes";
 import { useDataContext } from "hooks/contexts/DataContext";
 import { findDataById } from "utils/findDataById";
 import { getUserPhoto } from "utils/getUserPhoto";
+import UserIcon from "components/ui/UserIcon/UserIcon";
 
 export const Header = () => {
   const [isPopupVisibleUser, setPopupVisibleUser] = useState(false);
@@ -54,16 +55,21 @@ export const Header = () => {
 
   return (
     user && (
-      <header className={styles.header}>
-        <div></div>
-        <div className={styles.sideBar}>
-          <div className={styles.notif} onClick={togglePopupNotif}>
-            <TbBell size={IconSizes.LARGE} />
+      <>
+        <header className={styles.header}>
+          <div className={styles.sideBar}>
+            <button
+              className={`${styles.circleBtn} ${styles.notifications}`}
+              onClick={togglePopupNotif}
+            >
+              <TbBell size={23} strokeWidth={1.7} />
+            </button>
+            <div className={styles.userContainer} onClick={togglePopupUser}>
+              <UserIcon image={getUserPhoto(user.userPhoto)} size={35} />
+            </div>
           </div>
-          <div className={styles.userIcon} onClick={togglePopupUser}>
-            <img src={getUserPhoto(user.userPhoto)} alt="Your Profile Icon" />
-          </div>
-        </div>
+        </header>
+
         <Popup show={isPopupVisibleUser} close={closePopupUser} position={popupUserPosition}>
           <div className={styles.popupWrapperUser}>
             <div className={styles.userContainer}>
@@ -85,22 +91,27 @@ export const Header = () => {
             </div>
             <div className={styles.popupContent}>
               <div className={styles.line}></div>
-              <a href="a" className={styles.iconCta}>
-                <TbUser size={25} />
-                My Profile
-              </a>
-              <a href="a" className={styles.iconCta}>
-                <TbSettings size={25} />
-                Account Settings
-              </a>
+              <button type="button" className={styles.iconBtn}>
+                <a href="a" className={styles.alignCenter}>
+                  <TbUser size={IconSizes.LARGE} strokeWidth={1.8}/>
+                  My Profile
+                </a>
+              </button>
+              <button type="button" className={styles.iconBtn}>
+                <a href="a" className={styles.alignCenter}>
+                  <TbSettings size={IconSizes.LARGE} strokeWidth={1.8}/>
+                  Account Settings
+                </a>
+              </button>
               <div className={styles.line}></div>
-              <button onClick={logout} className={styles.iconCta}>
-                <TbLogout size={25} />
+              <button onClick={logout} className={styles.iconBtn}>
+                <TbLogout size={IconSizes.LARGE} strokeWidth={1.8}/>
                 Sign out
               </button>
             </div>
           </div>
         </Popup>
+
         <Popup
           show={isPopupVisibleNotif}
           close={closePopupNotif}
@@ -109,7 +120,9 @@ export const Header = () => {
           <div className={styles.popupWrapperNotif}>
             <div className={styles.titleContainer}>
               <h2>Notifications</h2>
-              <p className={styles.cta}>Mark all as read</p>
+              <button type="button" className={styles.ctaBtn}>
+                Mark all as read
+              </button>
             </div>
             <div className={styles.line}></div>
             <div className={styles.popupContent}>
@@ -154,7 +167,7 @@ export const Header = () => {
             </div>
           </div>
         </Popup>
-      </header>
+      </>
     )
   );
 };

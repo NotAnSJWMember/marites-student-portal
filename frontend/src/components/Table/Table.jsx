@@ -18,6 +18,7 @@ const Table = ({
   data,
   headers,
   content,
+  handleOnCheck,
   isPopupVisible,
   setIsPopupVisible,
   popupContent,
@@ -75,7 +76,10 @@ const Table = ({
     if (currentPage > totalPages && currentPage !== 1) {
       setCurrentPage((prev) => prev - 1);
     }
-  }, [data, currentPage, itemsPerPage]);
+    if (selectedData) {
+      handleOnCheck(selectedData);
+    }
+  }, [data, currentPage, itemsPerPage, selectedData, handleOnCheck]);
 
   return (
     <div className={styles.wrapper}>
@@ -147,13 +151,15 @@ const Table = ({
           ))}
         </div>
       </div>
-      {data.length > itemsPerPage && (
+      {data.length > itemsPerPage ? (
         <Pagination
           totalItems={data.length}
           itemsPerPage={itemsPerPage}
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
         />
+      ) : (
+        <span style={{ margin: "auto", opacity: "0.5" }}>You've reached the end..</span>
       )}
     </div>
   );

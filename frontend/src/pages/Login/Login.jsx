@@ -5,15 +5,13 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import Loading from "../../components/Loading/Loading";
-import { usePopupAlert, useTogglePassword, useLoading, useAuth } from "../../hooks";
+import { usePopupAlert, useLoading, useAuth } from "../../hooks";
 
 import PopupAlert from "../../components/Popup/PopupAlert";
 import logo from "assets/images/logo.png";
-import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
-import { FormInput } from "components/ui/Form";
+import { FormInput, FormPassword } from "components/ui/Form";
 
 const Login = () => {
-  const [showPassword, togglePasswordVisibility] = useTogglePassword();
   const { popupState, showPopup, setShowPopup, showError } = usePopupAlert();
   const { isLoading, withLoading } = useLoading();
   const { login } = useAuth();
@@ -74,6 +72,7 @@ const Login = () => {
           <form
             className={styles.formContainer}
             onSubmit={handleSubmit(onSubmit)}
+            autoComplete="off"
           >
             <div className={styles.formItem}>
               <label htmlFor="username">
@@ -82,7 +81,7 @@ const Login = () => {
                   <span className={styles.errorMsg}>(This field is required)</span>
                 )}
               </label>
-              <FormInput type="text" name="userId" register={register} />
+              <FormInput type="text" name="userId" register={register} errors={errors} />
             </div>
             <div className={styles.formItem}>
               <label htmlFor="password">
@@ -91,21 +90,12 @@ const Login = () => {
                   <span className={styles.errorMsg}>({errors.password.message})</span>
                 )}
               </label>
-              <div className={styles.inputMerge}>
-                <input
-                  type={showPassword ? "text" : "password"}
-                  {...register("password", {
-                    required: "Password is required",
-                  })}
-                />
-                <span className={styles.inputIcon} onClick={togglePasswordVisibility}>
-                  {showPassword ? (
-                    <IoEyeOffOutline color="gray" size={20} />
-                  ) : (
-                    <IoEyeOutline color="gray" size={20} />
-                  )}
-                </span>
-              </div>
+              <FormPassword
+                name="password"
+                required={true}
+                register={register}
+                errors={errors}
+              />
             </div>
             <a href="forgot-password" className={styles.ctaAnchor}>
               Forgot your password?

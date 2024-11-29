@@ -2,7 +2,14 @@ import React, { useEffect, useRef, useState } from "react";
 import { capitalize } from "lodash";
 import styles from "./FormSelect.module.scss";
 
-export const FormSelect = ({ selectedData, setSelectedData, name, options }) => {
+export const FormSelect = ({
+  name,
+  options,
+  required = true,
+  hasError,
+  selectedData,
+  setSelectedData,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [isAbove, setIsAbove] = useState(false);

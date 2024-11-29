@@ -27,9 +27,12 @@ const UserManagement = () => {
   const [showEditUserPopup, setShowEditUserPopup] = useState(false);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [showExportPopup, setShowExportPopup] = useState(false);
+  const [showActionBarPopup, setShowActionBarPopup] = useState(false);
+
   const [selectFileType, setSelectFileType] = useState(null);
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [checkedUser, setCheckedUser] = useState(null);
 
   const { data: users, fetchData: userFetchData } = useFetchData("user");
   const { data: instructors, fetchData: instructorFetchData } = useFetchData("instructor");
@@ -61,15 +64,43 @@ const UserManagement = () => {
     studentFetchData();
   }, [instructorFetchData, studentFetchData, userFetchData]);
 
-  const handleCreateUser = async (formData, role) => {
-    await postData(formData, role.toString(), userFetchData, true);
+  useEffect(() => {
+    checkedUser?.length > 0 ? setShowActionBarPopup(true) : setShowActionBarPopup(false);
+  }, [checkedUser, setShowActionBarPopup]);
+
+  const handleShowEditPopup = (user) => {
+    if (user && user.role === "student") {
+      const student = students ? findDataByUserId(students, user.userId) : null;
+      setSelectedUser(student);
+    } else if (user && user.role === "instructor") {
+      const instructor = instructors ? findDataByUserId(instructors, user.userId) : null;
+      setSelectedUser(instructor);
+    } else {
+      setSelectedUser(user);
+    }
+
+    setShowEditUserPopup((prev) => !prev);
+    setIsPopupVisible(false);
+  };
+
+  const handleShowCreatePopup = () => {
     setShowCreateUserPopup((prev) => !prev);
+  };
+
+  const handleShowActionBarPopup = () => {
+    setIsPopupVisible(false);
+    setShowActionBarPopup((prev) => !prev);
   };
 
   const handleShowExportPopup = (user) => {
     setSelectedUser(user);
     setIsPopupVisible(false);
     setShowExportPopup((prev) => !prev);
+  };
+
+  const handleCreateUser = async (formData, role) => {
+    await postData(formData, role.toString(), userFetchData, true);
+    setShowCreateUserPopup((prev) => !prev);
   };
 
   const handleUpdateUser = async (formData) => {
@@ -89,25 +120,6 @@ const UserManagement = () => {
   const handleShowDeleteConfirmation = (user) => {
     setSelectedUser(user);
     setShowDeleteConfirmation(true);
-    setIsPopupVisible(false);
-  };
-
-  const handleShowCreatePopup = () => {
-    setShowCreateUserPopup((prev) => !prev);
-  };
-
-  const handleShowEditPopup = (user) => {
-    if (user && user.role === "student") {
-      const student = students ? findDataByUserId(students, user.userId) : null;
-      setSelectedUser(student);
-    } else if (user && user.role === "instructor") {
-      const instructor = instructors ? findDataByUserId(instructors, user.userId) : null;
-      setSelectedUser(instructor);
-    } else {
-      setSelectedUser(user);
-    }
-
-    setShowEditUserPopup((prev) => !prev);
     setIsPopupVisible(false);
   };
 
@@ -185,6 +197,7 @@ const UserManagement = () => {
               data={users}
               headers={["Name", "Role", "Last Seen", "Created on"]}
               content={renderData}
+              handleOnCheck={setCheckedUser}
               isPopupVisible={isPopupVisible}
               setIsPopupVisible={setIsPopupVisible}
               popupContent={renderPopupContent}
@@ -194,6 +207,27 @@ const UserManagement = () => {
           </div>
         </section>
       </main>
+
+      {/* All of these shit below are popups */}
+
+      <Popup
+        show={showActionBarPopup}
+        close={handleShowActionBarPopup}
+        position="bottom"
+        handleClickOutside={false}
+      >
+        <div className={styles.actionBar}>
+          <button type="button" className={`${styles.iconBtn} ${styles.ctaBtn}`}>
+            <TbFileArrowRight size={IconSizes.MEDIUM} />
+            Export
+          </button>
+          <div className={styles.line}></div>
+          <button type="button" className={`${styles.iconBtn} ${styles.ctaBtn}`}>
+            <TbTrash size={IconSizes.MEDIUM} />
+            Delete
+          </button>
+        </div>
+      </Popup>
 
       <Popup show={showCreateUserPopup} close={handleShowCreatePopup} position="center">
         <div className={styles.userPopup}>

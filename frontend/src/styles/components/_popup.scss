@@ -1,0 +1,26 @@
+@use "../variables.scss";
+
+.actionBar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  padding: 0.3rem;
+  border-radius: $small-radius;
+  box-shadow: $light-box-shadow-gray;
+
+  .line {
+    width: 1.5px;
+    height: 60%;
+  }
+
+  .ctaBtn {
+    border-radius: $small-radius;
+    transition: 150ms $trans-smooth;
+
+    &:hover {
+      color: $black-hovered;
+      background-color: $white-hovered;
+    }
+  }
+}

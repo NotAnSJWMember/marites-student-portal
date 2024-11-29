@@ -4,15 +4,15 @@
   position: fixed;
   display: grid;
   gap: 1rem;
-  background: $light-primary-background;
-  box-shadow: $light-box-shadow-gray;
-  border: 1px solid $light-gray-color;
   border-radius: 0.5rem;
   z-index: 99;
   opacity: 0;
   visibility: hidden;
   scale: 0.95;
   transition: 100ms $trans-fast;
+  background: $light-primary-background;
+  border: 1px solid $light-gray-color;
+  box-shadow: $light-box-shadow-gray;
 
   &.center {
     top: 50%;
@@ -21,29 +21,33 @@
     transform-origin: 10% 10%;
   }
 
-  // &.left {
-  //   top: 50%;
-  //   left: 0;
-  //   transform: translateY(-50%);
-  // }
+  &.left {
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    transform-origin: 10% 10%;
+  }
 
-  // &.right {
-  //   top: 50%;
-  //   right: 0;
-  //   transform: translateY(-50%);
-  // }
+  &.right {
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    transform-origin: 10% 10%;
+  }
 
-  // &.top {
-  //   top: 0;
-  //   left: 50%;
-  //   transform: translateX(-50%);
-  // }
+  &.top {
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    transform-origin: 10% 10%;
+  }
 
-  // &.bottom {
-  //   bottom: 0;
-  //   left: 50%;
-  //   transform: translateX(-50%);
-  // }
+  &.bottom {
+    bottom: 0;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transform-origin: 10% 10%;
+  }
 
   &.show {
     visibility: visible;

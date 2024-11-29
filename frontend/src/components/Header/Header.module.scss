@@ -2,9 +2,8 @@
 
 .header {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1rem 2rem;
+  justify-content: end;
+  padding: 0.8rem 2rem;
   border-bottom: 1px solid $light-gray-color-200;
   background-color: $light-primary-background;
 
@@ -13,45 +12,11 @@
     align-items: center;
     justify-content: center;
     height: 100%;
-    gap: 0.5rem;
+    gap: 8px;
 
-    div {
-      border-radius: 0.5rem;
-      padding: 0.5rem 0.8rem;
-    }
-
-    .notif {
+    .notifications,
+    .userContainer {
       cursor: pointer;
-      color: $light-primary-text;
-      transition: 300ms $trans-smooth;
-
-      &:hover {
-        background-color: $light-gray-color-100;
-      }
-    }
-
-    .userIcon {
-      cursor: pointer;
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      padding: 0;
-      overflow: hidden;
-
-      img {
-        height: 100%;
-        width: 100%;
-        object-fit: cover;
-        object-position: center;
-        display: block;
-      }
-    }
-
-    .verticalLine {
-      padding: 0;
-      height: 70%;
-      margin: 0 0.5rem;
-      opacity: 0.2;
     }
   }
 }
@@ -61,8 +26,7 @@
   position: relative;
 
   .line {
-    height: 1.5px;
-    opacity: 0.1;
+    height: 1.4px;
   }
 }
 
@@ -107,15 +71,15 @@
   .popupContent {
     display: flex;
     flex-direction: column;
-    gap: 0.4rem;
+    gap: 0.3rem;
 
     button {
       background-color: transparent;
     }
 
-    .iconCta {
+    .iconBtn {
       color: $light-primary-text;
-      padding: 0.7rem;
+      padding: 0.6rem;
       justify-content: flex-start;
       width: 100%;
       border-radius: 0.5rem;
@@ -135,26 +99,33 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1rem;
+    padding: 0.8rem 1rem;
 
     h2 {
       font-size: 1.2rem;
-      font-weight: 500;
     }
 
-    p {
-      font-size: 0.9rem;
+    .ctaBtn {
+      border: 1px solid $light-gray-color;
+      border-radius: $small-radius;
+      transition: 150ms $trans-smooth;
+      
+      &:hover {
+        color: $black-hovered;
+        background-color: $white-hovered;
+      }
     }
   }
 
   .notifItem:not(:last-of-type) {
-    border-bottom: 1px solid $light-gray-color-100;
+    border-bottom: 1px solid $light-gray-color;
   }
 
   .notifItem {
     display: flex;
-    padding: 1rem;
+    padding: 0.8rem 1rem;
     gap: 1rem;
+    font-size: 0.9rem;
 
     .notifUser {
       position: relative;
