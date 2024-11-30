@@ -91,31 +91,6 @@ export class UserController {
       }
    }
 
-   @Delete(':userId')
-   @UseGuards(AuthGuard('jwt'), RolesGuard)
-   @Roles('admin')
-   async delete(@Param('userId') userId: string, @Res() res: Response) {
-      try {
-         const result = await this.userService.delete(userId);
-
-         if (result.deletedUser) {
-            return res.status(HttpStatus.OK).json({
-               message: result.message,
-               deletedUser: result.deletedUser,
-            });
-         } else {
-            return res.status(HttpStatus.NOT_FOUND).json({
-               message: result.message,
-            });
-         }
-      } catch (error) {
-         return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-            message: 'An error occurred while deleting the user.',
-            error: error.message,
-         });
-      }
-   }
-
    @Delete('batch-delete')
    @UseGuards(AuthGuard('jwt'), RolesGuard)
    @Roles('admin')
@@ -143,7 +118,32 @@ export class UserController {
       }
    }
 
-   @Post('/seed')
+   @Delete(':userId')
+   @UseGuards(AuthGuard('jwt'), RolesGuard)
+   @Roles('admin')
+   async delete(@Param('userId') userId: string, @Res() res: Response) {
+      try {
+         const result = await this.userService.delete(userId);
+
+         if (result.deletedUser) {
+            return res.status(HttpStatus.OK).json({
+               message: result.message,
+               deletedUser: result.deletedUser,
+            });
+         } else {
+            return res.status(HttpStatus.NOT_FOUND).json({
+               message: result.message,
+            });
+         }
+      } catch (error) {
+         return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+            message: 'An error occurred while deleting the user.',
+            error: error.message,
+         });
+      }
+   }
+
+   @Post('seed')
    async operationRestore() {
       await this.userService.operationRestoreMyself();
    }

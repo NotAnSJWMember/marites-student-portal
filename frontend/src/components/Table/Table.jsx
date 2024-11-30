@@ -1,13 +1,19 @@
 import React, { useEffect, useMemo, useState } from "react";
 import styles from "./Table.module.scss";
 import {
+  TbArrowDown,
   TbArrowsUpDown,
+  TbArrowUp,
+  TbClockCheck,
+  TbClockQuestion,
   TbDotsVertical,
   TbEdit,
   TbFileArrowRight,
   TbFilter,
+  TbLetterCase,
   TbPlus,
   TbTrash,
+  TbUserCircle,
   TbX,
 } from "react-icons/tb";
 import IconSizes from "constants/IconSizes";
@@ -16,6 +22,7 @@ import Checkbox from "components/ui/Checkbox/Checkbox";
 import Popup from "components/Popup/Popup";
 import SearchBar from "components/SearchBar/SearchBar";
 import Pagination from "components/Navigation/Pagination";
+import { Tooltip } from "react-tooltip";
 
 const Table = ({
   data,
@@ -29,20 +36,88 @@ const Table = ({
   ctaText,
   ctaAction,
 }) => {
-  const [selectedData, setSelectedData] = useState([]);
+  const [showSortPopup, setShowSortPopup] = useState(false);
+  const [sortPopupPosition, setSortPopupPosition] = useState({ top: 0, right: 0 });
   const [showActionBarPopup, setShowActionBarPopup] = useState(false);
   const [popupPosition, setPopupPosition] = useState({ top: 0, right: 0 });
+  const [selectedData, setSelectedData] = useState([]);
   const [activePopup, setActivePopup] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [sortOption, setSortOption] = useState(null);
+  const [filteredSearch, setFilteredSearch] = useState(data);
   const itemsPerPage = 8;
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
+  const sortOptionLabels = headers.flatMap((header) => [
+    {
+      option: header.label.toLowerCase().replace(" ", "-") + "-asc",
+      icon: <TbArrowUp size={IconSizes.SMALL} />,
+      label: `Sort by ${header.label}`,
+    },
+    {
+      option: header.label.toLowerCase().replace(" ", "-") + "-desc",
+      icon: <TbArrowDown size={IconSizes.SMALL} />,
+      label: `Sort by ${header.label}`,
+    },
+  ]);
+
+  const icon = sortOptionLabels.find((item) => item.option === sortOption)?.icon;
+  const label = sortOptionLabels.find((item) => item.option === sortOption)?.label;
+
+  const sortData = (data, option) => {
+    if (!option) return data;
+
+    const sorted = [...data];
+
+    const [label, direction] = option.split(/-(?=[^-]+$)/);
+    const header = headers.find((h) => h.label.toLowerCase().replace(" ", "-") === label);
+
+    if (!header) return data;
+
+    const { attribute } = header;
+
+    sorted.sort((a, b) => {
+      if (attribute === "lastActive" || attribute === "createdAt") {
+        return direction === "asc"
+          ? new Date(b[attribute]) - new Date(a[attribute])
+          : new Date(a[attribute]) - new Date(b[attribute]);
+      } else {
+        return direction === "asc"
+          ? a[attribute].localeCompare(b[attribute])
+          : b[attribute].localeCompare(a[attribute]);
+      }
+    });
+
+    return sorted;
+  };
+
+  const sortedData = sortData(filteredSearch, sortOption);
+
+  useEffect(() => {
+    const totalPages = Math.ceil(sortedData.length / itemsPerPage);
+    if (currentPage > totalPages && currentPage !== 1) {
+      setCurrentPage((prev) => prev - 1);
+    }
+
+    selectedData.length > 0 ? setShowActionBarPopup(true) : setShowActionBarPopup(false);
+  }, [data, currentPage, itemsPerPage, selectedData, sortedData.length]);
+
   const currentData = useMemo(
-    () => data.slice(indexOfFirstItem, indexOfLastItem),
-    [data, indexOfFirstItem, indexOfLastItem]
+    () => sortedData.slice(indexOfFirstItem, indexOfLastItem),
+    [indexOfFirstItem, indexOfLastItem, sortedData]
   );
+
+  const toggleSortPopup = (event) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    setSortPopupPosition({ top: rect.bottom + 5, left: rect.left });
+    setShowSortPopup((prev) => !prev);
+  };
+
+  const closeSortPopup = () => {
+    setShowSortPopup(false);
+  };
 
   const togglePopup = (userId, event) => {
     const rect = event.currentTarget.getBoundingClientRect();
@@ -60,6 +135,17 @@ const Table = ({
     }, 100);
   };
 
+  const handleSelectSortOption = (option) => {
+    setSortOption((prevOption) => (prevOption === option ? null : option));
+  };
+
+  const handleChangeSortDirection = (option) => {
+    let [label, direction] = option.split(/-(?=[^-]+$)/);
+    direction = direction === "asc" ? "desc" : "asc";
+    const changedOption = `${label}-${direction}`;
+    setSortOption(changedOption);
+  };
+
   const handleCheckboxChange = (dataId) => {
     setSelectedData((prev) =>
       prev.includes(dataId) ? prev.filter((id) => id !== dataId) : [...prev, dataId]
@@ -71,50 +157,90 @@ const Table = ({
     setSelectedData((prev) => (prev.length === currentData.length ? [] : allIds));
   };
 
-  const handleBulkAction = (action) => {
+  const handleExportBulkAction = () => {
     const selectedItems = selectedData.map((id) => data.find((item) => item._id === id));
-    action(selectedItems);
-    setSelectedData([]);
+    onExport(selectedItems);
   };
-
-  useEffect(() => {
-    const totalPages = Math.ceil(data.length / itemsPerPage);
-    if (currentPage > totalPages && currentPage !== 1) {
-      setCurrentPage((prev) => prev - 1);
-    }
-
-    selectedData.length > 0 ? setShowActionBarPopup(true) : setShowActionBarPopup(false);
-  }, [data, currentPage, itemsPerPage, selectedData]);
 
   return (
     <>
       <div className={styles.wrapper}>
         <div className={styles.table}>
           <div className={styles.toolsContainer}>
-            <SearchBar height="100%" width="30rem" />
+            <div className={styles.searchContainer}>
+              <SearchBar
+                data={data}
+                onSearch={setFilteredSearch}
+                height="100%"
+                width="30rem"
+              />
+              {sortOption && (
+                <button
+                  type="button"
+                  data-tooltip-id="sort-option"
+                  data-tooltip-content="Change direction"
+                  className={styles.sortOption}
+                  onClick={() => handleChangeSortDirection(sortOption)}
+                >
+                  {icon}
+                  {label}
+                </button>
+              )}
+            </div>
+            <Tooltip
+              id="sort-option"
+              noArrow={true}
+              offset={5}
+              className={styles.tooltip}
+            />
             <div className={styles.buttonContainer}>
               <button
                 type="button"
+                data-tooltip-id="export-button"
+                data-tooltip-content="Export all table data"
                 className={`${styles.iconBtn} ${styles.secondaryBtn}`}
                 onClick={() => onExport(data)}
               >
                 <TbFileArrowRight size={IconSizes.SMALL} />
                 Export
               </button>
+              <Tooltip
+                id="export-button"
+                noArrow={true}
+                offset={5}
+                className={styles.tooltip}
+              />
               <button
                 type="button"
+                data-tooltip-id="filter-button"
+                data-tooltip-content="Filter keywords"
                 className={`${styles.iconBtn} ${styles.secondaryBtn}`}
               >
                 <TbFilter size={IconSizes.SMALL} />
                 Filter
               </button>
+              <Tooltip
+                id="filter-button"
+                noArrow={true}
+                offset={5}
+                className={styles.tooltip}
+              />
               <button
                 type="button"
+                data-tooltip-id="sort-by-button"
+                data-tooltip-content="Sort by headers"
                 className={`${styles.iconBtn} ${styles.secondaryBtn}`}
+                onClick={(event) => toggleSortPopup(event)}
               >
                 <TbArrowsUpDown size={IconSizes.SMALL} />
                 Sort
               </button>
+              <Tooltip
+                id="sort-by-button"
+                noArrow={true}
+                offset={5}
+                className={styles.tooltip}
+              />
               <button
                 type="button"
                 className={`${styles.iconBtn} ${styles.primaryBtn}`}
@@ -129,11 +255,13 @@ const Table = ({
             <div className={styles.tableHeader}>
               <Checkbox
                 id="select-all"
-                isChecked={selectedData.length === currentData.length}
+                isChecked={
+                  selectedData.length === currentData.length && selectedData.length !== 0
+                }
                 onChange={handleSelectAll}
               />
               {headers.map((header, index) => {
-                return <h4 key={`header-${index}`}>{header}</h4>;
+                return <h4 key={`header-${index}`}>{header.label}</h4>;
               })}
             </div>
             {currentData.map((data, index) => (
@@ -205,6 +333,41 @@ const Table = ({
           <span style={{ margin: "auto", opacity: "0.5" }}>You've reached the end..</span>
         )}
       </div>
+
+      <Popup show={showSortPopup} close={closeSortPopup} position={sortPopupPosition}>
+        <div className={styles.sortBy}>
+          <div className={styles.sortOptions}>
+            {headers.map((header, index) => {
+              const headerIcons = [
+                <TbLetterCase size={IconSizes.MEDIUM} />,
+                <TbUserCircle size={IconSizes.MEDIUM} />,
+                <TbClockQuestion size={IconSizes.MEDIUM} />,
+                <TbClockCheck size={IconSizes.MEDIUM} />,
+              ];
+
+              const headerOption = header.label.toLowerCase().replace(" ", "-");
+
+              return (
+                <button
+                  key={header.label}
+                  type="button"
+                  className={`${styles.sortItem} ${
+                    sortOption === `${headerOption}-asc` ||
+                    sortOption === `${headerOption}-desc`
+                      ? styles.selected
+                      : ""
+                  }`}
+                  onClick={() => handleSelectSortOption(`${headerOption}-asc`)}
+                >
+                  {headerIcons[index]}
+                  {header.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </Popup>
+
       <Popup show={showActionBarPopup} position="bottom" handleClickOutside={false}>
         <div className={styles.actionBar}>
           <div className={`${styles.supportContent} ${styles.alignCenter}`}>
@@ -219,7 +382,7 @@ const Table = ({
             <button
               type="button"
               className={`${styles.iconBtn} ${styles.ctaBtn}`}
-              onClick={() => handleBulkAction(onExport)}
+              onClick={() => handleExportBulkAction()}
             >
               <TbFileArrowRight size={IconSizes.SMALL} />
               Export
@@ -227,7 +390,7 @@ const Table = ({
             <button
               type="button"
               className={`${styles.iconBtn} ${styles.deleteBtn}`}
-              onClick={() => handleBulkAction(onDelete)}
+              onClick={() => onDelete(selectedData)}
             >
               <TbTrash size={IconSizes.SMALL} />
               Delete

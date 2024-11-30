@@ -1,0 +1,8 @@
+@use '../variables.scss';
+
+.tooltip {
+  padding: 8px !important;
+  font-size: 0.75rem !important;
+  border-radius: $small-radius !important;
+  background-color: $light-primary-text !important;
+}

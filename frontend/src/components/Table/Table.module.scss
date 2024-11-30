@@ -5,13 +5,28 @@
   flex-direction: column;
   justify-content: space-between;
   height: 100%;
-
 }
 
 .table {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+
+  .searchContainer {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    gap: 0.5rem;
+
+    .sortOption {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      border-radius: $small-radius;
+      color: $light-primary-background;
+      background-color: $light-green-color-300;
+    }
+  }
 
   .toolsContainer {
     display: flex;
@@ -44,40 +59,6 @@
     padding: 1rem;
   }
 }
-
-.pagination {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.2rem;
-
-  .iconBtn {
-    cursor: pointer;
-    margin: 0 1rem;
-    color: $light-gray-color-400;
-    user-select: none;
-  }
-
-  button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 30px;
-    border-radius: $small-radius;
-    background-color: transparent;
-    color: $light-gray-color-600;
-    transition: 300ms $trans-smooth;
-
-    &.active {
-      background-color: $light-gray-color-100;
-    }
-
-    &:hover {
-      background-color: $light-gray-color-100;
-    }
-  }
-}
-
 
 .popupWrapper {
   padding: 0.3rem;

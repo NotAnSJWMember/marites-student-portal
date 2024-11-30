@@ -41,7 +41,7 @@ export class UserService {
 
          const hashedPassword = await this.hashPassword(createUserDto.password);
 
-         if (file) {
+         if (file && file.originalname !== 'default-user-photo.png') {
             const filePath = await this.fileUploadService.uploadUserPhoto(
                file,
                createUserDto.userId,
@@ -250,10 +250,23 @@ export class UserService {
             { session },
          );
 
-         this.logger.log('Successfully deleted all users requested.');
+         this.logger.log('Successfully deleted users from the userModel.');
+
+         await this.studentModel.deleteMany(
+            { _id: { $in: userIds } },
+            { session },
+         );
+         await this.instructorModel.deleteMany(
+            { _id: { $in: userIds } },
+            { session },
+         );
+
          await session.commitTransaction();
 
-         return { message: 'Successfully deleted users.' };
+         return {
+            message:
+               'Successfully deleted users from its respective collection.',
+         };
       } catch (error) {
          this.logger.error(`Batch delete failed: ${error.message}`);
          await session.abortTransaction();

@@ -14,7 +14,9 @@ const useDeleteData = (endpoint) => {
       const isBatch = Array.isArray(ids);
       const url = getApiUrl();
 
-      let apiUrl = isBatch ? `${url}/${endpoint}/batch` : `${url}/${endpoint}/${ids}`;
+      let apiUrl = isBatch
+        ? `${url}/${endpoint}/batch-delete`
+        : `${url}/${endpoint}/${ids}`;
 
       try {
         const response = await fetch(apiUrl, {
@@ -24,7 +26,7 @@ const useDeleteData = (endpoint) => {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
 
-          ...(isBatch && { body: JSON.stringify({ ids }) }),
+          ...(isBatch && { body: JSON.stringify({ userIds: ids }) }),
         });
 
         if (!response.ok) throw new Error(`Failed to delete from ${endpoint}`);

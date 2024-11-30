@@ -17,6 +17,7 @@ import InstructorDashboard from "./pages/Dashboard/Instructor/InstructorDashboar
 import Enrollment from "pages/Dashboard/Admin/pages/Enrollment";
 import Curriculum from "pages/Dashboard/Admin/pages/Curriculum";
 import AcademicPlanner from "pages/Dashboard/Admin/pages/AcademicPlanner";
+import GradeManagement from "components/GradeManagement/GradeManagement";
 import UserManagement from "./pages/Dashboard/Admin/pages/UserManagement";
 import Courses from "pages/Dashboard/Student/pages/Courses";
 import Schedule from "pages/Dashboard/Student/pages/Schedule";
@@ -25,7 +26,7 @@ import Examboard from "pages/Dashboard/Student/pages/Examboard";
 import Announcements from "pages/Dashboard/Student/pages/Announcements";
 
 import "./App.scss";
-import GradeManagement from "components/GradeManagement/GradeManagement";
+
 
 function App() {
   return (

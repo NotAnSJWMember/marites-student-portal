@@ -31,3 +31,41 @@
     gap: 5px;
   }
 }
+
+.sortBy {
+  display: grid;
+  gap: 5px;
+  width: 10rem;
+  padding: 5px;
+
+  .title {
+    padding: 0.4rem 0.7rem;
+    margin: 0;
+  }
+
+  .sortOptions {
+    display: grid;
+    gap: 5px;
+
+    .sortItem, span {
+      display: flex;
+      align-items: center;
+      justify-content: start;
+      border-radius: $small-radius;
+      text-align: left;
+      gap: 5px;
+      width: 100%;
+      color: $light-primary-text;
+      transition: 150ms  $trans-smooth;
+
+      &.selected {
+        color: $light-primary-background;
+        background-color: $light-green-color-300;
+      }
+
+      &:hover:not(.selected) {
+        background-color: $white-hovered;
+      }
+    }
+  }
+}

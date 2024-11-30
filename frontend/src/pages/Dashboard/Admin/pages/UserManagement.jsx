@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styles from "./UserManagement.module.scss";
-import { TbEdit, TbFileArrowRight, TbFileTypeCsv, TbJson, TbTrash } from "react-icons/tb";
+import { TbFileTypeCsv, TbJson } from "react-icons/tb";
 
 import IconSizes from "constants/IconSizes";
 import Table from "components/Table/Table";
@@ -33,7 +33,8 @@ const UserManagement = () => {
   const [selectedUser, setSelectedUser] = useState(null);
 
   const { data: users, fetchData: userFetchData } = useFetchData("user");
-  const { data: instructors, fetchData: instructorFetchData } = useFetchData("instructor");
+  const { data: instructors, fetchData: instructorFetchData } =
+    useFetchData("instructor");
   const { data: students, fetchData: studentFetchData } = useFetchData("student");
 
   const {
@@ -87,16 +88,21 @@ const UserManagement = () => {
     setShowExportPopup((prev) => !prev);
   };
 
-  const handleShowDeleteConfirmation = (user) => {
-    if (user) {
-      setSelectedUser(user);
+  const handleShowDeleteConfirmation = (data) => {
+    if (data) {
+      setSelectedUser(data);
       setIsPopupVisible(false);
     }
     setShowDeleteConfirmation(true);
   };
 
-  const handleDelete = async (user) => {
-    if (user?.userId) await deleteData(user?.userId, userFetchData);
+  const handleDelete = async () => {
+    if (selectedUser?.userId) {
+      await deleteData(selectedUser?.userId, userFetchData);
+    } else {
+      await deleteData(selectedUser, userFetchData);
+    }
+
     setShowDeleteConfirmation(false);
   };
 
@@ -155,7 +161,12 @@ const UserManagement = () => {
             </h3>
             <Table
               data={users}
-              headers={["Name", "Role", "Last Seen", "Created on"]}
+              headers={[
+                { label: "Name", attribute: "firstName" },
+                { label: "Role", attribute: "role" },
+                { label: "Last Seen", attribute: "lastActive" },
+                { label: "Created On", attribute: "createdAt" },
+              ]}
               content={renderData}
               onEdit={handleShowEditPopup}
               onExport={handleShowExportPopup}
@@ -228,7 +239,11 @@ const UserManagement = () => {
         </div>
       </Popup>
 
-      <Popup show={showExportPopup} close={() => setShowExportPopup(false)} position="center">
+      <Popup
+        show={showExportPopup}
+        close={() => setShowExportPopup(false)}
+        position="center"
+      >
         <div className={styles.exportPopup}>
           <div>
             <h3 className={styles.title}>Export data</h3>
@@ -263,7 +278,11 @@ const UserManagement = () => {
             >
               Cancel
             </button>
-            <button type="button" className={styles.primaryBtn} onClick={() => handleExport()}>
+            <button
+              type="button"
+              className={styles.primaryBtn}
+              onClick={() => handleExport()}
+            >
               Export
             </button>
           </div>
