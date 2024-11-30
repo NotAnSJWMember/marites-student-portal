@@ -23,6 +23,7 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './user.dto';
 import { Response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Types } from 'mongoose';
 
 @Controller('user')
 export class UserController {
@@ -39,8 +40,8 @@ export class UserController {
    }
 
    @Get()
-   // @UseGuards(AuthGuard('jwt'), RolesGuard)
-   // @Roles('admin')
+   @UseGuards(AuthGuard('jwt'), RolesGuard)
+   @Roles('admin')
    async findAll(): Promise<User[]> {
       return this.userService.findAll();
    }
@@ -101,6 +102,33 @@ export class UserController {
             return res.status(HttpStatus.OK).json({
                message: result.message,
                deletedUser: result.deletedUser,
+            });
+         } else {
+            return res.status(HttpStatus.NOT_FOUND).json({
+               message: result.message,
+            });
+         }
+      } catch (error) {
+         return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+            message: 'An error occurred while deleting the user.',
+            error: error.message,
+         });
+      }
+   }
+
+   @Delete('batch-delete')
+   @UseGuards(AuthGuard('jwt'), RolesGuard)
+   @Roles('admin')
+   async batchDelete(
+      @Body() body: { userIds: Types.ObjectId[] },
+      @Res() res: Response,
+   ) {
+      try {
+         const result = await this.userService.batchDelete(body.userIds);
+
+         if (result) {
+            return res.status(HttpStatus.OK).json({
+               message: result.message,
             });
          } else {
             return res.status(HttpStatus.NOT_FOUND).json({

@@ -27,12 +27,10 @@ const UserManagement = () => {
   const [showEditUserPopup, setShowEditUserPopup] = useState(false);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [showExportPopup, setShowExportPopup] = useState(false);
-  const [showActionBarPopup, setShowActionBarPopup] = useState(false);
 
   const [selectFileType, setSelectFileType] = useState(null);
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [checkedUser, setCheckedUser] = useState(null);
 
   const { data: users, fetchData: userFetchData } = useFetchData("user");
   const { data: instructors, fetchData: instructorFetchData } = useFetchData("instructor");
@@ -64,9 +62,9 @@ const UserManagement = () => {
     studentFetchData();
   }, [instructorFetchData, studentFetchData, userFetchData]);
 
-  useEffect(() => {
-    checkedUser?.length > 0 ? setShowActionBarPopup(true) : setShowActionBarPopup(false);
-  }, [checkedUser, setShowActionBarPopup]);
+  const handleShowCreatePopup = () => {
+    setShowCreateUserPopup((prev) => !prev);
+  };
 
   const handleShowEditPopup = (user) => {
     if (user && user.role === "student") {
@@ -83,19 +81,37 @@ const UserManagement = () => {
     setIsPopupVisible(false);
   };
 
-  const handleShowCreatePopup = () => {
-    setShowCreateUserPopup((prev) => !prev);
-  };
-
-  const handleShowActionBarPopup = () => {
-    setIsPopupVisible(false);
-    setShowActionBarPopup((prev) => !prev);
-  };
-
   const handleShowExportPopup = (user) => {
     setSelectedUser(user);
     setIsPopupVisible(false);
     setShowExportPopup((prev) => !prev);
+  };
+
+  const handleShowDeleteConfirmation = (user) => {
+    if (user) {
+      setSelectedUser(user);
+      setIsPopupVisible(false);
+    }
+    setShowDeleteConfirmation(true);
+  };
+
+  const handleDelete = async (user) => {
+    if (user?.userId) await deleteData(user?.userId, userFetchData);
+    setShowDeleteConfirmation(false);
+  };
+
+  const handleExport = (user) => {
+    const filename = user?.userId
+      ? `${user?.userId}-data-export.${selectFileType}`
+      : `data-export.${selectFileType}`;
+
+    if (selectFileType === "csv") {
+      exportToCSV(filename, !Array.isArray(selectedUser) ? [selectedUser] : selectedUser);
+    } else if (selectFileType === "json") {
+      exportToJSON(filename, selectedUser);
+    }
+
+    setSelectFileType(null);
   };
 
   const handleCreateUser = async (formData, role) => {
@@ -108,31 +124,6 @@ const UserManagement = () => {
     instructorFetchData();
     studentFetchData();
     setShowEditUserPopup((prev) => !prev);
-  };
-
-  const handleDeleteUser = async () => {
-    if (selectedUser?.userId) {
-      await deleteData(selectedUser.userId, userFetchData);
-      setShowDeleteConfirmation(false);
-    }
-  };
-
-  const handleShowDeleteConfirmation = (user) => {
-    setSelectedUser(user);
-    setShowDeleteConfirmation(true);
-    setIsPopupVisible(false);
-  };
-
-  const handleExport = () => {
-    const filename = `${selectedUser?.userId}-data-export.${selectFileType}`;
-
-    if (selectFileType === "csv") {
-      exportToCSV(filename, [selectedUser]);
-    } else if (selectFileType === "json") {
-      exportToJSON(filename, selectedUser);
-    }
-
-    setSelectFileType(null);
   };
 
   const renderData = (data) => {
@@ -154,37 +145,6 @@ const UserManagement = () => {
     );
   };
 
-  const renderPopupContent = (user) => (
-    <div className={styles.popupWrapper}>
-      <div className={styles.popupContent}>
-        <button
-          type="button"
-          className={styles.iconCta}
-          onClick={() => handleShowEditPopup(user)}
-        >
-          <TbEdit size={IconSizes.POPUP} />
-          Edit details
-        </button>
-        <button
-          type="button"
-          className={styles.iconCta}
-          onClick={() => handleShowExportPopup(user)}
-        >
-          <TbFileArrowRight size={IconSizes.POPUP} />
-          Export details
-        </button>
-        <button
-          type="button"
-          className={`${styles.deleteBtn} ${styles.iconCta}`}
-          onClick={() => handleShowDeleteConfirmation(user)}
-        >
-          <TbTrash size={IconSizes.POPUP} />
-          Delete user
-        </button>
-      </div>
-    </div>
-  );
-
   return (
     <Layout role="admin" pageName="User Management">
       <main className={styles.mainContent}>
@@ -197,10 +157,11 @@ const UserManagement = () => {
               data={users}
               headers={["Name", "Role", "Last Seen", "Created on"]}
               content={renderData}
-              handleOnCheck={setCheckedUser}
+              onEdit={handleShowEditPopup}
+              onExport={handleShowExportPopup}
+              onDelete={handleShowDeleteConfirmation}
               isPopupVisible={isPopupVisible}
               setIsPopupVisible={setIsPopupVisible}
-              popupContent={renderPopupContent}
               ctaText="Create user"
               ctaAction={() => handleShowCreatePopup()}
             />
@@ -209,26 +170,6 @@ const UserManagement = () => {
       </main>
 
       {/* All of these shit below are popups */}
-
-      <Popup
-        show={showActionBarPopup}
-        close={handleShowActionBarPopup}
-        position="bottom"
-        handleClickOutside={false}
-      >
-        <div className={styles.actionBar}>
-          <button type="button" className={`${styles.iconBtn} ${styles.ctaBtn}`}>
-            <TbFileArrowRight size={IconSizes.MEDIUM} />
-            Export
-          </button>
-          <div className={styles.line}></div>
-          <button type="button" className={`${styles.iconBtn} ${styles.ctaBtn}`}>
-            <TbTrash size={IconSizes.MEDIUM} />
-            Delete
-          </button>
-        </div>
-      </Popup>
-
       <Popup show={showCreateUserPopup} close={handleShowCreatePopup} position="center">
         <div className={styles.userPopup}>
           <h2>Create a user</h2>
@@ -268,7 +209,9 @@ const UserManagement = () => {
       >
         <div className={styles.userPopup}>
           <p>
-            <strong>Are you sure you want to delete {selectedUser?.firstName}?</strong>
+            <strong>
+              Are you sure you want to delete {selectedUser?.firstName || "these users"}?
+            </strong>
           </p>
           <div className={styles.buttonContainer}>
             <button
@@ -278,7 +221,7 @@ const UserManagement = () => {
             >
               Cancel
             </button>
-            <button type="button" className={styles.redBtn} onClick={handleDeleteUser}>
+            <button type="button" className={styles.redBtn} onClick={handleDelete}>
               Delete
             </button>
           </div>

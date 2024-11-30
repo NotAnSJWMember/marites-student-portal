@@ -64,32 +64,3 @@
   }
 }
 
-.popupWrapper {
-  padding: 0.5rem;
-
-  .popupContent {
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-
-    button {
-      background-color: transparent;
-    }
-
-    .iconCta {
-      width: 100%;
-      padding: 0.7rem;
-      border-radius: 0.5rem;
-      justify-content: flex-start;
-      transition: 200ms $trans-smooth;
-
-      &:hover {
-        background-color: $light-gray-color-100;
-      }
-    }
-
-    .deleteBtn {
-      color: #e22828;
-    }
-  }
-}

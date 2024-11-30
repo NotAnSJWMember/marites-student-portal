@@ -8,7 +8,6 @@ import { Section } from '../section/section.schema';
 import { Schedule } from '../schedule/schedule.schema';
 import { Student } from '../user/roles/student/student.schema';
 import { Finance } from '../finance/finance.schema';
-import { Program } from '../program/program.schema';
 
 @Injectable()
 export class EnrollmentService {
@@ -22,7 +21,6 @@ export class EnrollmentService {
       @InjectModel(Schedule.name) private scheduleModel: Model<Schedule>,
       @InjectModel(Student.name) private studentModel: Model<Student>,
       @InjectModel(Finance.name) private financeModel: Model<Finance>,
-      @InjectModel(Program.name) private programModel: Model<Program>,
    ) {}
 
    async batchEnroll(

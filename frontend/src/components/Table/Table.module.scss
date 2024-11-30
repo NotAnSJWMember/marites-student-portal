@@ -77,3 +77,25 @@
     }
   }
 }
+
+
+.popupWrapper {
+  padding: 0.3rem;
+
+  .popupContent {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+
+    .iconCta {
+      width: 100%;
+      border-radius: 0.5rem;
+      justify-content: flex-start;
+      transition: 100ms $trans-smooth;
+
+      &:hover {
+        background-color: $light-gray-color-100;
+      }
+    }
+  }
+}

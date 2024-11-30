@@ -5,10 +5,10 @@ import {
    Injectable,
    Logger,
 } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
+import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { User } from './user.schema';
 import { IdGenerator } from 'src/common/utils/generate-id.helper';
-import { Model, Types } from 'mongoose';
+import { Connection, Model, Types } from 'mongoose';
 import { CreateUserDto } from './user.dto';
 
 import * as bcrypt from 'bcrypt';
@@ -21,6 +21,7 @@ export class UserService {
    protected logger = new Logger(UserService.name);
 
    constructor(
+      @InjectConnection() private readonly connection: Connection,
       @InjectModel(User.name) private userModel: Model<User>,
       @InjectModel(Student.name) private studentModel: Model<Student>,
       @InjectModel(Instructor.name) private instructorModel: Model<Instructor>,
@@ -234,6 +235,32 @@ export class UserService {
                deletedUser: null,
             };
          }
+      }
+   }
+
+   async batchDelete(userIds: Types.ObjectId[]): Promise<any> {
+      const session = await this.connection.startSession();
+      session.startTransaction();
+
+      this.logger.log(`Deleting ${userIds.length} users...`);
+
+      try {
+         await this.userModel.deleteMany(
+            { _id: { $in: userIds } },
+            { session },
+         );
+
+         this.logger.log('Successfully deleted all users requested.');
+         await session.commitTransaction();
+
+         return { message: 'Successfully deleted users.' };
+      } catch (error) {
+         this.logger.error(`Batch delete failed: ${error.message}`);
+         await session.abortTransaction();
+
+         return { message: 'Could not delete users.' };
+      } finally {
+         session.endSession();
       }
    }
 

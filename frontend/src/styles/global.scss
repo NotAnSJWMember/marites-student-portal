@@ -1,5 +1,7 @@
 @import "./variables.scss";
+
 @import "./components/popup";
+@import "./components/button";
 
 .contentDivider {
   display: grid;
@@ -79,58 +81,11 @@
   gap: 0.5rem;
 }
 
-.primaryBtn {
-  border: 1px solid transparent;
-  border-radius: $small-radius;
-  color: $light-primary-background;
-  background-color: $light-green-color-300;
-}
-
-.secondaryBtn {
-  border: 1px solid $light-gray-color-200;
-  border-radius: $small-radius;
-  color: $light-primary-text;
-}
-
-.redBtn {
-  color: $light-primary-background;
-  background-color: $light-tertiary-color;
-  border-radius: $small-radius;
-}
-
-.switchButton {
-  display: flex;
-  gap: 0.5rem;
-  font-size: 0.85rem;
-}
-
 .ctaAnchor {
   font-size: 0.85rem;
   color: $light-green-color-300;
   text-decoration: underline;
   text-underline-offset: 5px;
-}
-
-.iconBtn,
-.iconCta {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 0.4rem;
-  border-radius: $small-radius;
-}
-
-.circleBtn {
-  margin-top: 2px;
-  padding: 5px 5px 2px 5px;
-  border-radius: 50%;
-  border: 1px solid $light-gray-color-400;
-  color: $light-primary-text;
-
-  &:hover {
-    background-color: $white-hovered;
-    color: $black-hovered;
-  }
 }
 
 .iconLabel {

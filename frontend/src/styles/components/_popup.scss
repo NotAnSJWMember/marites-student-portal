@@ -1,26 +1,33 @@
 @use "../variables.scss";
 
 .actionBar {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  width: max-content;
   align-items: center;
   justify-content: center;
-  gap: 0.3rem;
-  padding: 0.3rem;
+  padding: 7px;
   border-radius: $small-radius;
   box-shadow: $light-box-shadow-gray;
 
-  .line {
-    width: 1.5px;
-    height: 60%;
+  .supportContent {
+    gap: 5px;
+    margin-left: 7px;
+    font-size: 0.88rem;
+
+    svg {
+      cursor: pointer;
+    }
   }
 
-  .ctaBtn {
+  .ctaBtn,
+  .deleteBtn {
+    padding: 0.4rem 0.6rem;
     border-radius: $small-radius;
     transition: 150ms $trans-smooth;
+  }
 
-    &:hover {
-      color: $black-hovered;
-      background-color: $white-hovered;
-    }
+  .buttonContainer {
+    gap: 5px;
   }
 }
