@@ -101,10 +101,6 @@ const Table = ({
   const label = sortOptionLabels.find((item) => item.option === sortOption)?.label;
 
   const filterData = (data, filterSettings) => {
-    console.log("Data:", data);
-    console.log("Filter Settings:", filterSettings);
-    console.log("Filter options:", filterOptions);
-
     if (filterOptions.length === 0) return data;
 
     return data.filter((item) => {
@@ -113,7 +109,7 @@ const Table = ({
         const filter = filterSettings[keyLabel];
         const setting = filter?.setting?.value;
         const filterValue = filter?.value?.toLowerCase();
-        const itemValue = item[filterKey.attribute];
+        const itemValue = item[filterKey.attribute].toString().toLowerCase();
 
         switch (setting) {
           case "is":
@@ -331,7 +327,8 @@ const Table = ({
                           onClick={(event) => toggleFilterSettingsPopup(event, option)}
                           disabled={
                             activeFilterPopup?.name ===
-                            option.label.toLowerCase().replace(" ", "-")
+                              option.label.toLowerCase().replace(" ", "-") &&
+                            showFilterSettingsPopup
                           }
                         >
                           {option.label}

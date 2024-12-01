@@ -13,13 +13,15 @@ import Popup from "components/Popup/Popup";
 import TabMenu from "components/TabMenu/TabMenu";
 import { usePopupAlert } from "hooks";
 import PopupAlert from "components/Popup/PopupAlert";
-import usePostData from "hooks/usePostData";
 import useFetchData from "hooks/useFetchData";
 import useUpdateData from "hooks/useUpdateData";
+import { getUserPhoto } from "utils/getUserPhoto";
+import { FormSelect } from "components/ui/Form";
 
 const GradeManagement = () => {
   const [loading, setIsLoading] = useState(true);
   const [popupData, setPopupData] = useState(null);
+  const [searchData, setSearchData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [selectedOption, setSelectedOption] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -38,6 +40,17 @@ const GradeManagement = () => {
     updateData,
   } = useUpdateData();
 
+  const programOptions = useMemo(() => {
+    return programs.map((p) => {
+      const label = p.description.replace(/Bachelor of (Science|Arts) in /, "");
+
+      return {
+        value: p._id,
+        label,
+      };
+    });
+  }, [programs]);
+
   useEffect(() => {
     fetchData();
   }, [fetchData]);
@@ -45,9 +58,9 @@ const GradeManagement = () => {
   useEffect(() => {
     if (students && courses && programs && enrollments) {
       setIsLoading(false);
-      setFilteredData(students);
     }
-  }, [students, courses, programs, enrollments]);
+    setFilteredData(searchData);
+  }, [students, courses, programs, enrollments, searchData]);
 
   const formatGrade = (grade) => (grade !== 0 ? grade.toFixed(1) : "N/A");
 
@@ -83,7 +96,7 @@ const GradeManagement = () => {
     if (category === "all") {
       setSelectedCategory("all");
       setSelectedOption("");
-      setFilteredData(students);
+      setFilteredData(searchData);
     } else {
       setSelectedCategory(category);
       setSelectedOption("");
@@ -104,7 +117,9 @@ const GradeManagement = () => {
       );
       setFilteredData(courseStudents);
     } else if (selectedCategory === "program") {
-      const programStudents = students.filter((student) => student.programId === optionId);
+      const programStudents = students.filter(
+        (student) => student.programId === optionId
+      );
       setFilteredData(programStudents);
     }
   };
@@ -116,6 +131,10 @@ const GradeManagement = () => {
 
   const handleClosePopup = () => {
     setPopupData(null);
+  };
+
+  const handleSearch = (searchData) => {
+    setSearchData(searchData);
   };
 
   const StudentGradeView = ({ data }) => {
@@ -283,7 +302,9 @@ const GradeManagement = () => {
             );
             const courseGrades =
               selectedCategory === "course" &&
-              studentEnrollments.find((enrollment) => enrollment.courseId === selectedOption);
+              studentEnrollments.find(
+                (enrollment) => enrollment.courseId === selectedOption
+              );
 
             const program = programs
               ? programs.find((p) => p._id === student.programId)
@@ -303,7 +324,7 @@ const GradeManagement = () => {
                   <strong>{student.userId}</strong>
                 </p>
                 <div className={styles.userContainer}>
-                  <UserIcon image={student.userPhoto} size={48} />
+                  <UserIcon image={getUserPhoto(student.userPhoto)} size={48} />
                   <div className={styles.userInfo}>
                     <h4 className={styles.title}>
                       {`${student.firstName} ${student.lastName}`}
@@ -313,7 +334,9 @@ const GradeManagement = () => {
                 </div>
                 {selectedCategory === "all" && (
                   <p>
-                    {program?.code ? `${program.code} - ${student.yearLevel}` : "No Program"}
+                    {program?.code
+                      ? `${program.code} - ${student.yearLevel}`
+                      : "No Program"}
                   </p>
                 )}
                 {selectedCategory === "course" ? (
@@ -394,7 +417,7 @@ const GradeManagement = () => {
           <main className={styles.mainContent}>
             <section className={styles.editContainer}>
               <div className={styles.spaceBetween}>
-                <h2>Edit Grades</h2>
+                <h2>Grade Management</h2>
                 <div className={styles.buttonContainer}>
                   <p>
                     <strong>Category:</strong>
@@ -438,15 +461,28 @@ const GradeManagement = () => {
                     disabled={selectedCategory === "all"}
                   >
                     <option value="">Select {selectedCategory}</option>
-                    {(selectedCategory === "course" ? courses : programs).map((option) => (
-                      <option key={option._id} value={option._id}>
-                        {option.description}
-                      </option>
-                    ))}
+                    {(selectedCategory === "course" ? courses : programs).map(
+                      (option) => (
+                        <option key={option._id} value={option._id}>
+                          {option.description}
+                        </option>
+                      )
+                    )}
                   </select>
+                  <FormSelect
+                    name={selectedCategory}
+                    options={selectedCategory === "course" ? courses : programOptions}
+                    selectedData={selectedOption}
+                    setSelectedData={setSelectedOption}
+                  />
                 </div>
               </div>
-              <SearchBar height={45} />
+              <SearchBar
+                data={students}
+                onSearch={handleSearch}
+                height={45}
+                placeholder="Search for students with their ID or name"
+              />
               <GradeView data={filteredData} />
             </section>
           </main>

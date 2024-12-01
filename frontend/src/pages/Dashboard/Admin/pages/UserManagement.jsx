@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styles from "./UserManagement.module.scss";
-import { TbFileTypeCsv, TbJson } from "react-icons/tb";
 
-import IconSizes from "constants/IconSizes";
 import Table from "components/Table/Table";
 import Layout from "components/Layout/Layout";
 import UserIcon from "components/ui/UserIcon/UserIcon";
@@ -28,7 +26,7 @@ const UserManagement = () => {
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [showExportPopup, setShowExportPopup] = useState(false);
 
-  const [selectFileType, setSelectFileType] = useState(null);
+  const [selectFileType, setSelectFileType] = useState("csv");
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
 
@@ -257,22 +255,21 @@ const UserManagement = () => {
           </div>
           <div className={styles.container}>
             <div
-              className={`${styles.card} ${styles.alignCenter} ${
+              className={`${styles.fileType} ${
                 selectFileType === "csv" ? styles.selected : ""
               }`}
               onClick={() => setSelectFileType("csv")}
             >
-              <TbFileTypeCsv size={IconSizes.SMALL} />
               <p>CSV</p>
             </div>
+            <div className={styles.line}></div>
             <div
-              className={`${styles.card} ${styles.alignCenter} ${
+              className={`${styles.fileType} ${
                 selectFileType === "json" ? styles.selected : ""
               }`}
               onClick={() => setSelectFileType("json")}
             >
-              <TbJson size={IconSizes.SMALL} />
-              <p>JSON</p>
+              <p>JSON </p>
             </div>
           </div>
           <div className={styles.line}></div>

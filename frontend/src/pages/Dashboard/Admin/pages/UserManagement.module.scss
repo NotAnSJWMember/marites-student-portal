@@ -40,27 +40,47 @@
 .exportPopup {
   display: grid;
   gap: 1rem;
-  padding: 1.5rem;
+  padding: 1rem;
   border-radius: $small-radius;
 }
 
 .exportPopup {
   .container {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    display: flex;
+    align-items: center;
     width: 100%;
-    gap: 5px;
+    gap: 7px;
+    padding: 7px;
+    border: 1px solid $light-gray-color-200;
+    border-radius: $default-radius;
 
-    .card {
+    .fileType {
       cursor: pointer;
       width: 100%;
+      padding: 10px;
+      border-radius: $small-radius;
+      border: 1px solid transparent;
       transition: 100ms $trans-fast;
+      text-align: center;
+
+      &:hover {
+        background-color: $white-hovered;
+      }
+
+      &.selected {
+        background-color: #dcf3d0;
+        border: 1px solid #447730;
+
+        p {
+          color: #447730;
+          font-weight: 700;
+        }
+      }
     }
 
-    .selected {
-      border-color: $light-green-color-300;
-      background-color: $light-green-color-100;
+    .line {
+      height: 80%;
+      width: 3px;
     }
   }
 }
-

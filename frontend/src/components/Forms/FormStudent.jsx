@@ -14,7 +14,9 @@ export const FormStudent = ({
 }) => {
   useEffect(() => {
     if (!selectedProgram && userData.programId) {
-      const programId = programOptions.find((program) => program.value === userData.programId);
+      const programId = programOptions.find(
+        (program) => program.value === userData.programId
+      );
       if (programId) setSelectedProgram(programId);
     }
 
