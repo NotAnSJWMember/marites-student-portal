@@ -18,6 +18,19 @@
     height: 100%;
     gap: 0.5rem;
 
+    .toolOptions,
+    .filterOptionsContainer,
+    .filterOption {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+
+      .filterOption {
+        border: 1px solid $light-gray-color;
+        border-radius: $small-radius;
+      }
+    }
+
     .sortOption {
       display: flex;
       align-items: center;
@@ -27,37 +40,37 @@
       background-color: $light-green-color-300;
     }
   }
+}
 
-  .toolsContainer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
+.toolsContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 
-  .tableWrapper {
-    border: 1px solid $light-gray-color;
-    border-radius: $small-radius;
-  }
+.tableWrapper {
+  border: 1px solid $light-gray-color;
+  border-radius: $small-radius;
+}
 
-  .tableHeader,
-  .tableItem {
-    display: grid;
-    grid-template-columns: 40px 30% 1fr 1fr 1fr 50px;
-    align-items: center;
-    justify-items: start;
-    width: 100%;
-  }
+.tableHeader,
+.tableItem {
+  display: grid;
+  grid-template-columns: 40px 30% 1fr 1fr 1fr 50px;
+  align-items: center;
+  justify-items: start;
+  width: 100%;
+}
 
-  .tableHeader {
-    border-bottom: 1px solid $light-gray-color;
-    background-color: $table-header;
-    color: $light-primary-text;
-    padding: 0.5rem 1rem;
-  }
+.tableHeader {
+  border-bottom: 1px solid $light-gray-color;
+  background-color: $table-header;
+  color: $light-primary-text;
+  padding: 0.5rem 1rem;
+}
 
-  .tableItem {
-    padding: 1rem;
-  }
+.tableItem {
+  padding: 1rem;
 }
 
 .popupWrapper {

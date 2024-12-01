@@ -167,6 +167,12 @@ const UserManagement = () => {
                 { label: "Last Seen", attribute: "lastActive" },
                 { label: "Created On", attribute: "createdAt" },
               ]}
+              filters={[
+                { label: "User ID", attribute: "userId" },
+                { label: "Role", attribute: "role" },
+                { label: "Name", attribute: "firstName" },
+                { label: "Username", attribute: "username" },
+              ]}
               content={renderData}
               onEdit={handleShowEditPopup}
               onExport={handleShowExportPopup}

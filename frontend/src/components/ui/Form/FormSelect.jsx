@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import { capitalize } from "lodash";
 import styles from "./FormSelect.module.scss";
 
 export const FormSelect = ({
@@ -7,6 +6,8 @@ export const FormSelect = ({
   options,
   required = true,
   hasError,
+  defaultValue,
+  smallPadding = false,
   selectedData,
   setSelectedData,
 }) => {
@@ -17,6 +18,16 @@ export const FormSelect = ({
   const selectRef = useRef(null);
   const optionsRef = useRef(null);
   const timeoutRef = useRef(null);
+
+  useEffect(() => {
+    // Only set selectedData if it hasn't been set yet and there's a defaultValue
+    if (defaultValue && !selectedData) {
+      const defaultOption = options.find((option) => option.value === defaultValue);
+      if (defaultOption) {
+        setSelectedData(defaultOption);
+      }
+    }
+  }, [defaultValue, selectedData, setSelectedData, options]);
 
   const handleShowOptions = () => {
     if (timeoutRef.current) {
@@ -75,10 +86,13 @@ export const FormSelect = ({
         <div
           className={`${styles.selectBox}`}
           onClick={handleShowOptions}
-          style={selectedData ? { color: "black" } : { color: "gray" }}
+          style={{
+            ...(selectedData ? { color: "black" } : { color: "gray" }),
+            ...(smallPadding ? { padding: "5px 10px" } : { padding: "0.7rem 1rem" }),
+          }}
           ref={selectRef}
         >
-          {selectedData ? selectedData.label : `Select ${capitalize(name)}`}
+          {selectedData ? selectedData.label : `Select ${name}`}
         </div>
         <div
           className={`${styles.optionsContainer} ${isOpen ? styles.show : ""}`}
@@ -90,7 +104,8 @@ export const FormSelect = ({
         >
           {options.map((option, index) => (
             <div
-              key={option.value}
+              key={`${option.value}-${index}`}
+              style={smallPadding ? { padding: "5px 10px" } : { padding: "0.75rem 1rem" }}
               className={`${styles.option} ${
                 hoveredIndex === index ? styles.optionHover : ""
               } ${selectedData?.value === option.value ? styles.selected : ""} ${

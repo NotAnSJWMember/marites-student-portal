@@ -10,7 +10,9 @@ import {
   TbEdit,
   TbFileArrowRight,
   TbFilter,
+  TbId,
   TbLetterCase,
+  TbLetterCaseLower,
   TbPlus,
   TbTrash,
   TbUserCircle,
@@ -23,10 +25,12 @@ import Popup from "components/Popup/Popup";
 import SearchBar from "components/SearchBar/SearchBar";
 import Pagination from "components/Navigation/Pagination";
 import { Tooltip } from "react-tooltip";
+import { FormSelect } from "components/ui/Form";
 
 const Table = ({
   data,
   headers,
+  filters,
   content,
   onEdit,
   onExport,
@@ -36,17 +40,47 @@ const Table = ({
   ctaText,
   ctaAction,
 }) => {
+  const [showFilterPopup, setShowFilterPopup] = useState(false);
+  const [filterPopupPosition, setFilterPopupPosition] = useState({ top: 0, right: 0 });
+  const [showFilterSettingsPopup, setShowFilterSettingsPopup] = useState(false);
+  const [filterSettingsPopupPosition, setFilterSettingsPopupPosition] = useState({
+    top: 0,
+    right: 0,
+  });
+
+  const [filterOptions, setFilterOptions] = useState([]);
+  const [activeFilterPopup, setActiveFilterPopup] = useState(null);
+
+  const formattedFilterOptions = filters.map((filter) => ({
+    label: filter.label,
+    key: filter.label.toLowerCase().replace(" ", "-"),
+    attribute: filter.attribute,
+  }));
+
+  const [filterSettings, setFilterSettings] = useState(
+    formattedFilterOptions.reduce((acc, filter) => {
+      acc[filter.key] = {
+        name: filter.key,
+        setting: { value: "contains", label: "contains" },
+        value: "",
+      };
+      return acc;
+    }, {})
+  );
+
   const [showSortPopup, setShowSortPopup] = useState(false);
   const [sortPopupPosition, setSortPopupPosition] = useState({ top: 0, right: 0 });
+  const [sortOption, setSortOption] = useState(null);
+
   const [showActionBarPopup, setShowActionBarPopup] = useState(false);
   const [popupPosition, setPopupPosition] = useState({ top: 0, right: 0 });
-  const [selectedData, setSelectedData] = useState([]);
-  const [activePopup, setActivePopup] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [sortOption, setSortOption] = useState(null);
-  const [filteredSearch, setFilteredSearch] = useState(data);
-  const itemsPerPage = 8;
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [activePopup, setActivePopup] = useState(null);
+  const [selectedData, setSelectedData] = useState([]);
+  const [filteredSearch, setFilteredSearch] = useState(data);
+
+  const itemsPerPage = 8;
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
@@ -65,6 +99,41 @@ const Table = ({
 
   const icon = sortOptionLabels.find((item) => item.option === sortOption)?.icon;
   const label = sortOptionLabels.find((item) => item.option === sortOption)?.label;
+
+  const filterData = (data, filterSettings) => {
+    console.log("Data:", data);
+    console.log("Filter Settings:", filterSettings);
+    console.log("Filter options:", filterOptions);
+
+    if (filterOptions.length === 0) return data;
+
+    return data.filter((item) => {
+      return filterOptions.every((filterKey) => {
+        const keyLabel = filterKey.label.toLowerCase().replace(" ", "-");
+        const filter = filterSettings[keyLabel];
+        const setting = filter?.setting?.value;
+        const filterValue = filter?.value?.toLowerCase();
+        const itemValue = item[filterKey.attribute];
+
+        switch (setting) {
+          case "is":
+            return itemValue === filterValue;
+          case "is-not":
+            return itemValue !== filterValue;
+          case "contains":
+            return itemValue?.includes(filterValue);
+          case "starts-with":
+            return itemValue?.startsWith(filterValue);
+          case "ends-with":
+            return itemValue?.endsWith(filterValue);
+          default:
+            return true;
+        }
+      });
+    });
+  };
+
+  const filteredData = filterData(filteredSearch, filterSettings);
 
   const sortData = (data, option) => {
     if (!option) return data;
@@ -93,7 +162,7 @@ const Table = ({
     return sorted;
   };
 
-  const sortedData = sortData(filteredSearch, sortOption);
+  const sortedData = sortData(filteredData, sortOption);
 
   useEffect(() => {
     const totalPages = Math.ceil(sortedData.length / itemsPerPage);
@@ -102,12 +171,38 @@ const Table = ({
     }
 
     selectedData.length > 0 ? setShowActionBarPopup(true) : setShowActionBarPopup(false);
-  }, [data, currentPage, itemsPerPage, selectedData, sortedData.length]);
+  }, [currentPage, selectedData.length, sortedData.length]);
 
   const currentData = useMemo(
     () => sortedData.slice(indexOfFirstItem, indexOfLastItem),
     [indexOfFirstItem, indexOfLastItem, sortedData]
   );
+
+  const toggleFilterSettingsPopup = (event, option) => {
+    const opt = option.label.toLowerCase().replace(" ", "-");
+    const rect = event.currentTarget.getBoundingClientRect();
+
+    setTimeout(() => {
+      setActiveFilterPopup({ name: opt, ...filterSettings[opt] });
+      setFilterSettingsPopupPosition({ top: rect.bottom + 5, left: rect.left });
+      setShowFilterSettingsPopup(true);
+    }, 100);
+  };
+
+  const closeFilterSettingsPopup = () => {
+    setActiveFilterPopup(null);
+    setShowFilterSettingsPopup(false);
+  };
+
+  const toggleFilterPopup = (event) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    setFilterPopupPosition({ top: rect.bottom + 5, left: rect.left });
+    setShowFilterPopup((prev) => !prev);
+  };
+
+  const closeFilterPopup = () => {
+    setShowFilterPopup(false);
+  };
 
   const toggleSortPopup = (event) => {
     const rect = event.currentTarget.getBoundingClientRect();
@@ -146,6 +241,43 @@ const Table = ({
     setSortOption(changedOption);
   };
 
+  const handleSelectFilterOption = (option) => {
+    setFilterOptions((prevState) =>
+      prevState.includes(option)
+        ? prevState.filter((item) => item !== option)
+        : [...prevState, option]
+    );
+    closeFilterSettingsPopup();
+  };
+
+  const handleFilterSettingChange = (newSetting) => {
+    setFilterSettings((prevSettings) => ({
+      ...prevSettings,
+      [activeFilterPopup?.name]: {
+        ...prevSettings[activeFilterPopup?.name],
+        setting: newSetting,
+      },
+    }));
+    setActiveFilterPopup((prevState) => ({
+      ...prevState,
+      setting: newSetting,
+    }));
+  };
+
+  const handleFilterInputChange = (event) => {
+    setFilterSettings((prevValue) => ({
+      ...prevValue,
+      [activeFilterPopup?.name]: {
+        ...prevValue[activeFilterPopup?.name],
+        value: event.target.value,
+      },
+    }));
+    setActiveFilterPopup((prevState) => ({
+      ...prevState,
+      value: event.target.value,
+    }));
+  };
+
   const handleCheckboxChange = (dataId) => {
     setSelectedData((prev) =>
       prev.includes(dataId) ? prev.filter((id) => id !== dataId) : [...prev, dataId]
@@ -172,20 +304,49 @@ const Table = ({
                 data={data}
                 onSearch={setFilteredSearch}
                 height="100%"
-                width="30rem"
+                width="25rem"
               />
-              {sortOption && (
-                <button
-                  type="button"
-                  data-tooltip-id="sort-option"
-                  data-tooltip-content="Change direction"
-                  className={styles.sortOption}
-                  onClick={() => handleChangeSortDirection(sortOption)}
-                >
-                  {icon}
-                  {label}
-                </button>
-              )}
+              <div className={styles.toolOptions}>
+                {sortOption && (
+                  <button
+                    type="button"
+                    data-tooltip-id="sort-option"
+                    data-tooltip-content="Change direction"
+                    className={styles.sortOption}
+                    onClick={() => handleChangeSortDirection(sortOption)}
+                  >
+                    {icon}
+                    {label}
+                  </button>
+                )}
+                {filterOptions && (
+                  <div className={styles.filterOptionsContainer}>
+                    {filterOptions.map((option) => {
+                      return (
+                        <button
+                          key={option.attribute}
+                          className={styles.filterOption}
+                          data-tooltip-id="filter-options"
+                          data-tooltip-content="Change filter settings"
+                          onClick={(event) => toggleFilterSettingsPopup(event, option)}
+                          disabled={
+                            activeFilterPopup?.name ===
+                            option.label.toLowerCase().replace(" ", "-")
+                          }
+                        >
+                          {option.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+                <Tooltip
+                  id="filter-options"
+                  noArrow={true}
+                  offset={5}
+                  className={styles.tooltip}
+                />
+              </div>
             </div>
             <Tooltip
               id="sort-option"
@@ -215,6 +376,7 @@ const Table = ({
                 data-tooltip-id="filter-button"
                 data-tooltip-content="Filter keywords"
                 className={`${styles.iconBtn} ${styles.secondaryBtn}`}
+                onClick={(event) => toggleFilterPopup(event)}
               >
                 <TbFilter size={IconSizes.SMALL} />
                 Filter
@@ -333,6 +495,72 @@ const Table = ({
           <span style={{ margin: "auto", opacity: "0.5" }}>You've reached the end..</span>
         )}
       </div>
+
+      <Popup
+        show={showFilterPopup}
+        close={closeFilterPopup}
+        position={filterPopupPosition}
+      >
+        <div className={styles.filter}>
+          <div className={styles.sortOptions}>
+            {filters.map((option, index) => {
+              const headerIcons = [
+                <TbId size={IconSizes.MEDIUM} />,
+                <TbUserCircle size={IconSizes.MEDIUM} />,
+                <TbLetterCase size={IconSizes.MEDIUM} />,
+                <TbLetterCaseLower size={IconSizes.MEDIUM} />,
+              ];
+
+              return (
+                <button
+                  key={option.label}
+                  type="button"
+                  className={`${styles.sortItem} ${
+                    filterOptions.includes(option) ? styles.selected : null
+                  }`}
+                  onClick={() => handleSelectFilterOption(option)}
+                >
+                  {headerIcons[index]}
+                  {option.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </Popup>
+
+      <Popup
+        show={showFilterSettingsPopup}
+        close={closeFilterSettingsPopup}
+        position={filterSettingsPopupPosition}
+      >
+        <div className={styles.filterSettings}>
+          <p>
+            <strong>Choose a setting</strong>
+          </p>
+          <FormSelect
+            name="filter"
+            options={[
+              { value: "is", label: "is" },
+              { value: "is-not", label: "is not" },
+              { value: "contains", label: "contains" },
+              { value: "starts-with", label: "starts with" },
+              { value: "ends-with", label: "ends with" },
+            ]}
+            defaultValue="contains"
+            smallPadding={true}
+            selectedData={filterSettings[activeFilterPopup?.name]?.setting}
+            setSelectedData={(newSetting) => {
+              handleFilterSettingChange(newSetting);
+            }}
+          />
+          <input
+            placeholder="Type a value"
+            value={filterSettings[activeFilterPopup?.name]?.value}
+            onChange={(e) => handleFilterInputChange(e)}
+          />
+        </div>
+      </Popup>
 
       <Popup show={showSortPopup} close={closeSortPopup} position={sortPopupPosition}>
         <div className={styles.sortBy}>

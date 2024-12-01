@@ -69,3 +69,66 @@
     }
   }
 }
+
+.filter {
+  display: grid;
+  gap: 5px;
+  width: 10rem;
+  padding: 5px;
+
+  .title {
+    padding: 0.4rem 0.7rem;
+    margin: 0;
+  }
+
+  .sortOptions {
+    display: grid;
+    gap: 5px;
+
+    .sortItem, span {
+      display: flex;
+      align-items: center;
+      justify-content: start;
+      border-radius: $small-radius;
+      text-align: left;
+      gap: 5px;
+      width: 100%;
+      color: $light-primary-text;
+      transition: 150ms  $trans-smooth;
+
+      &.selected {
+        color: $light-primary-background;
+        background-color: $light-green-color-300;
+      }
+
+      &:hover:not(.selected) {
+        background-color: $white-hovered;
+      }
+    }
+  }
+}
+
+.filterSettings {
+  display: grid;
+  width: max-content;
+  padding: 10px;
+  gap: 5px;
+
+  p {
+    font-size: 0.9rem;
+    margin: 0 5px;
+  }
+
+  input {
+    font-size: 0.8rem;
+    outline: none;
+    border-radius: $small-radius;
+    border: 1px solid $light-gray-color;
+    padding: 5px 10px;
+  }
+
+  .redBtn {
+    font-size: 0.8rem;
+    padding: 5px 9px;
+  }
+}

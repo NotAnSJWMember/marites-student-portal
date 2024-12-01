@@ -9,7 +9,6 @@
   .selectBox {
     user-select: none;
     width: 100%;
-    padding: 0.7rem 1rem;
     border-radius: 0.4rem;
     border: 1px solid $light-gray-color;
     background-color: #fff;
@@ -42,7 +41,6 @@
   }
 
   .option {
-    padding: 0.75rem 1rem;
     cursor: pointer;
     font-size: 0.8rem;
     color: $light-primary-text;

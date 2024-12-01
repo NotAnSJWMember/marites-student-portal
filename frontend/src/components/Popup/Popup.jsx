@@ -37,7 +37,7 @@ const Popup = ({ show, close, position, children, handleClickOutside = true }) =
       }
       setTimeout(() => {
         setShouldRender(false);
-      }, 200);
+      }, 100);
     }
 
     return () => {
