@@ -46,13 +46,6 @@
   height: 100%;
 }
 
-.select {
-  border: 1px solid $light-gray-color;
-  border-radius: $small-radius;
-  padding: 0.5rem;
-  width: 22rem;
-}
-
 .active {
   border-color: $light-green-color-300;
   background-color: $light-green-color-300;
@@ -61,8 +54,14 @@
 
 .popupWrapper {
   display: grid;
+  width: 45rem;
   gap: 1rem;
   padding: 1rem;
+
+  .studentInfo {
+    display: flex;
+    justify-content: space-between;
+  }
 
   .gradeItem {
     input {

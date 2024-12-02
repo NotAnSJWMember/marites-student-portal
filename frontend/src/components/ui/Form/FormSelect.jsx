@@ -1,26 +1,31 @@
 import React, { useEffect, useRef, useState } from "react";
 import styles from "./FormSelect.module.scss";
+import SearchBar from "components/SearchBar/SearchBar";
 
 export const FormSelect = ({
   name,
   options,
-  required = true,
   hasError,
-  defaultValue,
+  width,
   smallPadding = false,
+  defaultValue,
   selectedData,
   setSelectedData,
+  required = true,
+  disabled = false,
+  searchBar = false,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState(null);
   const [isAbove, setIsAbove] = useState(false);
+  const [searchedOptions, setSearchOptions] = useState([]);
+  const [selectOptions, setSelectOptions] = useState(options);
 
   const selectRef = useRef(null);
   const optionsRef = useRef(null);
   const timeoutRef = useRef(null);
 
   useEffect(() => {
-    // Only set selectedData if it hasn't been set yet and there's a defaultValue
     if (defaultValue && !selectedData) {
       const defaultOption = options.find((option) => option.value === defaultValue);
       if (defaultOption) {
@@ -30,6 +35,8 @@ export const FormSelect = ({
   }, [defaultValue, selectedData, setSelectedData, options]);
 
   const handleShowOptions = () => {
+    if (disabled) return; // Prevent opening the dropdown when disabled
+
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
@@ -50,6 +57,7 @@ export const FormSelect = ({
   };
 
   const handleOptionClick = (option) => {
+    if (disabled) return;
     setSelectedData(option);
     setIsOpen(false);
   };
@@ -80,15 +88,20 @@ export const FormSelect = ({
     };
   }, []);
 
+  useEffect(() => {
+    if (searchBar) setSelectOptions(searchedOptions);
+  }, [searchBar, searchedOptions]);
+
   return (
-    <div className={styles.formItem}>
+    <div className={styles.formItem} style={{ width: width }}>
       <div className={styles.selectContainer}>
         <div
-          className={`${styles.selectBox}`}
+          className={`${styles.selectBox} ${disabled ? styles.disabled : ""}`}
           onClick={handleShowOptions}
           style={{
             ...(selectedData ? { color: "black" } : { color: "gray" }),
             ...(smallPadding ? { padding: "5px 10px" } : { padding: "0.7rem 1rem" }),
+            ...(disabled ? { backgroundColor: "#f0f0f0", cursor: "not-allowed" } : {}),
           }}
           ref={selectRef}
         >
@@ -102,7 +115,16 @@ export const FormSelect = ({
           }}
           ref={optionsRef}
         >
-          {options.map((option, index) => (
+          {searchBar && (
+            <SearchBar
+              data={options}
+              height={35}
+              margin={10}
+              onSearch={setSearchOptions}
+              showIcon={false}
+            />
+          )}
+          {selectOptions.map((option, index) => (
             <div
               key={`${option.value}-${index}`}
               style={smallPadding ? { padding: "5px 10px" } : { padding: "0.75rem 1rem" }}

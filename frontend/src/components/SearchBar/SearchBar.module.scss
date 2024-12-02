@@ -1,36 +1,35 @@
 @import "../../styles/global.scss";
 
 .searchBar {
-   display: flex;
-   align-items: center;
-   justify-content: start;
-   align-items: center;
-   justify-content: start;
-   background-color: white;
-   gap: 0.7rem;
-   border-radius: $small-radius;
-   border: 1px solid $light-gray-color;
-   
-   
-   input {
-      border: none;
-      background: none;
-      outline: none;
-      width: 100%;
-   }
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  align-items: center;
+  justify-content: start;
+  background-color: white;
+  gap: 0.4rem;
+  border-radius: $small-radius;
+  border: 1px solid $light-gray-color;
+
+  input {
+    border: none;
+    background: none;
+    outline: none;
+    width: 100%;
+  }
 }
 
 .suggestionsDropdown {
-   border-radius: $small-radius;
-   border: 1px solid $light-gray-color;
-   background-color: white;
+  border-radius: $small-radius;
+  border: 1px solid $light-gray-color;
+  background-color: white;
 
-   .suggestionItem {
-      cursor: pointer;
-      padding: 1rem;
+  .suggestionItem {
+    cursor: pointer;
+    padding: 1rem;
 
-      &:hover {
-         background-color: $light-gray-color-100;
-      }
-   }
+    &:hover {
+      background-color: $light-gray-color-100;
+    }
+  }
 }

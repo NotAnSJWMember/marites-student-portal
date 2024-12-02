@@ -7,9 +7,11 @@ const SearchBar = ({
   data,
   width,
   height,
+  margin,
   onSearch,
   placeholder = "Search",
   showSuggestions = false,
+  showIcon = true,
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
@@ -43,7 +45,7 @@ const SearchBar = ({
       if (searchQuery.length > 0) {
         const filteredSuggestions = data.filter((item) =>
           Object.values(item).some((value) =>
-            String(value).toLowerCase().includes(searchQuery.toLowerCase())
+            String(value).toLowerCase().startsWith(searchQuery.toLowerCase())
           )
         );
         setSuggestions(filteredSuggestions);
@@ -61,14 +63,15 @@ const SearchBar = ({
     <div
       ref={searchBarRef}
       className={styles.searchBar}
-      style={{ height: height, width: width }}
+      style={{ height: height, width: width, margin: margin }}
     >
-      <TbSearch style={{ marginLeft: 20 }} size={20} />
+      {showIcon && <TbSearch style={{ marginLeft: 13 }} size={20} />}
       <input
         type="text"
         value={searchQuery}
         placeholder={placeholder}
         onChange={handleInputChange}
+        style={{ ...(!showIcon && { padding: "0 13px" }) }}
       />
       {showSuggestions && suggestions.length > 0 && (
         <div

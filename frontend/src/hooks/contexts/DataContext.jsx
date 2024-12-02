@@ -28,10 +28,6 @@ export const useDataContext = (endpoint, id = null) => {
   const loading = id ? loadingState[`${endpoint}_${id}`] : loadingState[endpoint];
   const error = id ? errorState[`${endpoint}_${id}`] : errorState[endpoint];
 
-  if (!data) {
-    console.log("Loading data for endpint:", endpoint);
-  }
-
   if (id) {
     url = endpoint;
     endpointId = id;

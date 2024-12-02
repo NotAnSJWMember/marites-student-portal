@@ -1,11 +1,10 @@
 import React, { useEffect, useMemo, useState } from "react";
 import styles from "./GradeManagement.module.scss";
-import { TbDotsVertical } from "react-icons/tb";
+import { TbDotsVertical, TbId } from "react-icons/tb";
 
 import IconSizes from "constants/IconSizes";
 import Layout from "components/Layout/Layout";
 import Loading from "components/Loading/Loading";
-import UserIcon from "components/ui/UserIcon/UserIcon";
 
 import { useDataContext } from "hooks/contexts/DataContext";
 import SearchBar from "components/SearchBar/SearchBar";
@@ -15,15 +14,16 @@ import { usePopupAlert } from "hooks";
 import PopupAlert from "components/Popup/PopupAlert";
 import useFetchData from "hooks/useFetchData";
 import useUpdateData from "hooks/useUpdateData";
-import { getUserPhoto } from "utils/getUserPhoto";
 import { FormSelect } from "components/ui/Form";
+import { UserContainer } from "components/ui/UserContainer/UserContainer";
 
 const GradeManagement = () => {
   const [loading, setIsLoading] = useState(true);
   const [popupData, setPopupData] = useState(null);
   const [searchData, setSearchData] = useState([]);
+  const [initialData, setInitialData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
-  const [selectedOption, setSelectedOption] = useState("");
+  const [selectedOption, setSelectedOption] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("all");
 
   const { dataState: students } = useDataContext("student");
@@ -40,6 +40,10 @@ const GradeManagement = () => {
     updateData,
   } = useUpdateData();
 
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
   const programOptions = useMemo(() => {
     return programs.map((p) => {
       const label = p.description.replace(/Bachelor of (Science|Arts) in /, "");
@@ -51,18 +55,38 @@ const GradeManagement = () => {
     });
   }, [programs]);
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+  const courseOptions = useMemo(() => {
+    return courses.map((c) => {
+      return {
+        value: c._id,
+        label: c.description,
+      };
+    });
+  }, [courses]);
 
   useEffect(() => {
     if (students && courses && programs && enrollments) {
       setIsLoading(false);
-    }
-    setFilteredData(searchData);
-  }, [students, courses, programs, enrollments, searchData]);
 
-  const formatGrade = (grade) => (grade !== 0 ? grade.toFixed(1) : "N/A");
+      const studentEnrollments = students.map((student) => {
+        const enrollmentsForStudent = enrollments.filter(
+          (e) => e.studentId === student.userId
+        );
+        return {
+          student,
+          enrollments: enrollmentsForStudent,
+        };
+      });
+
+      const enrolledStudents = studentEnrollments.filter(
+        (student) => student.enrollments.length !== 0
+      );
+      setInitialData(enrolledStudents);
+      setFilteredData(enrolledStudents);
+    }
+  }, [students, courses, programs, enrollments]);
+
+  const formatGrade = (grade) => (grade !== 0 ? grade?.toFixed(1) : "N/A");
 
   const calculateAverageGrade = (enrollments) => {
     const grades = enrollments.flatMap(({ prelim, midterm, prefinal, final }) =>
@@ -95,11 +119,11 @@ const GradeManagement = () => {
   const handleCategoryChange = (category) => {
     if (category === "all") {
       setSelectedCategory("all");
-      setSelectedOption("");
-      setFilteredData(searchData);
+      setSelectedOption(null);
+      setFilteredData(initialData);
     } else {
       setSelectedCategory(category);
-      setSelectedOption("");
+      setSelectedOption(null);
       setFilteredData([]);
     }
   };
@@ -108,24 +132,33 @@ const GradeManagement = () => {
     setSelectedOption(optionId);
 
     if (selectedCategory === "course") {
-      const enrolledStudentIds = enrollments
-        .filter((enrollment) => enrollment.courseId === optionId)
-        .map((enrollment) => enrollment.studentId);
+      const enrolledStudents = initialData.map((item) => {
+        const enrollment = item.enrollments
+          .filter((e) => e.courseId === optionId.value)
+          .find((e) => e.studentId);
 
-      const courseStudents = students.filter((student) =>
-        enrolledStudentIds.includes(student.userId)
+        return {
+          student: item.student,
+          enrollments: enrollment,
+        };
+      });
+
+      const filteredStudents = enrolledStudents.filter(
+        (item) => item.enrollments !== undefined
       );
-      setFilteredData(courseStudents);
+
+      setFilteredData(filteredStudents);
     } else if (selectedCategory === "program") {
-      const programStudents = students.filter(
-        (student) => student.programId === optionId
-      );
-      setFilteredData(programStudents);
+      // const programStudents = enrolledStudentData.filter(
+      //   (student) => student.programId === optionId.value
+      // );
+      // setFilteredData(programStudents);
     }
   };
 
   const handleOpenPopup = (studentId) => {
     const student = students.find((student) => student.userId === studentId);
+
     if (student) setPopupData(student);
   };
 
@@ -133,18 +166,16 @@ const GradeManagement = () => {
     setPopupData(null);
   };
 
-  const handleSearch = (searchData) => {
-    setSearchData(searchData);
-  };
-
   const StudentGradeView = ({ data }) => {
-    const memoizedData = useMemo(() => data, [data]);
-
     const [editingGrade, setEditingGrade] = useState(null);
     const [editedValue, setEditedValue] = useState("");
-    const [grades, setGrades] = useState(memoizedData);
+    const [grades, setGrades] = useState(data);
 
-    const handleDoubleClick = (enrollmentId, gradeType, currentGrade) => {
+    useEffect(() => {
+      setGrades(data);
+    }, [data]);
+
+    const handleClick = (enrollmentId, gradeType, currentGrade) => {
       setEditingGrade({ enrollmentId, gradeType });
       setEditedValue(currentGrade);
     };
@@ -175,90 +206,93 @@ const GradeManagement = () => {
       setEditingGrade(null);
     };
 
-    const handleBlur = () => {
-      setEditingGrade(null);
-    };
-
-    return grades.length !== 0 ? (
+    return (
       <>
-        <div className={styles.tableWrapper}>
-          <div
-            className={styles.tableHeader}
-            style={{ gridTemplateColumns: "100px 200px 1fr" }}
-          >
-            <h4>Code</h4>
-            <h4>Course</h4>
-            <div className={styles.gradeHeader}>
-              <h4>Prelim</h4>
-              <h4>Midterm</h4>
-              <h4>Prefinal</h4>
-              <h4>Final</h4>
+        {grades.length !== 0 ? (
+          <div className={styles.tableWrapper}>
+            <div
+              className={styles.tableHeader}
+              style={{ gridTemplateColumns: "100px 200px 1fr" }}
+            >
+              <h4>Code</h4>
+              <h4>Course</h4>
+              <div className={styles.gradeHeader}>
+                <h4>Prelim</h4>
+                <h4>Midterm</h4>
+                <h4>Prefinal</h4>
+                <h4>Final</h4>
+              </div>
+            </div>
+            <div className={styles.tableContent}>
+              {grades.map((enrollment) => {
+                const course = courses
+                  ? courses.find((c) => c._id === enrollment.courseId)
+                  : null;
+
+                return (
+                  <div
+                    key={course._id}
+                    className={styles.tableItem}
+                    style={{ gridTemplateColumns: "100px 200px 1fr" }}
+                  >
+                    <p>
+                      <strong>{course.code}</strong>
+                    </p>
+                    <p>{course.description}</p>
+                    <div className={styles.gradeHeader}>
+                      {["prelim", "midterm", "prefinal", "final"].map((gradeType) => {
+                        const grade = enrollment[gradeType];
+                        return (
+                          <p
+                            key={gradeType}
+                            className={styles.gradeItem}
+                            onClick={() => handleClick(enrollment._id, gradeType, grade)}
+                          >
+                            {editingGrade &&
+                            editingGrade.enrollmentId === enrollment._id &&
+                            editingGrade.gradeType === gradeType ? (
+                              <input
+                                type="number"
+                                onChange={handleGradeChange}
+                                onBlur={handleSave}
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter") {
+                                    handleSave();
+                                  }
+                                }}
+                                autoFocus
+                                placeholder={grade}
+                              />
+                            ) : (
+                              formatGrade(parseFloat(grade))
+                            )}
+                          </p>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
-          <div className={styles.tableContent}>
-            {grades.map((enrollment) => {
-              const course = courses
-                ? courses.find((c) => c._id === enrollment.courseId)
-                : null;
-
-              return (
-                <div
-                  key={course._id}
-                  className={styles.tableItem}
-                  style={{ gridTemplateColumns: "100px 200px 1fr" }}
-                >
-                  <p>{course.code}</p>
-                  <p>{course.description}</p>
-                  <div className={styles.gradeHeader}>
-                    {["prelim", "midterm", "prefinal", "final"].map((gradeType) => {
-                      const grade = enrollment[gradeType];
-                      return (
-                        <p
-                          key={gradeType}
-                          className={styles.gradeItem}
-                          onDoubleClick={() =>
-                            handleDoubleClick(enrollment._id, gradeType, grade)
-                          }
-                        >
-                          {editingGrade &&
-                          editingGrade.enrollmentId === enrollment._id &&
-                          editingGrade.gradeType === gradeType ? (
-                            <input
-                              type="number"
-                              onChange={handleGradeChange}
-                              onBlur={handleBlur}
-                              onKeyDown={(e) => {
-                                if (e.key === "Enter") {
-                                  handleSave();
-                                }
-                              }}
-                              autoFocus
-                              placeholder={grade}
-                            />
-                          ) : (
-                            formatGrade(parseFloat(grade))
-                          )}
-                        </p>
-                      );
-                    })}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
+        ) : (
+          <p>This student hasn't been enrolled in this semester.</p>
+        )}
         <div className={styles.buttonContainer}>
           <button onClick={handleClosePopup} className={styles.secondaryBtn}>
             Close
           </button>
-          <button onClick={() => handleSavedGrades(grades)} className={styles.primaryBtn}>
-            Save changes
-            {updateLoading && <Loading />}
-          </button>
+          {grades.length !== 0 && (
+            <button
+              onClick={() => handleSavedGrades(grades)}
+              className={styles.primaryBtn}
+            >
+              Save changes
+              {updateLoading && <Loading />}
+            </button>
+          )}
         </div>
       </>
-    ) : (
-      <p>This student hasn't been enrolled in this semester.</p>
     );
   };
 
@@ -296,19 +330,13 @@ const GradeManagement = () => {
           {selectedCategory === "program" && <h4>Average Grade</h4>}
         </div>
         <div className={styles.tableContent}>
-          {data.map((student) => {
-            const studentEnrollments = enrollments.filter(
-              (enrollment) => enrollment.studentId === student.userId
-            );
-            const courseGrades =
-              selectedCategory === "course" &&
-              studentEnrollments.find(
-                (enrollment) => enrollment.courseId === selectedOption
-              );
+          {data.map((item) => {
+            const student = item.student;
+            const studentEnrollments = item.enrollments;
 
-            const program = programs
-              ? programs.find((p) => p._id === student.programId)
-              : "No program";
+            const program =
+              selectedCategory === "program" &&
+              programs.find((p) => p._id === student.programId);
 
             return (
               <div
@@ -323,15 +351,7 @@ const GradeManagement = () => {
                 <p className={styles.badge}>
                   <strong>{student.userId}</strong>
                 </p>
-                <div className={styles.userContainer}>
-                  <UserIcon image={getUserPhoto(student.userPhoto)} size={48} />
-                  <div className={styles.userInfo}>
-                    <h4 className={styles.title}>
-                      {`${student.firstName} ${student.lastName}`}
-                    </h4>
-                    <p className={styles.desc}>{student.email}</p>
-                  </div>
-                </div>
+                <UserContainer user={student} size={48} />
                 {selectedCategory === "all" && (
                   <p>
                     {program?.code
@@ -341,10 +361,10 @@ const GradeManagement = () => {
                 )}
                 {selectedCategory === "course" ? (
                   <div className={styles.gradeHeader}>
-                    <p>{formatGrade(courseGrades?.prelim)}</p>
-                    <p>{formatGrade(courseGrades?.midterm)}</p>
-                    <p>{formatGrade(courseGrades?.prefinal)}</p>
-                    <p>{formatGrade(courseGrades?.final)}</p>
+                    <p>{formatGrade(studentEnrollments.prelim)}</p>
+                    <p>{formatGrade(studentEnrollments.midterm)}</p>
+                    <p>{formatGrade(studentEnrollments.prefinal)}</p>
+                    <p>{formatGrade(studentEnrollments.final)}</p>
                   </div>
                 ) : (
                   <p>{calculateAverageGrade(studentEnrollments)}</p>
@@ -365,17 +385,17 @@ const GradeManagement = () => {
   };
 
   const renderEditPopup = () => {
-    const studentEnrollments = enrollments
-      ? enrollments.filter((e) => e.studentId === popupData.userId)
-      : [];
+    const data = filteredData.find((item) => item.student.userId === popupData.userId);
 
     return (
       <Popup show={!!popupData} close={handleClosePopup} position="center">
         <div className={styles.popupWrapper}>
           <div className={styles.studentInfo}>
-            <h3>{`${popupData.firstName} ${popupData.lastName}`}</h3>
-            <p>{popupData.email}</p>
-            <p>{popupData.userId}</p>
+            <UserContainer user={popupData} size={70} />
+            <div className={styles.iconBadge}>
+              <TbId size={IconSizes.SMALL} />
+              <p>{data.student.userId}</p>
+            </div>
           </div>
           <div className={styles.contentContainer}>
             <TabMenu
@@ -384,7 +404,7 @@ const GradeManagement = () => {
                   label: "1st Semester",
                   content: (
                     <StudentGradeView
-                      data={studentEnrollments.filter(
+                      data={data.enrollments.filter(
                         (enrollment) => enrollment.semester === 1
                       )}
                       semester={1}
@@ -395,7 +415,7 @@ const GradeManagement = () => {
                   label: "2nd Semester",
                   content: (
                     <StudentGradeView
-                      data={studentEnrollments.filter(
+                      data={data.enrollments.filter(
                         (enrollment) => enrollment.semester === 2
                       )}
                       semester={2}
@@ -409,6 +429,10 @@ const GradeManagement = () => {
       </Popup>
     );
   };
+
+  useEffect(() => {
+    console.log("Current data: ", filteredData);
+  });
 
   return (
     <Layout role="admin" pageName="Grade Management">
@@ -428,6 +452,7 @@ const GradeManagement = () => {
                       selectedCategory === "all" ? styles.active : ""
                     }`}
                     onClick={() => handleCategoryChange("all")}
+                    disabled={selectedCategory === "all"}
                   >
                     All
                   </button>
@@ -437,6 +462,7 @@ const GradeManagement = () => {
                       selectedCategory === "course" ? styles.active : ""
                     }`}
                     onClick={() => handleCategoryChange("course")}
+                    disabled={selectedCategory === "course"}
                   >
                     Course
                   </button>
@@ -446,40 +472,26 @@ const GradeManagement = () => {
                       selectedCategory === "program" ? styles.active : ""
                     }`}
                     onClick={() => handleCategoryChange("program")}
+                    disabled={selectedCategory === "program"}
                   >
                     Program
                   </button>
-                  <select
-                    className={styles.select}
-                    value={selectedOption}
-                    onChange={(e) => handleOptionChange(e.target.value)}
-                    style={
-                      selectedCategory === "all"
-                        ? { cursor: "not-allowed" }
-                        : { cursor: "pointer" }
-                    }
-                    disabled={selectedCategory === "all"}
-                  >
-                    <option value="">Select {selectedCategory}</option>
-                    {(selectedCategory === "course" ? courses : programs).map(
-                      (option) => (
-                        <option key={option._id} value={option._id}>
-                          {option.description}
-                        </option>
-                      )
-                    )}
-                  </select>
                   <FormSelect
                     name={selectedCategory}
-                    options={selectedCategory === "course" ? courses : programOptions}
+                    options={
+                      selectedCategory === "course" ? courseOptions : programOptions
+                    }
+                    width="17rem"
                     selectedData={selectedOption}
-                    setSelectedData={setSelectedOption}
+                    setSelectedData={handleOptionChange}
+                    searchBar={true}
+                    disabled={selectedCategory === "all"}
                   />
                 </div>
               </div>
               <SearchBar
                 data={students}
-                onSearch={handleSearch}
+                onSearch={setSearchData}
                 height={45}
                 placeholder="Search for students with their ID or name"
               />

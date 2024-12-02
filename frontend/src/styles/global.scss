@@ -49,13 +49,19 @@
   padding: 1rem;
 }
 
-.badge {
+.badge, .iconBadge {
   font-size: 0.8rem;
   border: 1px solid $light-gray-color;
   border-radius: $small-radius;
   height: max-content;
   width: max-content;
   padding: 0.4rem 0.7rem;
+}
+
+.iconBadge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
 .greenBadge {
@@ -266,3 +272,8 @@
   }
 }
 
+.disabled {
+  background-color: #f0f0f0;
+  cursor: not-allowed;
+  color: gray !important;
+}
