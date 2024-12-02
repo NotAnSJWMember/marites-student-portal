@@ -11,7 +11,7 @@ const Table = ({ data, programs, handleOpenPopup, selectedCategory, selectedOpti
   const gridTemplates = {
     all: "120px 1fr 1fr 1fr 40px",
     program: "120px 1fr 1fr 40px",
-    course: "120px 1fr 1fr",
+    course: "120px 1fr 1fr 40px",
   };
   const gridStyle = {
     gridTemplateColumns: gridTemplates[selectedCategory] || gridTemplates.all,
@@ -89,15 +89,13 @@ const Table = ({ data, programs, handleOpenPopup, selectedCategory, selectedOpti
               ) : (
                 <p>{calculateAverageGrade(studentEnrollments)}</p>
               )}
-              {selectedCategory !== "course" && (
-                <button
-                  type="button"
-                  className={`${styles.actionBtn} ${styles.iconBtn}`}
-                  onClick={() => handleOpenPopup(student.userId)}
-                >
-                  <TbDotsVertical size={IconSizes.MEDIUM} />
-                </button>
-              )}
+              <button
+                type="button"
+                className={`${styles.actionBtn} ${styles.iconBtn}`}
+                onClick={() => handleOpenPopup(student.userId)}
+              >
+                <TbDotsVertical size={IconSizes.MEDIUM} />
+              </button>
             </div>
           );
         })}

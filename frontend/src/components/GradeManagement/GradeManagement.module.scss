@@ -6,6 +6,28 @@
     flex-direction: column;
     gap: 1rem;
   }
+
+  .editContainer {
+    height: 100%;
+  }
+
+  .active {
+    border-color: $light-green-color-300;
+    background-color: $light-green-color-300;
+    color: $light-primary-background;
+  }
+}
+.sideContent {
+  .title {
+    margin-bottom: 5px;
+  }
+
+  .guidelinesContainer {
+    ol {
+      display: grid;
+      gap: 0.5rem;
+    }
+  }
 }
 
 .tableWrapper {
@@ -40,16 +62,6 @@
     padding: 0.8rem;
     overflow: auto;
   }
-}
-
-.editContainer {
-  height: 100%;
-}
-
-.active {
-  border-color: $light-green-color-300;
-  background-color: $light-green-color-300;
-  color: $light-primary-background;
 }
 
 .popupWrapper {

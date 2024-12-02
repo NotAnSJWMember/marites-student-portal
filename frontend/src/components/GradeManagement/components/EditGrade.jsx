@@ -15,6 +15,12 @@ const EditGrade = ({
   const [editedValue, setEditedValue] = useState("");
   const [grades, setGrades] = useState(data);
 
+  useEffect(() => {
+    setTimeout(() => {
+      setGrades(data);
+    }, 150);
+  }, [data]);
+
   const handleClick = (enrollmentId, gradeType, currentGrade) => {
     setEditingGrade({ enrollmentId, gradeType });
     setEditedValue(currentGrade);

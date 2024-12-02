@@ -86,23 +86,24 @@ const GradeManagement = () => {
   };
 
   useEffect(() => {
+    const enrollmentsByStudentId = enrollments.reduce((acc, enrollment) => {
+      if (!acc[enrollment.studentId]) {
+        acc[enrollment.studentId] = [];
+      }
+      acc[enrollment.studentId].push(enrollment);
+      return acc;
+    }, {});
+
+    const enrolledStudents = students
+      .map((student) => ({
+        student,
+        enrollments: enrollmentsByStudentId[student.userId] || [],
+      }))
+      .filter((item) => item.enrollments.length > 0);
+
+    setInitialData(enrolledStudents);
+
     if (selectedCategory === "all") {
-      const enrollmentsByStudentId = enrollments.reduce((acc, enrollment) => {
-        if (!acc[enrollment.studentId]) {
-          acc[enrollment.studentId] = [];
-        }
-        acc[enrollment.studentId].push(enrollment);
-        return acc;
-      }, {});
-
-      const enrolledStudents = students
-        .map((student) => ({
-          student,
-          enrollments: enrollmentsByStudentId[student.userId] || [],
-        }))
-        .filter((item) => item.enrollments.length > 0);
-
-      setInitialData(enrolledStudents);
       setCategoryFilteredData(enrolledStudents);
       setSearchFilteredData(enrolledStudents);
     }
@@ -195,7 +196,10 @@ const GradeManagement = () => {
 
     const body = { enrollments: enrollmentsToUpdate };
     const response = await updateData(body, `enrollment/update-grades`, null, fetchData);
-    if (response.ok) setShowUpdatePopup(true);
+    closeEditPopup();
+    if (response.ok) {
+      setShowUpdatePopup(true);
+    }
   };
 
   return (
@@ -253,19 +257,24 @@ const GradeManagement = () => {
                 handleOpenPopup={handleShowEditPopup}
                 selectedCategory={selectedCategory}
                 selectedOption={selectedOption}
+                showError={showError}
               />
             </section>
           </main>
           <aside className={styles.sideContent}>
             <section className={styles.requestsContainer}>
-              <h3>Requests</h3>
-              <p>Manage requests for grade changes submitted by instructors.</p>
+              <div>
+                <h3 className={styles.title}>Requests</h3>
+                <p className={styles.desc}>
+                  Manage requests for grade changes submitted by instructors.
+                </p>
+              </div>
               <ul>
                 <li>Request #1: Change grade for John Doe in Course A (Pending)</li>
               </ul>
             </section>
             <section className={styles.guidelinesContainer}>
-              <h3>Guidelines</h3>
+              <h3 className={styles.title}>Guidelines</h3>
               <ol>
                 <li>Always double-check the student ID before making changes.</li>
                 <li>Ensure grades are updated within the allowed timeframe.</li>
