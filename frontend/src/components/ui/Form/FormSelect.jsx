@@ -5,13 +5,12 @@ import SearchBar from "components/SearchBar/SearchBar";
 export const FormSelect = ({
   name,
   options,
-  hasError,
+  height,
   width,
   smallPadding = false,
   defaultValue,
   selectedData,
   setSelectedData,
-  required = true,
   disabled = false,
   searchBar = false,
 }) => {
@@ -26,6 +25,21 @@ export const FormSelect = ({
   const timeoutRef = useRef(null);
 
   useEffect(() => {
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (searchBar) setSelectOptions(searchedOptions);
+  }, [searchBar, searchedOptions]);
+
+  useEffect(() => {
+    setSelectOptions(options);
+  }, [options]);
+
+  useEffect(() => {
     if (defaultValue && !selectedData) {
       const defaultOption = options.find((option) => option.value === defaultValue);
       if (defaultOption) {
@@ -35,29 +49,27 @@ export const FormSelect = ({
   }, [defaultValue, selectedData, setSelectedData, options]);
 
   const handleShowOptions = () => {
-    if (disabled) return; // Prevent opening the dropdown when disabled
+    if (disabled) return;
 
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
+
     timeoutRef.current = setTimeout(() => {
       const rect = selectRef.current.getBoundingClientRect();
       const screenHeight = window.innerHeight;
-
       const spaceBelow = screenHeight - rect.bottom;
 
-      if (spaceBelow < 200) {
-        setIsAbove(true);
-      } else {
-        setIsAbove(false);
-      }
-
+      setIsAbove(spaceBelow < 200);
       setIsOpen((prev) => !prev);
     }, 150);
+
+    if (!isOpen && optionsRef.current) {
+      optionsRef.current.scrollTop = 0;
+    }
   };
 
   const handleOptionClick = (option) => {
-    if (disabled) return;
     setSelectedData(option);
     setIsOpen(false);
   };
@@ -77,21 +89,6 @@ export const FormSelect = ({
     }
   };
 
-  useEffect(() => {
-    document.addEventListener("click", handleClickOutside);
-
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (searchBar) setSelectOptions(searchedOptions);
-  }, [searchBar, searchedOptions]);
-
   return (
     <div className={styles.formItem} style={{ width: width }}>
       <div className={styles.selectContainer}>
@@ -108,12 +105,13 @@ export const FormSelect = ({
           {selectedData ? selectedData.label : `Select ${name}`}
         </div>
         <div
+          ref={optionsRef}
           className={`${styles.optionsContainer} ${isOpen ? styles.show : ""}`}
           style={{
             bottom: isAbove ? "110%" : "auto",
             top: isAbove ? "auto" : "110%",
+            ...(height ? { maxHeight: height } : { maxHeight: "200px" }),
           }}
-          ref={optionsRef}
         >
           {searchBar && (
             <SearchBar
@@ -135,7 +133,7 @@ export const FormSelect = ({
               }`}
               onClick={() => handleOptionClick(option)}
               onMouseEnter={() => handleOptionHover(index)}
-              onMouseLeave={() => setHoveredIndex(null)}
+              onMouseLeave={() => setHoveredIndex(-1)}
             >
               {option.label}
             </div>

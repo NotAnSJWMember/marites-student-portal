@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import styles from "./SearchBar.module.scss";
 
 import { TbSearch } from "react-icons/tb";
@@ -14,50 +14,52 @@ const SearchBar = ({
   showIcon = true,
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [suggestions, setSuggestions] = useState([]);
-  const [dropdownStyle, setDropdownStyle] = useState({});
+  const [filteredSuggestions, setFilteredSuggestions] = useState(data);
 
   const searchBarRef = useRef(null);
+  const timeoutRef = useRef(null);
+
+  const dropdownStyle = useMemo(() => {
+    if (searchBarRef.current) {
+      const rect = searchBarRef.current.getBoundingClientRect();
+      return {
+        top: rect.bottom + 10,
+        left: rect.left,
+        width: rect.width,
+        position: "absolute",
+        zIndex: 10,
+      };
+    }
+    return {};
+  }, []);
 
   const handleInputChange = (event) => {
-    setSearchQuery(event.target.value);
+    const query = event.target.value;
+    setSearchQuery(query);
+
+    clearTimeout(timeoutRef.current);
+
+    timeoutRef.current = setTimeout(() => {
+      if (query.length > 0) {
+        const filteredSuggestions = data.filter((item) =>
+          Object.values(item).some((value) =>
+            String(value).toLowerCase().startsWith(query.toLowerCase())
+          )
+        );
+        setFilteredSuggestions(filteredSuggestions);
+        onSearch(filteredSuggestions);
+      } else {
+        setFilteredSuggestions(data);
+        onSearch(data);
+      }
+    }, 300);
   };
 
   const handleSuggestionClick = (suggestion) => {
     setSearchQuery("");
-    setSuggestions([]);
+    setFilteredSuggestions([]);
     onSearch(suggestion);
   };
-
-  useEffect(() => {
-    if (searchBarRef.current) {
-      const rect = searchBarRef.current.getBoundingClientRect();
-      setDropdownStyle({
-        top: rect.bottom + 10,
-        left: rect.left,
-        width: rect.width,
-      });
-    }
-  }, [searchQuery]);
-
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      if (searchQuery.length > 0) {
-        const filteredSuggestions = data.filter((item) =>
-          Object.values(item).some((value) =>
-            String(value).toLowerCase().startsWith(searchQuery.toLowerCase())
-          )
-        );
-        setSuggestions(filteredSuggestions);
-        onSearch(filteredSuggestions);
-      } else {
-        setSuggestions(data);
-        onSearch(data);
-      }
-    }, 300);
-
-    return () => clearTimeout(timeoutId);
-  }, [data, onSearch, searchQuery]);
 
   return (
     <div
@@ -73,16 +75,16 @@ const SearchBar = ({
         onChange={handleInputChange}
         style={{ ...(!showIcon && { padding: "0 13px" }) }}
       />
-      {showSuggestions && suggestions.length > 0 && (
+      {showSuggestions && filteredSuggestions.length > 0 && (
         <div
-          className={styles.suggestionsDropdown}
+          className={styles.filteredSuggestionsDropdown}
           style={{
             ...dropdownStyle,
             position: "absolute",
             zIndex: 10,
           }}
         >
-          {suggestions.map((suggestion, index) => (
+          {filteredSuggestions.map((suggestion, index) => (
             <div
               key={index}
               className={styles.suggestionItem}
