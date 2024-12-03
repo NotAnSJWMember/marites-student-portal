@@ -3,6 +3,26 @@ import styles from "./SearchBar.module.scss";
 
 import { TbSearch } from "react-icons/tb";
 
+const flattenObject = (obj, prefix = "") =>
+  Object.keys(obj).reduce((acc, key) => {
+    const value = obj[key];
+    const newKey = prefix ? `${prefix}.${key}` : key;
+
+    if (value && typeof value === "object" && !Array.isArray(value)) {
+      Object.assign(acc, flattenObject(value, newKey));
+    } else {
+      acc[newKey] = value;
+    }
+
+    return acc;
+  }, {});
+
+const preprocessData = (data) =>
+  data.map((item) => ({
+    original: item,
+    flattened: flattenObject(item),
+  }));
+
 const SearchBar = ({
   data,
   width,
@@ -15,6 +35,8 @@ const SearchBar = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredSuggestions, setFilteredSuggestions] = useState(data);
+
+  const processedData = useMemo(() => preprocessData(data), [data]);
 
   const searchBarRef = useRef(null);
   const timeoutRef = useRef(null);
@@ -41,16 +63,16 @@ const SearchBar = ({
 
     timeoutRef.current = setTimeout(() => {
       if (query.length > 0) {
-        const filteredSuggestions = data.filter((item) =>
-          Object.values(item).some((value) =>
-            String(value).toLowerCase().startsWith(query.toLowerCase())
+        const filteredSuggestions = processedData.filter(({ flattened }) =>
+          Object.values(flattened).some((value) =>
+            String(value).toLowerCase().includes(query.toLowerCase())
           )
         );
         setFilteredSuggestions(filteredSuggestions);
-        onSearch(filteredSuggestions);
+        onSearch(filteredSuggestions.map(({ original }) => original));
       } else {
-        setFilteredSuggestions(data);
-        onSearch(data);
+        setFilteredSuggestions(processedData);
+        onSearch(processedData.map(({ original }) => original));
       }
     }, 300);
   };

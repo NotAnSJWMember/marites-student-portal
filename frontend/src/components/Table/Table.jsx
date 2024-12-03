@@ -27,14 +27,36 @@ import Pagination from "components/Navigation/Pagination";
 import { Tooltip } from "react-tooltip";
 import { FormSelect } from "components/ui/Form";
 
+const flattenObject = (obj, prefix = "") =>
+  Object.keys(obj).reduce((acc, key) => {
+    const value = obj[key];
+    const newKey = prefix ? `${prefix}.${key}` : key;
+
+    if (value && typeof value === "object" && !Array.isArray(value)) {
+      Object.assign(acc, flattenObject(value, newKey));
+    } else {
+      acc[newKey] = value;
+    }
+
+    return acc;
+  }, {});
+
+const preprocessData = (data) =>
+  data.map((item) => ({
+    original: item,
+    flattened: flattenObject(item),
+  }));
+
 const Table = ({
   data,
   headers,
   filters,
   content,
+  gridTemplateColumns,
   onEdit,
   onExport,
   onDelete,
+  isSingleObject = true,
   isPopupVisible,
   setIsPopupVisible,
   ctaText,
@@ -80,10 +102,6 @@ const Table = ({
   const [selectedData, setSelectedData] = useState([]);
   const [filteredSearch, setFilteredSearch] = useState([]);
 
-  useEffect(() => {
-    setFilteredSearch(data);
-  }, [data]);
-
   const itemsPerPage = 8;
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -104,16 +122,51 @@ const Table = ({
   const icon = sortOptionLabels.find((item) => item.option === sortOption)?.icon;
   const label = sortOptionLabels.find((item) => item.option === sortOption)?.label;
 
+  const processedData = useMemo(() => preprocessData(data), [data]);
+
+  const newData = useMemo(() => {
+    if (isSingleObject) return data;
+    return preprocessData(data).map(({ original }) => original);
+  }, [data, isSingleObject]);
+
+  useEffect(() => {
+    setFilteredSearch(newData);
+  }, [newData]);
+
+  console.log("Table data:", data);
+
   const filterData = (data, filterSettings) => {
     if (filterOptions.length === 0) return data;
 
-    return data.filter((item) => {
+    const dataToFilter = isSingleObject ? data : processedData;
+    const keys = isSingleObject
+      ? []
+      : Array.from(new Set(data.flatMap((item) => Object.keys(item))));
+
+    const filteredData = dataToFilter.filter((item) => {
+      const object = isSingleObject ? item : item.flattened;
+
       return filterOptions.every((filterKey) => {
         const keyLabel = filterKey.label.toLowerCase().replace(" ", "-");
         const filter = filterSettings[keyLabel];
         const setting = filter?.setting?.value;
         const filterValue = filter?.value?.toLowerCase();
-        const itemValue = item[filterKey.attribute].toString().toLowerCase();
+
+        let itemValue;
+
+        if (isSingleObject) {
+          itemValue = item[filterKey.attribute]?.toString().toLowerCase();
+        } else {
+          for (const key of keys) {
+            const attribute = `${key}.${filterKey.attribute}`;
+            if (object[attribute]) {
+              itemValue = object[attribute].toString().toLowerCase();
+              break;
+            }
+          }
+        }
+
+        if (!itemValue) return true;
 
         switch (setting) {
           case "is":
@@ -131,12 +184,15 @@ const Table = ({
         }
       });
     });
+
+    return isSingleObject ? filteredData : filteredData.map((item) => item.original);
   };
 
   const filteredData = filterData(filteredSearch, filterSettings);
 
   const sortData = (data, option) => {
     if (!option) return data;
+    if (!isSingleObject) return data;
 
     const sorted = [...data];
 
@@ -415,7 +471,14 @@ const Table = ({
             </div>
           </div>
           <div className={styles.tableWrapper}>
-            <div className={styles.tableHeader}>
+            <div
+              className={styles.tableHeader}
+              style={
+                gridTemplateColumns
+                  ? { gridTemplateColumns: gridTemplateColumns }
+                  : { gridTemplateColumns: "40px 30% 1fr 1fr 1fr 50px" }
+              }
+            >
               <Checkbox
                 id="select-all"
                 isChecked={
@@ -428,8 +491,15 @@ const Table = ({
               })}
             </div>
             {currentData.map((data, index) => (
-              <div key={data._id}>
-                <div className={styles.tableItem}>
+              <div key={`${data._id}-${index}`}>
+                <div
+                  className={styles.tableItem}
+                  style={
+                    gridTemplateColumns
+                      ? { gridTemplateColumns: gridTemplateColumns }
+                      : { gridTemplateColumns: "40px 30% 1fr 1fr 1fr 50px" }
+                  }
+                >
                   <Checkbox
                     id={`checkbox-${data._id}`}
                     isChecked={selectedData.includes(data._id)}
@@ -493,7 +563,9 @@ const Table = ({
             setCurrentPage={setCurrentPage}
           />
         ) : (
-          <span style={{ margin: "auto", opacity: "0.5" }}>You've reached the end..</span>
+          <span style={{ margin: "auto", padding: "20px 0", opacity: "0.5" }}>
+            You've reached the end..
+          </span>
         )}
       </div>
 

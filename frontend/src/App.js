@@ -26,7 +26,7 @@ import Examboard from "pages/Dashboard/Student/pages/Examboard";
 import Announcements from "pages/Dashboard/Student/pages/Announcements";
 
 import "./App.scss";
-
+import FinanceManagement from "components/FinanceManagement/FinanceManagement";
 
 function App() {
   return (
@@ -48,6 +48,10 @@ function App() {
           <Route
             path="/admin/dashboard/grade-management"
             element={<PrivateRoute element={<GradeManagement />} roles={["admin"]} />}
+          />
+          <Route
+            path="/admin/dashboard/finance-management"
+            element={<PrivateRoute element={<FinanceManagement />} roles={["admin"]} />}
           />
           <Route
             path="/admin/dashboard/user-management"
@@ -86,11 +90,15 @@ function App() {
           />
           <Route
             path="/student/dashboard/announcements"
-            element={<PrivateRoute element={<Announcements />} roles={["student", "admin"]} />}
+            element={
+              <PrivateRoute element={<Announcements />} roles={["student", "admin"]} />
+            }
           />
           <Route
             path="/student/dashboard/examboard"
-            element={<PrivateRoute element={<Examboard />} roles={["student", "admin"]} />}
+            element={
+              <PrivateRoute element={<Examboard />} roles={["student", "admin"]} />
+            }
           />
           <Route
             path="/student/dashboard/schedule"

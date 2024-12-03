@@ -17,6 +17,7 @@ import Layout from "components/Layout/Layout";
 import useFetchData from "hooks/useFetchData";
 import { useAuth } from "hooks";
 import { format } from "date-fns";
+import { formatCurrency } from "utils/formatCurrency";
 
 const Finance = () => {
   const { user: session } = useAuth();
@@ -32,15 +33,6 @@ const Finance = () => {
 
   const schoolYear = finances?.schoolYear;
   const semester = finances?.semester === 1 ? "1st" : "2nd";
-
-  const formatCurrency = (number) => {
-    const formattedNumber = new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "PHP",
-    }).format(number);
-
-    return formattedNumber;
-  };
 
   const calculateRunningBalance = (transactions, totalDue) => {
     let runningBalance = totalDue;
