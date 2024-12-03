@@ -13,7 +13,7 @@ import Table from "./components/Table";
 import Popup from "components/Popup/Popup";
 import { UserContainer } from "components/ui/UserContainer/UserContainer";
 import IconSizes from "constants/IconSizes";
-import { TbId } from "react-icons/tb";
+import { TbCircleCheck, TbId } from "react-icons/tb";
 import TabMenu from "components/TabMenu/TabMenu";
 import EditGrade from "./components/EditGrade";
 
@@ -262,24 +262,60 @@ const GradeManagement = () => {
             </section>
           </main>
           <aside className={styles.sideContent}>
-            <section className={styles.requestsContainer}>
+            <section className={styles.guidelinesContent}>
+              <div>
+                <h3 className={styles.title}>Guidelines</h3>
+                <p className={styles.desc}>
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Veritatis,
+                  eaque!
+                </p>
+              </div>
+              <div className={styles.line}></div>
+              <div className={styles.guidelinesContainer}>
+                <div className={styles.guidelineItem}>
+                  <div>
+                    <TbCircleCheck size={IconSizes.MEDIUM} />
+                  </div>
+                  <li>Always double-check the student ID before making changes.</li>
+                </div>
+                <div className={styles.guidelineItem}>
+                  <div>
+                    <TbCircleCheck size={IconSizes.MEDIUM} />
+                  </div>
+                  <li>Ensure grades are updated within the allowed timeframe.</li>
+                </div>
+                <div className={styles.guidelineItem}>
+                  <div>
+                    <TbCircleCheck size={IconSizes.MEDIUM} />
+                  </div>
+                  <li>Submit grade changes for approval when required.</li>
+                </div>
+              </div>
+            </section>
+            <section className={styles.requestsContent}>
               <div>
                 <h3 className={styles.title}>Requests</h3>
                 <p className={styles.desc}>
                   Manage requests for grade changes submitted by instructors.
                 </p>
               </div>
-              <ul>
-                <li>Request #1: Change grade for John Doe in Course A (Pending)</li>
+              <div className={styles.line}></div>
+              <ul className={styles.requestsContainer}>
+                <div className={styles.requestItem}>
+                  <span className={styles.badge}>PENDING</span>
+                  <li>
+                    Change grade for <strong>John Doe</strong> in{" "}
+                    <strong>Course A</strong>
+                  </li>
+                </div>
+                <div className={styles.requestItem}>
+                  <span className={styles.badge}>PENDING</span>
+                  <li>
+                    Change grade for <strong>Jane Doe</strong> in{" "}
+                    <strong>Course B</strong>
+                  </li>
+                </div>
               </ul>
-            </section>
-            <section className={styles.guidelinesContainer}>
-              <h3 className={styles.title}>Guidelines</h3>
-              <ol>
-                <li>Always double-check the student ID before making changes.</li>
-                <li>Ensure grades are updated within the allowed timeframe.</li>
-                <li>Submit grade changes for approval when required.</li>
-              </ol>
             </section>
           </aside>
         </div>

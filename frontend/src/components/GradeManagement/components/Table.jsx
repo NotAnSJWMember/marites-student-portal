@@ -11,7 +11,7 @@ const Table = ({ data, programs, handleOpenPopup, selectedCategory, selectedOpti
   const gridTemplates = {
     all: "120px 1fr 1fr 1fr 40px",
     program: "120px 1fr 1fr 40px",
-    course: "120px 1fr 1fr 40px",
+    course: "120px 1fr 1fr 100px",
   };
   const gridStyle = {
     gridTemplateColumns: gridTemplates[selectedCategory] || gridTemplates.all,
@@ -93,6 +93,7 @@ const Table = ({ data, programs, handleOpenPopup, selectedCategory, selectedOpti
                 type="button"
                 className={`${styles.actionBtn} ${styles.iconBtn}`}
                 onClick={() => handleOpenPopup(student.userId)}
+                style={{ justifySelf: "end" }}
               >
                 <TbDotsVertical size={IconSizes.MEDIUM} />
               </button>

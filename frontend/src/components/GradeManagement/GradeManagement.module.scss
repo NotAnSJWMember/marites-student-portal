@@ -22,10 +22,35 @@
     margin-bottom: 5px;
   }
 
-  .guidelinesContainer {
-    ol {
+  .requestsContent {
+    display: grid;
+    align-content: start;
+    gap: 1rem;
+    height: 100%;
+
+    .requestsContainer {
       display: grid;
-      gap: 0.5rem;
+      gap: 1rem;
+
+      .requestItem {
+        display: flex;
+        gap: 10px;
+      }
+    }
+  }
+
+  .guidelinesContent {
+    display: grid;
+    gap: 1rem;
+
+    .guidelinesContainer {
+      display: grid;
+      gap: 1rem;
+
+      .guidelineItem {
+        display: flex;
+        gap: 10px;
+      }
     }
   }
 }

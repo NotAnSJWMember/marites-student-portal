@@ -78,7 +78,11 @@ const Table = ({
   const [currentPage, setCurrentPage] = useState(1);
   const [activePopup, setActivePopup] = useState(null);
   const [selectedData, setSelectedData] = useState([]);
-  const [filteredSearch, setFilteredSearch] = useState(data);
+  const [filteredSearch, setFilteredSearch] = useState([]);
+
+  useEffect(() => {
+    setFilteredSearch(data);
+  }, [data]);
 
   const itemsPerPage = 8;
   const indexOfLastItem = currentPage * itemsPerPage;

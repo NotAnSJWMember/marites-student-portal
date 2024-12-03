@@ -18,7 +18,7 @@ const EditGrade = ({
   useEffect(() => {
     setTimeout(() => {
       setGrades(data);
-    }, 150);
+    }, 200);
   }, [data]);
 
   const handleClick = (enrollmentId, gradeType, currentGrade) => {
